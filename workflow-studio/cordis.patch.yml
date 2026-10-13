@@ -1,0 +1,7 @@
+- insert:
+    - id: workflow-studio
+      name: dsh-workflow-studio
+      config:
+        provider: spawn
+        maxParallel: 3
+        maxNodes: 24

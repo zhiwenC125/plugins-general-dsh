@@ -1,0 +1,20 @@
+#!/bin/zsh
+set -euo pipefail
+
+# 项目根目录 = 本脚本所在目录
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+DSH_HOME_DIR="$ROOT/.dsh-smoke"
+DSH_BIN="/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh"
+
+if [ ! -x "$DSH_BIN" ]; then
+  echo "找不到 DeepSeek Harness CLI：$DSH_BIN" >&2
+  exit 1
+fi
+
+if [ ! -f "$DSH_HOME_DIR/profiles/web/package.json" ]; then
+  echo "找不到 web profile：$DSH_HOME_DIR/profiles/web" >&2
+  exit 1
+fi
+
+export DSH_HOME="$DSH_HOME_DIR"
+exec "$DSH_BIN" --profile web "$@"

@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+
+# Logs
+*.log
+
+# DeepSeek Harness runtime data (contains credentials/sessions — never commit)
+.dsh-smoke/
+
+# pnpm store
+.pnpm-store/
+
+# Upstream DeepSeek Harness source (clean clone, not part of this repo)
+deepseek-harness/

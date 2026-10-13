@@ -1,0 +1,7 @@
+- insert:
+    - id: workflow-studio
+      name: "/Users/alanbanana/Library/Mobile Documents/com~apple~CloudDocs/dsh-ui-change/workflow-studio/src/host.js"
+      config:
+        provider: spawn
+        maxParallel: 3
+        maxNodes: 24
