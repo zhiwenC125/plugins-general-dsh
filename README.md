@@ -1,4 +1,4 @@
-# ai-studio
+# Plugins for General DSH
 
 基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的二次开发集合。
 
