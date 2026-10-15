@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "setup": "npx --yes pnpm@11.25.0 --dir deepseek-harness install --frozen-lockfile",
-    "build": "node workflow-studio/scripts/build.mjs",
+    "build": "node plugins/workflow-studio/scripts/build.mjs",
     "build:harness": "./deepseek-harness/node_modules/.bin/pnpm --dir deepseek-harness run build",
     "start": "./dsh-studio",
     "version:dsh": "./dsh-studio --version",
-    "test:workflow": "node --test workflow-studio/tests/*.test.js"
+    "test:workflow": "node --test plugins/workflow-studio/tests/*.test.js"
   },
   "engines": {
     "node": "^22.19.0 || >=24.0.0"

@@ -34,7 +34,7 @@ npm run test:workflow
 ```
 
 - `npm run setup` 使用锁定版本的 pnpm 安装上游依赖，不要求全局安装 pnpm。
-- `npm run build` 从 `workflow-studio/src/` 生成 `workflow-studio/lib/client.js`。
+- `npm run build` 从 `plugins/workflow-studio/src/` 生成 `plugins/workflow-studio/lib/client.js`。
 - `npm run build:harness` 仅在 DSH 上游源码发生变化后需要执行。
 - `npm start` 通过根目录的 `dsh-studio` 启动本地 DSH Web 界面。
 
@@ -68,7 +68,7 @@ npm run test:workflow
 ### 验证状态
 
 - `npm run build` 通过。
-- 生成文件 `workflow-studio/lib/client.js` 通过 Node 语法检查。
+- 生成文件 `plugins/workflow-studio/lib/client.js` 通过 Node 语法检查。
 - `npm run test:workflow` 当前共有 6 项测试，全部通过。
 - 已使用真实 alpha.4 会话在浏览器中验证画布、phase、卡片输入输出、详情面板和父子连线。
 - `workflow-smoke-test/` 保存了可重复使用的端到端检验场景和验收清单。
@@ -162,7 +162,7 @@ dshOutput/<workflow-run-id>/
 
 1. 先设计并确认 DSH Runtime 的 DAG/Artifact 事件协议。
 2. 在上游 Runtime 中实现并测试新的持久化事件。
-3. 扩展 `workflow-studio/src/projection.js`，投影节点依赖与 artifact 引用。
+3. 扩展 `plugins/workflow-studio/src/projection.js`，投影节点依赖与 artifact 引用。
 4. 扩展 `layout.js` 和 `view.js`，绘制真实 DAG 边和数据流。
 5. 最后实现用户主动触发的 `dshOutput/` 导出，避免在协议不完整时形成错误文件归属。
 
@@ -170,15 +170,17 @@ dshOutput/<workflow-run-id>/
 
 ## 7. 关键文件
 
-- `workflow-studio/src/client.js`：DSH 客户端注入、子会话观察、打开会话和文件预览。
-- `workflow-studio/src/projection.js`：把官方 Workflow 事件投影成画布状态。
-- `workflow-studio/src/child-preview.js`：提取子 Agent 输入、输出、模型和文件。
-- `workflow-studio/src/layout.js`：编排 Agent、phase 和子 Agent 的布局。
-- `workflow-studio/src/view.js`：React 画布、卡片和详情面板。
-- `workflow-studio/src/style.css`：画布与卡片样式。
-- `workflow-studio/src/locales.js`：中英文界面文本。
-- `workflow-studio/scripts/build.mjs`：生成浏览器端 bundle。
-- `workflow-studio/tests/`：投影和视图辅助逻辑测试。
+- `WORKFLOW_COMPATIBILITY.md`：DSH 原生生命周期投影与 Nexus 持久化 DAG 的双范式兼容、adapter 边界及公司侧 AI 迁移清单。
+- `plugins/README.md`：项目插件目录约定。
+- `plugins/workflow-studio/src/client.js`：DSH 客户端注入、子会话观察、打开会话和文件预览。
+- `plugins/workflow-studio/src/projection.js`：把官方 Workflow 事件投影成画布状态。
+- `plugins/workflow-studio/src/child-preview.js`：提取子 Agent 输入、输出、模型和文件。
+- `plugins/workflow-studio/src/layout.js`：编排 Agent、phase 和子 Agent 的布局。
+- `plugins/workflow-studio/src/view.js`：React 画布、卡片和详情面板。
+- `plugins/workflow-studio/src/style.css`：画布与卡片样式。
+- `plugins/workflow-studio/src/locales.js`：中英文界面文本。
+- `plugins/workflow-studio/scripts/build.mjs`：生成浏览器端 bundle。
+- `plugins/workflow-studio/tests/`：投影和视图辅助逻辑测试。
 - `workflow-smoke-test/`：真实 Workflow 端到端测试案例。
 - `dsh-studio`：从项目根目录启动本地 DSH 的入口。
 
@@ -186,7 +188,7 @@ dshOutput/<workflow-run-id>/
 
 ```sh
 npm run build
-node --check workflow-studio/lib/client.js
+node --check plugins/workflow-studio/lib/client.js
 npm run test:workflow
 git diff --check
 ```
@@ -202,7 +204,7 @@ npm start
 
 ## 9. 开发注意事项
 
-- `workflow-studio/lib/client.js` 是构建产物，但当前仓库会提交它；修改 `src/` 后务必重新运行 `npm run build`。
+- `plugins/workflow-studio/lib/client.js` 是构建产物，但当前仓库会提交它；修改 `src/` 后务必重新运行 `npm run build`。
 - 不要把 `.dsh-smoke/` 提交到 Git，它可能包含本地配置或凭据。
 - 不要把 `deepseek-harness/` 作为本仓库源码提交；它是被忽略的上游检出目录。
 - 不要恢复已经移除的插件内 DAG runner。Workflow Studio 当前定位是 DSH 官方 Workflow 的只读可视化层。
