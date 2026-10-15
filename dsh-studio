@@ -4,10 +4,11 @@ set -euo pipefail
 # 项目根目录 = 本脚本所在目录
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 DSH_HOME_DIR="$ROOT/.dsh-smoke"
-DSH_BIN="/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh"
+DSH_SOURCE="$ROOT/deepseek-harness"
+PNPM_BIN="$DSH_SOURCE/node_modules/.bin/pnpm"
 
-if [ ! -x "$DSH_BIN" ]; then
-  echo "找不到 DeepSeek Harness CLI：$DSH_BIN" >&2
+if [ ! -f "$DSH_SOURCE/package.json" ]; then
+  echo "找不到 DeepSeek Harness 源码：$DSH_SOURCE" >&2
   exit 1
 fi
 
@@ -16,5 +17,10 @@ if [ ! -f "$DSH_HOME_DIR/profiles/web/package.json" ]; then
   exit 1
 fi
 
+if [ ! -x "$PNPM_BIN" ]; then
+  echo "DeepSeek Harness 依赖尚未安装，请先在项目根目录运行：npm run setup" >&2
+  exit 1
+fi
+
 export DSH_HOME="$DSH_HOME_DIR"
-exec "$DSH_BIN" --profile web "$@"
+exec "$PNPM_BIN" --dir "$DSH_SOURCE" dsh --profile web "$@"

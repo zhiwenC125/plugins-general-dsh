@@ -1,0 +1,10 @@
+{
+  "name": "workflow-plugin-smoke",
+  "description": "Exercises every workflow script hook (phase, log, agent with label and schema, parallel, pipeline, args) to verify the dsh-workflow-studio canvas end-to-end.",
+  "whenToUse": "To smoke-test that the DeepSeek Harness workflow tool and its canvas projection are working.",
+  "phases": [
+    { "title": "Discover", "detail": "Two parallel research agents." },
+    { "title": "Build", "detail": "A two-item, two-stage pipeline." },
+    { "title": "Verify", "detail": "A structured verdict and a written artifact." }
+  ]
+}

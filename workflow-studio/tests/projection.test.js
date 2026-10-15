@@ -1,34 +1,76 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { samplePlan, PLAN_KIND } from '../src/graph.js';
-import { studioResult, studioDefinition, createStudioBuilder } from '../src/projection.js';
+import {
+  createStudioBuilder, EMPTY_STUDIO_SNAPSHOT, studioDefinition, workflowPhases,
+} from '../src/projection.js';
 
-test('native metadata and nested plan results reconstruct the same graph', () => {
-  const value = { kind: PLAN_KIND, plan: samplePlan() };
-  const native = studioResult({ type: 'tool/result', data: { meta: value, message: { content: [] } } });
-  const nested = studioResult({ type: 'tool/ptc-dispatch', data: { content: [{ type: 'text', text: JSON.stringify(value) }] } });
-  assert.deepEqual(native, nested);
-  assert.equal(studioResult({ type: 'tool/result', data: { meta: value, message: { isError: true } } }), null);
-  assert.equal(studioResult({ type: 'tool/result', data: { meta: { ...value, plan: {} }, message: { content: [] } } }), null);
-});
-test('run fold is replayable and ordinary turn end does not imply workflow completion', () => {
-  const start = { event: { type: 'tool-workflow/run-start', seq: 1, data: { runId: 'run', name: 'studio:delivery:1' } }, location: { kind: 'turn', turn: { end: { data: { reason: { kind: 'completed' } } } } } };
+function startMatch(reason = 'completed') {
+  return {
+    event: { type: 'tool-workflow/run-start', seq: 10, data: { runId: 'run-1', name: 'Ship feature' } },
+    location: { kind: 'turn', turn: { end: { data: { reason: { kind: reason } } } } },
+  };
+}
+
+test('official workflow events become live phase and member data', () => {
+  const start = startMatch();
   let state = studioDefinition.start({}, start);
-  state = studioDefinition.update({ state }, { event: { type: 'tool-workflow/agent-start', data: { seq: 1, phase: 'clarify', childId: 'child' } } });
-  let view = studioDefinition.buildViewNode({ state, start, key: 'run', id: 'run' }); assert.equal(view.data.status, 'running');
-  start.location.turn.end.data.reason.kind = 'interrupted';
-  view = studioDefinition.buildViewNode({ state, start, key: 'run', id: 'run' }); assert.equal(view.data.status, 'interrupted'); assert.equal(view.data.members[0].status, 'interrupted');
+  state = studioDefinition.update({ state }, {
+    event: { type: 'tool-workflow/agent-start', data: { runId: 'run-1', seq: 1, label: 'Research', phase: 'Discover', childId: 'child-1' } },
+  });
+  state = studioDefinition.update({ state }, {
+    event: { type: 'tool-workflow/agent-start', data: { runId: 'run-1', seq: 2, label: 'Implement', phase: 'Build', childId: 'child-2' } },
+  });
+  state = studioDefinition.update({ state }, {
+    event: { type: 'tool-workflow/agent-end', data: { runId: 'run-1', seq: 1, outcome: 'completed' } },
+  });
+  const node = studioDefinition.buildViewNode({ state, start, key: 'context', id: 'run-1' });
+  assert.equal(node.target, 'workflow-studio');
+  assert.equal(node.data.status, 'running');
+  assert.deepEqual(node.data.phases.map(phase => phase.phase), ['Discover', 'Build']);
+  assert.deepEqual(node.data.members.map(member => member.status), ['completed', 'running']);
 });
-test('history replacement and incremental upserts converge', () => {
-  const a = { key: 'a', anchorSeq: 1 }, b = { key: 'b', anchorSeq: 5 }, updated = { ...b, data: 'done' };
-  const one = createStudioBuilder(), two = createStudioBuilder();
-  one.replace({ nodes: [a, updated] }); two.replace({ nodes: [b] }); two.apply({ upserts: [a] });
-  assert.deepEqual(one.apply({ upserts: [] }), two.apply({ upserts: [updated] }));
+
+test('terminal and abandoned runs settle visible state', () => {
+  const interruptedStart = startMatch('interrupted');
+  let interrupted = studioDefinition.start({}, interruptedStart);
+  interrupted = studioDefinition.update({ state: interrupted }, {
+    event: { type: 'tool-workflow/agent-start', data: { runId: 'run-1', seq: 1, label: 'Agent', childId: 'child' } },
+  });
+  const interruptedNode = studioDefinition.buildViewNode({ state: interrupted, start: interruptedStart, key: 'a', id: 'run-1' });
+  assert.equal(interruptedNode.data.status, 'interrupted');
+  assert.equal(interruptedNode.data.members[0].status, 'interrupted');
+
+  const completedStart = startMatch();
+  let completed = studioDefinition.start({}, completedStart);
+  completed = studioDefinition.update({ state: completed }, {
+    event: { type: 'tool-workflow/run-end', data: { runId: 'run-1', stopReason: 'completed' } },
+  });
+  assert.equal(studioDefinition.buildViewNode({ state: completed, start: completedStart, key: 'b', id: 'run-1' }).data.status, 'completed');
 });
-test('agent progress folds live tool-call counters onto the running member', () => {
-  const start = { event: { type: 'tool-workflow/run-start', seq: 1, data: { runId: 'run', name: 'studio:delivery:1' } }, location: { kind: 'turn', turn: { end: { data: { reason: { kind: 'completed' } } } } } };
-  let state = studioDefinition.start({}, start);
-  state = studioDefinition.update({ state }, { event: { type: 'tool-workflow/agent-start', data: { seq: 1, phase: 'clarify', childId: 'child' } } });
-  state = studioDefinition.update({ state }, { event: { type: 'tool-workflow/agent-progress', data: { seq: 1, calls: 3, lastTool: 'read_file' } } });
-  assert.equal(state.members[0].calls, 3); assert.equal(state.members[0].lastTool, 'read_file'); assert.equal(state.members[0].status, 'running');
+
+test('phase grouping preserves missing and empty identities', () => {
+  const groups = workflowPhases([
+    { seq: 1 },
+    { seq: 2, phase: '' },
+    { seq: 3, phase: 'Build' },
+    { seq: 4, phase: 'Build' },
+  ]);
+  assert.deepEqual(groups.map(group => [group.key, group.members.length]), [
+    ['missing', 1],
+    ['value:0:', 1],
+    ['value:5:Build', 2],
+  ]);
+});
+
+test('history replacement and live upserts converge', () => {
+  assert.deepEqual(EMPTY_STUDIO_SNAPSHOT, { runs: [] });
+  const a = { key: 'a', anchorSeq: 1, data: { runId: 'a' } };
+  const b = { key: 'b', anchorSeq: 2, data: { runId: 'b', status: 'running' } };
+  const updated = { ...b, data: { ...b.data, status: 'completed' } };
+  const replay = createStudioBuilder();
+  const live = createStudioBuilder();
+  replay.replace({ nodes: [a, updated] });
+  live.replace({ nodes: [b] });
+  live.apply({ upserts: [a] });
+  assert.deepEqual(live.apply({ upserts: [updated] }), replay.apply({ upserts: [] }));
 });

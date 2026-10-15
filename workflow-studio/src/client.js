@@ -1,38 +1,98 @@
-import { studioDefinition, createStudioBuilder } from './projection.js';
+import { EMPTY_STUDIO_SNAPSHOT, studioDefinition, createStudioBuilder } from './projection.js';
 import { zh, en } from './locales.js';
+import { childPreview, EMPTY_CHILD_PREVIEW } from './child-preview.js';
 
-const clientInject = ['slots', 'sessions', 'uiConversation', 'uiWorkspace', 'locale'];
-/** Registers a real Conversation target and hooks through the native renderer. */
+const clientInject = ['slots', 'sessions', 'uiConversation', 'uiWorkspace', 'sidebarRight', 'locale'];
+
+function sessionFileAddress(sessionId, path) {
+  const encodedId = encodeURIComponent(sessionId);
+  const encodedPath = path.replace(/\\/g, '/').replace(/^(?:\.\/)+/, '')
+    .split('/').map(segment => encodeURIComponent(segment).replace(/%3A/gi, ':')).join('/');
+  return `dsh-resource://file/session/${encodedId}/${encodedPath}`;
+}
+
+function watchChildren(ctx, parentSessionId, childIds, publish) {
+  const previews = {};
+  const releases = [];
+  let disposed = false;
+  const update = (childId, value) => {
+    if (disposed) return;
+    previews[childId] = value;
+    publish({ ...previews });
+  };
+  for (const childId of childIds.slice(64)) update(childId, { ...EMPTY_CHILD_PREVIEW, limited: true });
+  for (const childId of childIds.slice(0, 64)) {
+    const address = ctx.sessions.subagentAddress(childId);
+    if (!address || address.parentSessionId !== parentSessionId) {
+      update(childId, { ...EMPTY_CHILD_PREVIEW, unavailable: true });
+      continue;
+    }
+    const reference = ctx.sessions.retain(address, { source: 'controllerOperation' });
+    let unsubscribe = () => {};
+    releases.push(() => { unsubscribe(); reference.release(); });
+    reference.ready.then((binding) => {
+      if (disposed) return;
+      const emit = () => update(childId, childPreview(binding.eventSource.getSnapshot().entries));
+      unsubscribe = binding.eventSource.subscribe(emit);
+      emit();
+    }).catch(() => update(childId, { ...EMPTY_CHILD_PREVIEW, unavailable: true }));
+  }
+  return () => {
+    disposed = true;
+    for (const release of releases) release();
+  };
+}
+
+/** Register the Workflow view between Chat and Trajectory. */
 function applyClient(ctx) {
   ctx.effect(() => {
-    const style = document.createElement('style'); style.dataset.workflowStudio = 'true'; style.textContent = STUDIO_CSS;
-    document.head.appendChild(style); return () => style.remove();
+    const style = document.createElement('style');
+    style.dataset.workflowStudio = 'true';
+    style.textContent = STUDIO_CSS;
+    document.head.appendChild(style);
+    return () => style.remove();
   });
   ctx.effect(() => ctx.locale.register('workflowStudio', { zh, en }));
   const t = ctx.locale.bind('workflowStudio');
   ctx.uiConversation.events.register(studioDefinition);
-  ctx.uiConversation.views.register({ target: 'workflow-studio', create: createStudioBuilder, isActive: rows => rows.length > 0 });
-  const empty = [];
-  ctx.slots.inject('conversation.session.header.actions', () => {
-    const store = ctx.slots.entries('conversation.session.header').find(entry => entry.store)?.store;
-    if (!store) throw new Error('Workflow Studio requires the native Conversation store');
-    return ctx.slots.register({
-      name: 'conversation.session.header.actions', id: 'workflow-studio', store, locale: 'workflowStudio',
-      inject: (sessionId, actions) => {
-        const session = ctx.sessions.binding(sessionId)?.session;
-        if (!session) throw new Error('Workflow Studio: session unavailable');
-        const binding = ctx.uiConversation.binding(sessionId);
-        const target = binding.target('workflow-studio');
-        return {
-          hooks: { studio: { getSnapshot: () => target.getSnapshot() ?? empty, subscribe: listener => target.subscribe(listener) } },
-          restoreChat: () => { binding.activate('chat'); actions.setView('chat'); },
-          send: async text => {
-            const result = await session.prompt([{ type: 'text', text }], 'queue');
-            if (!result.ok) throw new Error(result.error.message);
-          },
-          openChild: target => ctx.uiWorkspace.openSession(target),
-        };
-      },
-    }, StudioCanvasPortal);
+  ctx.uiConversation.views.register({
+    target: 'workflow-studio',
+    create: createStudioBuilder,
+    isActive: snapshot => snapshot.runs.length > 0,
   });
+  ctx.slots.inject('conversation.view', () => ctx.slots.register({
+    name: 'conversation.view',
+    id: 'workflow-studio',
+    order: 5,
+    locale: 'workflowStudio',
+    label: () => t('tab'),
+    inject: (sessionId) => {
+      const binding = ctx.sessions.binding(sessionId);
+      if (!binding) throw new Error(`Workflow Studio: session "${sessionId}" is unavailable`);
+      const target = ctx.uiConversation.binding(binding).target('workflow-studio');
+      const summary = ctx.sessions.list.getSnapshot().byId[sessionId];
+      return {
+        hooks: {
+          workflowStudio: {
+            getSnapshot: () => target.getSnapshot() ?? EMPTY_STUDIO_SNAPSHOT,
+            subscribe: listener => target.subscribe(listener),
+          },
+        },
+        orchestrator: {
+          id: sessionId,
+          title: summary?.projectionValues?.title || t('orchestrator'),
+        },
+        watchChildren: (childIds, publish) => watchChildren(ctx, sessionId, childIds, publish),
+        openChild: (childId) => {
+          const address = ctx.sessions.subagentAddress(childId);
+          if (!address || address.parentSessionId !== sessionId) return false;
+          ctx.uiWorkspace.openSession(address);
+          return true;
+        },
+        openFile: (childId, path) => {
+          ctx.sidebarRight.openResource(sessionFileAddress(childId, path));
+        },
+      };
+    },
+  }, StudioView));
 }

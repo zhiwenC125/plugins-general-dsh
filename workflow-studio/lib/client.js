@@ -1,389 +1,608 @@
 window.__ModuleLoader__.load({id:"dsh-workflow-studio",factory:(require)=>{
 const React=require("react");
-const ReactDOM=require("react-dom");
-const STUDIO_CSS=".ws-root{--ws-bg:var(--dsw-alias-bg-base,#f5f6f8);--ws-surface:var(--dsw-alias-bg-layer-1,#fff);--ws-text:var(--dsw-alias-text-primary,#202632);--ws-muted:var(--dsw-alias-text-secondary,#687384);--ws-border:var(--dsw-alias-border-l4,#e2e6ed);--ws-accent:var(--dsw-alias-brand-primary,#4d6bfe);position:relative;display:flex;flex-direction:column;width:100%;height:100%;min-height:500px;overflow:hidden;color:var(--ws-text);background:var(--ws-bg);font:13px/1.5 var(--dsw-font-family,system-ui,sans-serif)}\n.ws-root *{box-sizing:border-box}.ws-root button,.ws-root select,.ws-root input,.ws-root textarea{font:inherit;color:inherit}.ws-root button{cursor:pointer;border:1px solid var(--ws-border);background:var(--ws-surface);border-radius:8px;padding:7px 11px;white-space:nowrap}.ws-root button:disabled{opacity:.45;cursor:not-allowed}.ws-root button:hover:not(:disabled){border-color:var(--ws-accent)}.ws-root :focus-visible{outline:2px solid var(--ws-accent);outline-offset:3px}.ws-root .ws-primary{background:var(--ws-accent);color:white;border-color:var(--ws-accent)}\n.ws-header{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:16px 22px;background:var(--ws-surface);border-bottom:1px solid var(--ws-border);flex-wrap:wrap}.ws-header h2{font-size:19px;margin:0}.ws-header p{color:var(--ws-muted);font-size:11px;margin:4px 0 0}.ws-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.ws-body{display:flex;flex:1;min-height:0}.ws-canvas{position:relative;flex:1;min-width:200px;min-height:360px;overflow:hidden;touch-action:none;background-image:radial-gradient(var(--ws-border) 1px,transparent 1px);background-size:24px 24px;cursor:grab}.ws-canvas:active{cursor:grabbing}.ws-world{position:absolute;left:0;top:0;transform-origin:0 0}.ws-edges{position:absolute;overflow:visible;pointer-events:none}.ws-edges path{fill:none;stroke:var(--ws-border);stroke-width:2}.ws-edges .ws-edge-done{stroke:var(--ws-accent)}\n.ws-node{position:absolute;width:260px;min-height:200px;background:var(--ws-surface);border:1px solid var(--ws-border);border-radius:12px;padding:17px;box-shadow:0 3px 12px #00000006;cursor:grab;user-select:none}.ws-node.ws-selected{border:2px solid var(--ws-accent);padding:16px}.ws-node-top{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ws-muted)}.ws-node-child{color:var(--ws-muted);font-size:10px}.ws-dot{width:7px;height:7px;background:var(--ws-muted);border-radius:50%}.ws-node[data-status=running] .ws-dot{background:var(--ws-accent)}.ws-node[data-status=completed] .ws-dot{background:#238568}.ws-node[data-status=failed] .ws-dot{background:#c64a4a}.ws-root .ws-node-title{font-weight:600;font-size:15px;padding:10px 0 0;border:0;background:none;white-space:normal;text-align:left;overflow-wrap:anywhere}.ws-node-role{color:var(--ws-muted);margin:6px 0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ws-inout{display:flex;flex-direction:column;gap:6px;margin:2px 0 8px}.ws-io{display:flex;gap:8px;align-items:flex-start;font-size:11px}.ws-io-tag{flex:none;color:var(--ws-muted);border:1px solid var(--ws-border);border-radius:4px;padding:0 5px;font-size:10px;line-height:1.6}.ws-io-out{color:#238568}.ws-io-text{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}.ws-node-tools{font-size:11px;color:var(--ws-muted);margin-top:6px}.ws-node-detail{border-top:1px solid var(--ws-border);margin-top:12px;padding-top:10px}.ws-node-detail h4{margin:12px 0 5px;font-size:12px}.ws-node-detail p.ws-detail-text{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ws-muted);margin:0;font-size:11px}.ws-child-btn,.ws-collapse{margin-top:10px}.ws-collapse{border:0;background:none;color:var(--ws-accent);padding:0;margin-left:10px;font-size:12px}\n.ws-controls{position:absolute;bottom:18px;left:18px;display:flex;gap:7px;align-items:center;background:var(--ws-surface);border:1px solid var(--ws-border);border-radius:10px;padding:5px;cursor:default}.ws-controls button{border:0}.ws-controls span{min-width:40px;text-align:center;font-size:11px}.ws-inspector{width:300px;flex:none;background:var(--ws-surface);border-left:1px solid var(--ws-border);padding:20px;overflow:auto}.ws-inspector h3{font-size:15px;margin:0 0 16px}.ws-inspector h4{margin:20px 0 8px}.ws-inspector-title{display:flex;justify-content:space-between;align-items:center}.ws-field{display:flex;flex-direction:column;gap:6px;margin:12px 0;font-size:12px}.ws-field>span{color:var(--ws-muted)}.ws-field input,.ws-field textarea,.ws-field select,.ws-version select{background:var(--ws-bg);border:1px solid var(--ws-border);padding:8px;border-radius:7px;min-width:0;resize:vertical;width:100%}.ws-help{font-size:11px;color:var(--ws-muted);line-height:1.8}.ws-result,.ws-call pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--ws-bg);border-radius:8px;padding:10px;max-height:320px;overflow:auto;font-size:11px}.ws-call{border-top:1px solid var(--ws-border);padding:8px 0}.ws-call summary{cursor:pointer}.ws-upstream>div{display:flex;align-items:center;justify-content:space-between}.ws-version{padding:8px 20px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--ws-border);font-size:11px}.ws-version label{display:flex;gap:10px;align-items:center}.ws-version select{width:280px;padding:4px}.ws-notice{padding:9px 22px;background:var(--ws-surface);color:var(--ws-muted);font-size:12px}.ws-error{color:#b33e3e;white-space:pre-wrap}.ws-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px;text-align:center;cursor:default}.ws-empty h3{font-size:24px;margin:12px}.ws-empty p{max-width:460px;color:var(--ws-muted);line-height:1.8}.ws-symbol{font-size:60px;color:var(--ws-accent)}.ws-json{position:absolute;inset:20px;background:var(--ws-surface);border:1px solid var(--ws-border);border-radius:12px;box-shadow:0 20px 80px #0003;z-index:5;display:flex;flex-direction:column;padding:20px;gap:14px}.ws-json textarea{flex:1;resize:none;background:var(--ws-bg);border:1px solid var(--ws-border);border-radius:8px;padding:12px;font-family:monospace}.ws-json h3{margin:0}@media(max-width:850px){.ws-inspector{width:250px}.ws-header{padding:12px}.ws-actions{gap:4px}.ws-actions button{padding:5px 7px;font-size:11px}}@media(max-width:600px){.ws-body{flex-direction:column}.ws-inspector{width:100%;max-height:260px;border-left:0;border-top:1px solid var(--ws-border)}.ws-canvas{min-height:340px}}\n.ws-progress{height:5px;border-radius:3px;background:var(--ws-border);overflow:hidden;margin:10px 0}.ws-progress-fill{height:100%;border-radius:3px;background:var(--ws-muted);transition:width .4s ease}.ws-fill-running{width:40%;background:var(--ws-accent);animation:ws-progress-run 1.4s ease-in-out infinite}.ws-fill-completed{background:#238568}.ws-fill-failed,.ws-fill-cancelled,.ws-fill-interrupted{background:#c64a4a}.ws-fill-blocked,.ws-fill-ready{width:0}@keyframes ws-progress-run{0%{margin-left:-40%}100%{margin-left:100%}}\n.ws-chatbar{flex:none;border-top:1px solid var(--ws-border);background:var(--ws-surface);padding:12px 16px;display:flex;flex-direction:column;gap:8px}.ws-chat-target{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ws-muted)}.ws-chat-target-dot{width:8px;height:8px;border-radius:50%;background:var(--ws-accent)}.ws-chatbar .ws-chat-target button{border:0;background:none;color:var(--ws-accent);padding:0 4px;font-size:12px}.ws-chatbar textarea{resize:vertical;background:var(--ws-bg);border:1px solid var(--ws-border);border-radius:8px;padding:10px;font:inherit;min-height:56px;width:100%}.ws-chat-actions{display:flex;justify-content:flex-end}\n.ws-side{width:340px;flex:none;display:flex;flex-direction:column;border-left:1px solid var(--ws-border);background:var(--ws-surface);min-height:0}.ws-side-head{padding:12px 16px;border-bottom:1px solid var(--ws-border);font-size:12px;color:var(--ws-muted)}.ws-side-stream{flex:1;overflow:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;min-height:0}.ws-side-input{border-top:1px solid var(--ws-border);padding:12px 16px;display:flex;flex-direction:column;gap:8px}.ws-side-input textarea{resize:vertical;background:var(--ws-bg);border:1px solid var(--ws-border);border-radius:8px;padding:10px;font:inherit;min-height:64px;width:100%}.ws-stream-item{display:flex;align-items:center;gap:8px;font-size:12px}.ws-stream-plan{font-size:13px}.ws-stream-dot{width:7px;height:7px;border-radius:50%;background:var(--ws-muted);flex:none}.ws-stream-item[data-status=running] .ws-stream-dot{background:var(--ws-accent)}.ws-stream-item[data-status=completed] .ws-stream-dot{background:#238568}.ws-stream-item[data-status=failed] .ws-stream-dot{background:#c64a4a}.ws-muted{color:var(--ws-muted)}.ws-stream-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:24px 8px}.ws-stream-empty p{margin:0;color:var(--ws-muted);line-height:1.8}.ws-stream-empty .ws-symbol{font-size:44px}@media(max-width:900px){.ws-side{width:280px}}\n.ws-runline{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 0;border-bottom:1px solid var(--ws-border)}.ws-runline[data-status=running] .ws-stream-dot{background:var(--ws-accent)}.ws-runline[data-status=completed] .ws-stream-dot{background:#238568}.ws-runline[data-status=failed] .ws-stream-dot{background:#c64a4a}.ws-msg{display:flex;flex-direction:column;gap:3px;padding:7px 0;border-bottom:1px solid var(--ws-border);font-size:12px}.ws-msg-who{font-size:10px;color:var(--ws-muted)}.ws-msg-user .ws-msg-who{color:var(--ws-accent)}.ws-msg-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}.ws-msg-tool .ws-msg-text{color:var(--ws-muted)}.ws-msg-error .ws-msg-text{color:#b33e3e}\n.ws-history{background:var(--ws-bg);border:1px solid var(--ws-border);border-radius:7px;padding:6px 8px;font-size:12px;max-width:260px}\n.ws-live{font-size:11px;color:var(--ws-accent);margin-top:6px;overflow-wrap:anywhere}\n\n/* One native transcript and one native editor, both remain mounted in place.\n   Studio is a sibling canvas in the same Conversation body, never another page. */\n[data-conversation-content]:has(> [data-workflow-studio]) {\n  position: relative;\n  --ws-side-width: clamp(320px, 36%, 480px);\n}\n[data-conversation-content]:has(> [data-workflow-studio]) > [data-conversation-scroll] {\n  flex: 1; width: var(--ws-side-width); margin-left: auto;\n  border-left: 1px solid var(--dsw-alias-border-l4,#e2e6ed);\n  --dsh-chat-content-width: 100%;\n  --dsh-composer-side-clearance: 0px;\n}\n[data-conversation-content] > .ws-root {\n  position: absolute; left: 0; top: 0; bottom: 0;\n  width: calc(100% - var(--ws-side-width)); height: 100%; min-height: 0;\n}\n.ws-body { flex-direction: row; }\n.ws-canvas { min-width: 0; min-height: 0; }\n@media(max-width:650px) {\n  [data-conversation-content]:has(> [data-workflow-studio]) { --ws-side-width: 52%; }\n  .ws-header { padding: 8px; gap: 8px; }\n  .ws-header h2 { font-size: 14px; }\n  .ws-controls { left: 6px; bottom: 6px; gap: 0; }\n  .ws-controls button { padding: 6px; }\n}\n";
-/** Versioned JSON graph shared by the host validator and browser editor. */
-const PLAN_KIND = 'workflow-studio-plan';
-const RUN_KIND = 'workflow-studio-run';
-const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
-function object(value, label) {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`${label}: expected an object`);
-  return value;
-}
-function string(value, label, limit = 12000) {
-  if (typeof value !== 'string' || !value.trim() || value.length > limit) throw new Error(`${label}: expected non-empty text (max ${limit})`);
-  return value;
-}
-function names(value, label) {
-  if (!Array.isArray(value) || value.length > 80) throw new Error(`${label}: expected an array (max 80)`);
-  return [...new Set(value.map(v => string(v, label, 200)))];
-}
-function identifier(value, label) {
-  string(value, label, 64);
-  if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(value)) throw new Error(`${label}: use letters, digits, underscores and hyphens; begin with a letter`);
-  return value;
-}
-/** Validate imported/model JSON, reject ambiguous graphs, and detach accepted fields. */
-function validatePlan(input, maxNodes = 24) {
-  const p = object(input, 'plan');
-  if (p.version !== 1) throw new Error('Unsupported workflow version; expected 1');
-  if (!Number.isSafeInteger(p.revision) || p.revision < 1) throw new Error('revision must be a positive integer');
-  if (!Array.isArray(p.nodes) || !p.nodes.length || p.nodes.length > maxNodes) throw new Error(`nodes must contain 1–${maxNodes} agents`);
-  if (!Array.isArray(p.edges) || p.edges.length > maxNodes * maxNodes) throw new Error('edges must be an array within the graph size limit');
-  const nodes = p.nodes.map((raw, i) => {
-    const n = object(raw, `nodes[${i}]`);
-    return { id: identifier(n.id, 'node.id'), label: string(n.label, 'node.label', 120), role: string(n.role, 'node.role', 1000), task: string(n.task, 'node.task'), skills: names(n.skills, 'node.skills'), tools: names(n.tools, 'node.tools'), output: string(n.output, 'node.output', 1000) };
-  });
-  const ids = new Set(nodes.map(n => n.id));
-  if (ids.size !== nodes.length) throw new Error('Duplicate node id');
-  const edgeIds = new Set();
-  const edges = p.edges.map(raw => {
-    const e = object(raw, 'edge');
-    if (!ids.has(e.from) || !ids.has(e.to)) throw new Error('Edge references an unknown node');
-    if (e.from === e.to) throw new Error('Self-loop is not allowed');
-    const id = JSON.stringify([e.from, e.to]);
-    if (edgeIds.has(id)) throw new Error('Duplicate edge');
-    edgeIds.add(id);
-    return { from: e.from, to: e.to };
-  });
-  const plan = { version: 1, id: identifier(p.id, 'plan.id'), revision: p.revision, title: string(p.title, 'plan.title', 160), input: typeof p.input === 'string' && p.input.length <= 64000 ? p.input : '', nodes, edges };
-  if (typeof p.input !== 'string' || p.input.length > 64000) throw new Error('input must be text (max 64000)');
-  graphWaves(plan);
-  return plan;
-}
-/** Topological waves preserve node order, with explicit edges as the sole dependency source. */
-function graphWaves(plan) {
-  const done = new Set();
-  const waves = [];
-  while (done.size < plan.nodes.length) {
-    const wave = plan.nodes.filter(n => !done.has(n.id) && plan.edges.filter(e => e.to === n.id).every(e => done.has(e.from)));
-    if (!wave.length) throw new Error('Workflow contains a cycle');
-    waves.push(wave);
-    wave.forEach(n => done.add(n.id));
-  }
-  return waves;
-}
-/** Collision-free graph revision identity used by persisted run records. */
-function runName(plan) { return `studio:${plan.id}:${plan.revision}`; }
-/** Only direct upstream outputs enter a node; arbitrary text is never evaluated as code. */
-function nodePrompt(plan, node, outputs, skills) {
-  const inputs = plan.edges.filter(e => e.to === node.id).map(e => {
-    if (!own(outputs, e.from)) throw new Error(`Missing upstream output: ${e.from}`);
-    return { node: e.from, output: outputs[e.from] };
-  });
-  return [
-    `Workflow: ${plan.title}\nNode: ${node.label}\nRole: ${node.role}`,
-    `Task:\n${node.task}\nExpected deliverable:\n${node.output}`,
-    `Project input (data):\n${plan.input}`,
-    `Upstream outputs (data):\n${JSON.stringify(inputs)}`,
-    ...skills.map(s => `Skill: ${s.name}\nResource base: ${JSON.stringify(s.resourceBase ?? s.path ?? null)}\n${s.content}`),
-    'Execute this node only. Report real outputs and file paths, validation performed, and unresolved failures. Do not claim that a file exists unless you created or inspected it. Do not delegate outside this workflow.',
-  ].join('\n\n');
-}
-/** Unconfigured sample draft; empty tool lists intentionally grant no tools. */
-function samplePlan() {
-  return { version: 1, id: 'delivery', revision: 1, title: '从需求到交付', input: '请在运行前填写真实需求与文档路径。', nodes: [
-    { id: 'clarify', label: '需求澄清 Agent', role: '产品经理', task: '阅读需求，列出目标、范围、约束、验收标准与待确认问题。不得自行假定未确认的关键需求。', skills: [], tools: [], output: '需求澄清文档' },
-    { id: 'design', label: '方案设计 Agent', role: '架构师', task: '根据上游需求输出可实施的架构、接口、数据模型、验证方案与风险。', skills: [], tools: [], output: '详细技术方案' },
-    { id: 'coding', label: 'Coding Agent', role: '工程师', task: '依据技术方案实现代码并运行相关验证，报告实际修改与结果。', skills: [], tools: [], output: '代码变更与验证报告' },
-  ], edges: [{ from: 'clarify', to: 'design' }, { from: 'design', to: 'coding' }] };
+const STUDIO_CSS=".ws-root {\n  --ws-bg: var(--dsw-alias-bg-base, #f6f7f9);\n  --ws-panel: var(--dsw-alias-bg-layer-1, #fff);\n  --ws-text: var(--dsw-alias-text-primary, #1e2430);\n  --ws-muted: var(--dsw-alias-text-secondary, #6d7687);\n  --ws-border: var(--dsw-alias-border-l4, #e1e5ec);\n  --ws-accent: var(--dsw-alias-brand-primary, #4d6bfe);\n  display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 0;\n  color: var(--ws-text); background: var(--ws-bg); font: 13px/1.5 var(--dsw-font-family, system-ui, sans-serif); overflow: hidden;\n}\n.ws-root * { box-sizing: border-box; }\n.ws-root button, .ws-root select { font: inherit; color: inherit; }\n.ws-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 20px; background: var(--ws-panel); border-bottom: 1px solid var(--ws-border); flex: none; }\n.ws-heading { min-width: 0; }\n.ws-title-row { display: flex; align-items: center; gap: 10px; }\n.ws-title-row h2 { font-size: 17px; line-height: 1.3; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-heading p { margin: 3px 0 0; color: var(--ws-muted); font-size: 11px; }\n.ws-actions { display: flex; align-items: center; gap: 8px; }\n.ws-actions button, .ws-actions select, .ws-controls button, .ws-open-child { border: 1px solid var(--ws-border); background: var(--ws-panel); border-radius: 8px; padding: 6px 10px; cursor: pointer; }\n.ws-actions select { max-width: 280px; }\n.ws-actions button:hover, .ws-controls button:hover, .ws-open-child:hover { border-color: var(--ws-accent); }\n.ws-content { display: flex; flex: 1; min-height: 0; }\n.ws-canvas { position: relative; flex: 1; min-width: 0; overflow: hidden; touch-action: none; cursor: grab; background-color: var(--ws-bg); background-image: radial-gradient(var(--ws-border) 1px, transparent 1px); background-size: 22px 22px; }\n.ws-canvas:active { cursor: grabbing; }\n.ws-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }\n.ws-phase-links { position: absolute; overflow: visible; pointer-events: none; }\n.ws-agent-link { fill: none; stroke: #9aa7c7; stroke-width: 2; }\n.ws-arrow-head { fill: #9aa7c7; }\n.ws-phase-label { position: absolute; width: 280px; height: 62px; display: grid; grid-template-columns: 24px 1fr; grid-template-rows: 28px 18px; column-gap: 8px; align-items: center; color: var(--ws-text); font-weight: 600; }\n.ws-phase-label small { grid-column: 2; color: var(--ws-muted); font-size: 10px; font-weight: 400; }\n.ws-phase-index { grid-row: 1/3; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ws-accent); color: #fff; font-size: 11px; }\n.ws-root-node, .ws-node { position: absolute; width: 280px; height: 172px; border: 1px solid var(--ws-border); border-radius: 14px; background: var(--ws-panel); box-shadow: 0 6px 18px #1018280a; }\n.ws-root-node { height: 156px; display: flex; flex-direction: column; padding: 16px; border-color: color-mix(in srgb, var(--ws-accent) 38%, var(--ws-border)); background: color-mix(in srgb, var(--ws-accent) 5%, var(--ws-panel)); }\n.ws-root-node strong { margin-top: 9px; font-size: 15px; }\n.ws-root-node p { margin: 10px 0 0; color: var(--ws-muted); font-size: 11px; line-height: 1.55; }\n.ws-node-kicker { color: var(--ws-accent); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }\n.ws-node { display: flex; flex-direction: column; align-items: stretch; text-align: left; padding: 13px 15px; cursor: pointer; overflow: hidden; }\n.ws-node:hover, .ws-node-selected { border-color: var(--ws-accent); box-shadow: 0 8px 24px #4d6bfe1c; }\n.ws-node-selected { outline: 2px solid color-mix(in srgb, var(--ws-accent) 22%, transparent); outline-offset: 2px; }\n.ws-node-top { display: flex; align-items: center; gap: 7px; color: var(--ws-muted); font-size: 10px; }\n.ws-runtime { margin-left: auto; max-width: 145px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-node strong { margin: 9px 0 7px; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-node-id { margin-top: 3px; color: var(--ws-muted); font: 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-io { display: grid; grid-template-columns: 36px 1fr; gap: 5px; margin-top: 5px; color: var(--ws-muted); font-size: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }\n.ws-io b { color: var(--ws-text); font-weight: 600; }\n.ws-file-count { margin-top: auto; color: var(--ws-accent); font-size: 10px; }\n.ws-dot { width: 7px; height: 7px; border-radius: 50%; background: #87909f; }\n.ws-node[data-status=running] .ws-dot { background: var(--ws-accent); box-shadow: 0 0 0 4px #4d6bfe18; animation: ws-pulse 1.4s ease-in-out infinite; }\n.ws-node[data-status=completed] .ws-dot { background: #23936f; }\n.ws-node[data-status=failed] .ws-dot { background: #d04f55; }\n.ws-node[data-status=cancelled] .ws-dot, .ws-node[data-status=interrupted] .ws-dot { background: #d18a24; }\n.ws-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--ws-border); }\n.ws-progress-fill { display: block; height: 100%; width: 0; background: #87909f; }\n.ws-node[data-status=running] .ws-progress-fill { width: 42%; background: var(--ws-accent); animation: ws-run 1.35s ease-in-out infinite; }\n.ws-node[data-status=completed] .ws-progress-fill { width: 100%; background: #23936f; }\n.ws-node[data-status=failed] .ws-progress-fill { width: 100%; background: #d04f55; }\n.ws-node[data-status=cancelled] .ws-progress-fill, .ws-node[data-status=interrupted] .ws-progress-fill { width: 100%; background: #d18a24; }\n.ws-legend { position: absolute; right: 16px; bottom: 16px; max-width: 310px; padding: 7px 10px; border: 1px solid var(--ws-border); border-radius: 8px; color: var(--ws-muted); background: var(--ws-panel); font-size: 10px; }\n.ws-controls { position: absolute; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 3px; padding: 4px; border: 1px solid var(--ws-border); border-radius: 10px; background: var(--ws-panel); box-shadow: 0 6px 20px #10182812; cursor: default; }\n.ws-controls button { border: 0; padding: 5px 9px; }\n.ws-controls span { min-width: 44px; text-align: center; color: var(--ws-muted); font-size: 11px; }\n.ws-inspector { width: 340px; flex: none; padding: 18px; background: var(--ws-panel); border-left: 1px solid var(--ws-border); overflow: auto; }\n.ws-inspector-head { display: flex; justify-content: space-between; align-items: center; }\n.ws-inspector-head h3 { margin: 0; font-size: 15px; }\n.ws-inspector-head button { border: 0; background: none; font-size: 20px; cursor: pointer; }\n.ws-inspector h4 { font-size: 16px; margin: 18px 0; }\n.ws-inspector dl { margin: 18px 0; }\n.ws-inspector dt { color: var(--ws-muted); font-size: 11px; margin-top: 12px; }\n.ws-inspector dd { margin: 4px 0 0; overflow-wrap: anywhere; }\n.ws-mono { font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }\n.ws-preview-section { margin: 18px 0; }\n.ws-preview-section h5 { margin: 0 0 7px; font-size: 11px; color: var(--ws-muted); }\n.ws-preview-section pre { max-height: 190px; margin: 0; padding: 10px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--ws-border); border-radius: 8px; background: var(--ws-bg); font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }\n.ws-artifacts { display: flex; flex-direction: column; gap: 6px; }\n.ws-artifacts button { width: 100%; padding: 7px 9px; border: 1px solid var(--ws-border); border-radius: 7px; background: var(--ws-bg); color: var(--ws-accent); text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }\n.ws-open-child { width: 100%; background: var(--ws-accent); border-color: var(--ws-accent); color: #fff; }\n.ws-child-unavailable { margin: 9px 0 0; color: #b94147; font-size: 11px; }\n.ws-hint { margin-top: 12px; color: var(--ws-muted); font-size: 11px; line-height: 1.7; }\n.ws-status { display: inline-flex; align-items: center; border-radius: 999px; padding: 2px 8px; background: var(--ws-border); color: var(--ws-muted); font-size: 10px; white-space: nowrap; }\n.ws-status-running { background: #4d6bfe14; color: var(--ws-accent); }\n.ws-status-completed { background: #23936f16; color: #238366; }\n.ws-status-failed { background: #d04f5516; color: #b94147; }\n.ws-status-cancelled, .ws-status-interrupted { background: #d18a2418; color: #a96d17; }\n.ws-empty, .ws-waiting { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; color: var(--ws-muted); }\n.ws-empty h3 { color: var(--ws-text); font-size: 20px; margin: 14px 0 6px; }\n.ws-empty p { max-width: 520px; margin: 0; line-height: 1.8; }\n.ws-empty-icon { display: grid; place-items: center; width: 58px; height: 58px; border: 1px solid var(--ws-border); border-radius: 18px; background: var(--ws-panel); color: var(--ws-accent); font-size: 28px; box-shadow: 0 8px 28px #1018280d; }\n.ws-waiting { position: absolute; inset: 0; flex-direction: row; gap: 10px; }\n.ws-spinner { width: 14px; height: 14px; border: 2px solid var(--ws-border); border-top-color: var(--ws-accent); border-radius: 50%; animation: ws-spin .8s linear infinite; }\n@keyframes ws-spin { to { transform: rotate(360deg); } }\n@keyframes ws-pulse { 50% { opacity: .45; } }\n@keyframes ws-run { 0% { margin-left: -42%; } 100% { margin-left: 100%; } }\n@media (max-width: 760px) { .ws-header { padding: 10px 12px; } .ws-heading p { display: none; } .ws-inspector { width: 280px; } .ws-actions select { max-width: 170px; } .ws-legend { display: none; } }\n@media (max-width: 560px) { .ws-inspector { position: absolute; right: 0; top: 0; bottom: 0; z-index: 4; width: min(88%, 340px); box-shadow: -12px 0 30px #1018281a; } .ws-title-row h2 { font-size: 14px; } .ws-actions select { max-width: 120px; } }\n";
+/** Status vocabulary shared by run and member cards. */
+const RUNNING = 'running';
+
+function stopStatus(reason) {
+  if (reason === 'completed') return 'completed';
+  if (reason === 'cancelled') return 'cancelled';
+  return 'failed';
 }
 
-
-/** Read only the plugin's versioned tool result; malformed data remains a generic native tool card. */
-function studioResult(event) {
-  if (event.type !== 'tool/result' && event.type !== 'tool/ptc-dispatch') return null;
-  const data = event.data;
-  if (data.message?.isError || data.isError) return null;
-  let value = data.meta;
-  if (!value || (value.kind !== PLAN_KIND && value.kind !== RUN_KIND)) {
-    const content = data.message?.content ?? data.content ?? [];
-    const text = content.filter(b => b.type === 'text').map(b => b.text).join('');
-    try { value = JSON.parse(text); } catch { return null; }
-  }
-  if (value?.kind !== PLAN_KIND && value?.kind !== RUN_KIND) return null;
-  try { return { ...value, plan: validatePlan(value.plan, 100) }; } catch { return null; }
+function memberStatus(outcome) {
+  if (outcome === 'completed') return 'completed';
+  if (outcome === 'cancelled') return 'cancelled';
+  return 'failed';
 }
-/** Pure, replayable event folds for plans and actual workflow membership. */
+
+function abandoned(location) {
+  const reason = location?.turn?.end?.data?.reason?.kind;
+  return reason === 'interrupted' || reason === 'forked';
+}
+
+/** Group observed members by their exact phase label, preserving first-seen order. */
+function workflowPhases(members) {
+  const phases = new Map();
+  for (const member of members) {
+    const phase = member.phase === undefined ? null : member.phase;
+    const key = phase === null ? 'missing' : `value:${phase.length}:${phase}`;
+    let group = phases.get(key);
+    if (!group) {
+      group = { key, phase, members: [] };
+      phases.set(key, group);
+    }
+    group.members.push(member);
+  }
+  return [...phases.values()];
+}
+
+function projectedRun(context) {
+  const state = context.state;
+  const interrupted = state.status === RUNNING && abandoned(context.start?.location);
+  const members = state.members.map(member => member.status === RUNNING && interrupted
+    ? { ...member, status: 'interrupted' }
+    : member);
+  return {
+    runId: state.runId,
+    name: state.name,
+    status: interrupted ? 'interrupted' : state.status,
+    members,
+    phases: workflowPhases(members),
+  };
+}
+
+/** Replayable projection of the official tool-workflow event family. */
 const studioDefinition = {
-  kind: 'workflow-studio', target: 'workflow-studio',
+  kind: 'workflow-studio-run',
+  target: 'workflow-studio',
   match(event) {
-    const result = studioResult(event);
-    if (result) return { id: `result:${event.seq}`, role: 'start' };
-    if (event.type === 'tool-workflow/run-start') return { id: event.data.runId, role: 'start' };
-    if (['tool-workflow/agent-start', 'tool-workflow/agent-end', 'tool-workflow/agent-progress', 'tool-workflow/run-end'].includes(event.type)) return { id: event.data.runId, role: 'update' };
+    if (event.type === 'tool-workflow/run-start') return { id: String(event.data.runId), role: 'start' };
+    if (event.type === 'tool-workflow/agent-start'
+      || event.type === 'tool-workflow/agent-end'
+      || event.type === 'tool-workflow/run-end') {
+      return { id: String(event.data.runId), role: 'update' };
+    }
     return null;
   },
   start(_context, match) {
-    const result = studioResult(match.event);
-    return result ? { type: 'result', ...result } : { type: 'run', name: match.event.data.name, runId: match.event.data.runId, status: 'running', members: [] };
+    if (match.event.type !== 'tool-workflow/run-start') throw new Error('workflow-studio run requires run-start');
+    return {
+      runId: String(match.event.data.runId),
+      name: match.event.data.name,
+      status: RUNNING,
+      members: [],
+    };
   },
   update(context, match) {
-    const s = context.state, e = match.event;
-    if (e.type === 'tool-workflow/agent-start') return { ...s, members: [...s.members, { ...e.data, status: 'running' }] };
-    if (e.type === 'tool-workflow/agent-progress') return { ...s, members: s.members.map(m => m.seq === e.data.seq ? { ...m, calls: e.data.calls, lastTool: e.data.lastTool } : m) };
-    if (e.type === 'tool-workflow/agent-end') return { ...s, members: s.members.map(m => m.seq === e.data.seq ? { ...m, status: e.data.outcome } : m) };
-    if (e.type === 'tool-workflow/run-end') return { ...s, status: e.data.stopReason === 'error' ? 'failed' : e.data.stopReason };
-    return s;
+    const state = context.state;
+    const event = match.event;
+    if (event.type === 'tool-workflow/agent-start') {
+      return {
+        ...state,
+        members: [...state.members, {
+          seq: event.data.seq,
+          label: event.data.label,
+          ...(event.data.phase === undefined ? {} : { phase: event.data.phase }),
+          childId: event.data.childId,
+          status: RUNNING,
+        }],
+      };
+    }
+    if (event.type === 'tool-workflow/agent-end') {
+      return {
+        ...state,
+        members: state.members.map(member => member.seq === event.data.seq
+          ? { ...member, status: memberStatus(event.data.outcome) }
+          : member),
+      };
+    }
+    if (event.type === 'tool-workflow/run-end') return { ...state, status: stopStatus(event.data.stopReason) };
+    return state;
   },
   buildViewNode(context) {
     if (!context.start) return null;
-    let data = context.state;
-    const location = context.start.location;
-    const reason = location.turn?.end?.data.reason?.kind;
-    if (data.type === 'run' && data.status === 'running' && ['interrupted', 'forked'].includes(reason)) data = { ...data, status: 'interrupted', members: data.members.map(m => m.status === 'running' ? { ...m, status: 'interrupted' } : m) };
-    return { key: context.key, kind: 'workflow-studio', id: context.id, target: 'workflow-studio', anchorSeq: context.start.event.seq, location, visibility: 'visible', data };
+    return {
+      key: context.key,
+      kind: 'workflow-studio-run',
+      id: context.id,
+      target: 'workflow-studio',
+      anchorSeq: context.start.event.seq,
+      location: context.start.location,
+      visibility: 'visible',
+      data: projectedRun(context),
+    };
   },
 };
-/** Incremental target builder; complete reconstruction is reserved for history replacement. */
+
+const EMPTY_STUDIO_SNAPSHOT = Object.freeze({ runs: [] });
+
+/** Incremental target builder for workflow runs. */
 function createStudioBuilder() {
   const nodes = new Map();
-  const snapshot = () => [...nodes.values()].sort((a, b) => a.anchorSeq - b.anchorSeq);
-  return { empty: [], replace({ nodes: rows }) { nodes.clear(); rows.forEach(n => nodes.set(n.key, n)); return snapshot(); }, apply({ upserts }) { upserts.forEach(n => nodes.set(n.key, n)); return snapshot(); } };
+  const snapshot = () => ({
+    runs: [...nodes.values()]
+      .sort((left, right) => left.anchorSeq - right.anchorSeq)
+      .map(node => node.data),
+  });
+  return {
+    empty: EMPTY_STUDIO_SNAPSHOT,
+    replace({ nodes: rows }) {
+      nodes.clear();
+      for (const row of rows) nodes.set(row.key, row);
+      return snapshot();
+    },
+    apply({ upserts }) {
+      for (const row of upserts) nodes.set(row.key, row);
+      return snapshot();
+    },
+  };
 }
 
 const zh = {
-  tab: '工作流', title: 'Agent 工作流', subtitle: '把目标拆解为可以追踪的工作', chat: '原生聊天', sample: '使用示例草案', edit: '编辑 JSON', export: '导出', import: '导入', run: '运行此版本', save: '发布草案', close: '关闭', reset: '适应画布', zoomIn: '放大', zoomOut: '缩小', add: '添加 Agent', connect: '连接到', remove: '删除节点', empty: '从一个目标开始', emptyHelp: '在右侧对话中描述目标，Agent 流程会随对话建立并更新。', draft: '本地草案 · 尚未发布', ready: '待运行', running: '运行中', completed: '已完成', failed: '失败', cancelled: '已取消', interrupted: '已中断', blocked: '未执行', details: '节点详情', role: '角色 / 背景', task: '任务', skills: '技能名称（每行一个）', tools: '允许的工具（每行一个）', output: '预期产物', input: '项目输入 / 文档路径', upstream: '上游节点', actual: '实际输出', noOutput: '尚无已提交的输出。预期产物不代表文件已生成。', trace: '实际工具调用', noTrace: '尚无已提交的调用记录；运行中可在子会话查看。', openChild: '打开子会话', planOnly: '技能会在运行前读取；工具白名单在子 Agent 中强制生效。空白名单不授予任何工具。', configure: '示例未绑定技能和工具。请先让 AI 查询真实能力并配置，再运行。', pending: '请求已提交，等待 AI 调用对应工具。', history: '版本 / 运行记录', aiHelp: '通过右侧对话修改流程、添加附件、回答澄清问题。', preparing: '正在提交…', newNode: '新 Agent', newTask: '填写这个节点要完成的工作。', newOutput: '填写可验收的输出。', noSkills: '未绑定技能', noTools: '无工具权限', importError: '无法读取工作流', editHint: '修改后作为新的草案发布；不会改变已有运行。', label: '节点名称', unknown: '状态未知', disconnect: '移除此依赖', status: '状态', toolsCount: '工具', skillsCount: '技能', select: '点击节点查看配置与执行结果', sampleTitle: '从需求到交付', error: '操作失败', name: '工作流名称', nativeRequired: '运行请使用 Native 工具模式；PTC 嵌套执行会被明确拒绝。', viewResult: '查看运行结果', noEdges: '无上游依赖', exportName: 'workflow.json', calls: '工具调用', you: '你', assistant: '助手', tool: '工具', conversation: '对话 · 执行流', autoPlanHint: '请基于以下诉求立即编排并生成工作流，无需等待我确认编排：', send: '发送', chatPlaceholder: '描述你的目标，或粘贴需求、飞书纪要、GitHub / Coding 需求链接…', chatPlaceholderNode: '向该 Agent 补充或修改要求，变更会影响后续 Agent…', targetWorkflow: '整个工作流 · 总领输入', targetNode: 'Agent：{label}', clearTarget: '回到工作流', noChild: '该 Agent 尚未运行，暂时无法单独对话', collapse: '收起', in: '输入', out: '输出', runRequest: '请运行画布中的当前工作流',
+  tab: '工作流',
+  title: '工作流画布',
+  empty: '当前对话还没有工作流',
+  emptyHelp: '当 DeepSeek Harness 在本次对话中调用 workflow 工具后，阶段与 Agent 会在这里实时出现。',
+  waiting: '等待 Agent 启动',
+  phase: '阶段',
+  unassigned: '未分组',
+  unnamed: '未命名 Agent',
+  members: 'Agent',
+  latest: '最新运行',
+  fit: '适应画布',
+  zoomIn: '放大',
+  zoomOut: '缩小',
+  details: 'Agent 详情',
+  orchestrator: '当前会话 Agent',
+  orchestratorRole: '编排 Agent · workflow 调用方',
+  orchestratorHelp: '由主 Agent 生成编排脚本，Workflow Runtime 负责执行并派生子 Agent。',
+  subagent: 'Subagent',
+  runtime: '运行模型',
+  relation: '连线表示原生父子执行关系，不表示未记录的 Agent 间依赖',
+  input: '输入',
+  output: '输出',
+  loadingInput: '正在读取子会话输入…',
+  previewLimited: '大型工作流仅加载前 64 个子会话的内容预览；双击可打开此子会话。',
+  generating: '生成中…',
+  noOutput: '暂无文本输出',
+  artifacts: '文件产物',
+  noArtifacts: '当前子会话没有记录到成功的文件写入或编辑。',
+  filesCount: '{count} 个文件产物',
+  childSession: '子会话',
+  openChild: '打开子会话',
+  childUnavailable: '子会话当前不可用',
+  close: '关闭',
+  running: '运行中',
+  completed: '已完成',
+  failed: '失败',
+  cancelled: '已取消',
+  interrupted: '已中断',
+  phaseHint: '阶段表示 Harness 报告的进度分组，不代表未记录的严格依赖关系。',
+  live: '事件会随对话与 workflow 执行实时更新',
 };
+
 const en = {
-  tab: 'Workflow', title: 'Agent workflow', subtitle: 'Turn a goal into traceable work', chat: 'Native chat', sample: 'Use sample draft', edit: 'Edit JSON', export: 'Export', import: 'Import', run: 'Run this revision', save: 'Publish draft', close: 'Close', reset: 'Fit canvas', zoomIn: 'Zoom in', zoomOut: 'Zoom out', add: 'Add agent', connect: 'Connect to', remove: 'Delete node', empty: 'Start with a goal', emptyHelp: 'Describe your goal on the right. The agent workflow is created and updated as you chat.', draft: 'Local draft · unpublished', ready: 'Ready', running: 'Running', completed: 'Completed', failed: 'Failed', cancelled: 'Cancelled', interrupted: 'Interrupted', blocked: 'Not executed', details: 'Node details', role: 'Role / background', task: 'Task', skills: 'Skill names (one per line)', tools: 'Allowed tools (one per line)', output: 'Expected deliverable', input: 'Project input / document paths', upstream: 'Upstream nodes', actual: 'Actual output', noOutput: 'No committed output yet. An expected deliverable does not prove a file exists.', trace: 'Actual tool calls', noTrace: 'No committed calls yet; open the child session during execution.', openChild: 'Open child session', planOnly: 'Skills load before execution; tool allowlists are enforced in each child. An empty list grants no tools.', configure: 'The sample has no skills or tools bound. Ask AI to discover and configure real capabilities before running.', pending: 'Request submitted; waiting for AI to call the corresponding tool.', history: 'Revisions / runs', aiHelp: 'Use the chat on the right to edit the graph, attach documents, and answer questions.', preparing: 'Submitting…', newNode: 'New agent', newTask: 'Describe the work this node should perform.', newOutput: 'Describe a verifiable deliverable.', noSkills: 'No skills bound', noTools: 'No tool access', importError: 'Cannot read workflow', editHint: 'Edits create a new draft and do not change an existing run.', label: 'Node name', unknown: 'Unknown', disconnect: 'Remove dependency', status: 'Status', toolsCount: 'tools', skillsCount: 'skills', select: 'Select a node to inspect its configuration and execution', sampleTitle: 'From requirements to delivery', error: 'Action failed', name: 'Workflow name', nativeRequired: 'Run in Native tool mode; nested PTC execution is explicitly rejected.', viewResult: 'View run result', noEdges: 'No upstream dependencies', exportName: 'workflow.json', calls: 'tool calls', you: 'You', assistant: 'Assistant', tool: 'Tool', conversation: 'Conversation · execution', autoPlanHint: 'Plan and generate the workflow immediately from the following request, without waiting for my approval:', send: 'Send', chatPlaceholder: 'Describe your goal, or paste requirements, Feishu notes, or a GitHub / Coding issue link…', chatPlaceholderNode: 'Add or revise requirements for this agent; changes ripple to downstream agents…', targetWorkflow: 'Entire workflow · initial input', targetNode: 'Agent: {label}', clearTarget: 'Back to workflow', noChild: 'This agent has not run yet, so it cannot be addressed directly', collapse: 'Collapse', in: 'In', out: 'Out', runRequest: 'Please run the current workflow on the canvas',
+  tab: 'Workflow',
+  title: 'Workflow canvas',
+  empty: 'No workflow in this conversation yet',
+  emptyHelp: 'Phases and agents appear here live when DeepSeek Harness invokes the workflow tool in this conversation.',
+  waiting: 'Waiting for agents',
+  phase: 'Phase',
+  unassigned: 'Unassigned',
+  unnamed: 'Unnamed agent',
+  members: 'agents',
+  latest: 'Latest run',
+  fit: 'Fit canvas',
+  zoomIn: 'Zoom in',
+  zoomOut: 'Zoom out',
+  details: 'Agent details',
+  orchestrator: 'Current session agent',
+  orchestratorRole: 'Orchestrating agent · workflow caller',
+  orchestratorHelp: 'The main agent authors the orchestration script; Workflow Runtime executes it and starts subagents.',
+  subagent: 'Subagent',
+  runtime: 'Runtime model',
+  relation: 'Lines show native parent-child execution, not unrecorded dependencies between agents',
+  input: 'Input',
+  output: 'Output',
+  loadingInput: 'Loading child input…',
+  previewLimited: 'Large workflows load content previews for the first 64 children; double-click to open this session.',
+  generating: 'Generating…',
+  noOutput: 'No text output yet',
+  artifacts: 'File artifacts',
+  noArtifacts: 'No successful file write or edit is recorded in this child session.',
+  filesCount: '{count} file artifacts',
+  childSession: 'Child session',
+  openChild: 'Open child session',
+  childUnavailable: 'Child session is currently unavailable',
+  close: 'Close',
+  running: 'Running',
+  completed: 'Completed',
+  failed: 'Failed',
+  cancelled: 'Cancelled',
+  interrupted: 'Interrupted',
+  phaseHint: 'Phases are progress groups reported by Harness, not unrecorded strict dependencies.',
+  live: 'Updates live with the conversation and workflow execution',
 };
+
+/** Place phases in columns and concurrently observed members in rows. */
+function layoutFor(run) {
+  const positions = new Map();
+  run.phases.forEach((phase, column) => {
+    phase.members.forEach((member, row) => {
+      positions.set(member.seq, { x: 430 + column * 360, y: 116 + row * 196 });
+    });
+  });
+  return positions;
+}
+
+/** The calling Agent is the durable parent of every workflow child. */
+function orchestratorPosition(run) {
+  const rows = Math.max(1, ...run.phases.map(phase => phase.members.length));
+  return { x: 48, y: 116 + (rows - 1) * 98 };
+}
+
+const EMPTY = Object.freeze({ input: '', output: '', files: [], provider: '', model: '' });
+
+function contentText(content) {
+  if (!Array.isArray(content)) return '';
+  return content.map((block) => {
+    if (block?.type === 'text' && typeof block.text === 'string') return block.text;
+    if (block?.type === 'file') return `[file] ${block.name ?? block.path ?? ''}`.trim();
+    if (block?.type === 'image') return '[image]';
+    return '';
+  }).filter(Boolean).join('\n').trim();
+}
+
+function mutationPath(name, raw) {
+  let args;
+  try { args = JSON.parse(raw); } catch { return null; }
+  if (!args || typeof args !== 'object' || Array.isArray(args)) return null;
+  if (name === 'write' || name === 'edit') return typeof args.file_path === 'string' ? args.file_path : null;
+  if (name === 'str_replace_editor') return typeof args.path === 'string' ? args.path : null;
+  return null;
+}
+
+/** Extract browser-safe input, output, model, and produced-file facts from one child Session window. */
+function childPreview(entries) {
+  const calls = new Map();
+  const files = [];
+  let input = '';
+  let contextualInput = '';
+  let output = '';
+  let provider = '';
+  let model = '';
+  for (const entry of entries ?? []) {
+    if (entry?.type !== 'event') continue;
+    const event = entry.event;
+    if (event.type === 'user/message') {
+      const text = contentText(event.data?.content);
+      if (event.data?.source?.kind === 'user') input = text;
+      else if (!contextualInput) contextualInput = text;
+    }
+    if (event.type === 'assistant/message') output = contentText(event.data?.message?.content);
+    if (event.type === 'request/header') {
+      const config = event.data?.header?.config;
+      if (typeof config?.provider === 'string') provider = config.provider;
+      if (typeof config?.model === 'string') model = config.model;
+    }
+    if (event.type === 'tool/call') {
+      const path = mutationPath(event.data?.name, event.data?.arguments);
+      if (path) calls.set(String(event.data.callId), path);
+    }
+    if (event.type === 'tool/result' && event.data?.message?.isError !== true) {
+      const callId = String(event.data?.message?.source?.callId ?? '');
+      const argumentPath = calls.get(callId);
+      if (!argumentPath) continue;
+      calls.delete(callId);
+      const path = typeof event.data?.meta?.path === 'string' ? event.data.meta.path : argumentPath;
+      if (path && !files.includes(path)) files.push(path);
+    }
+  }
+  return { ...EMPTY, input: input || contextualInput, output, files, provider, model };
+}
+
+const EMPTY_CHILD_PREVIEW = EMPTY;
 
 
 const h = (...args) => React.createElement(...args);
-const { useState, useRef, useMemo, useEffect } = React;
-const button = (label, onClick, extra = {}) => h('button', { type: 'button', onClick, ...extra }, label);
+const { useEffect, useMemo, useRef, useState } = React;
 
-
-// Keep the resident native Chat and composer untouched. The canvas is a sibling
-// of their scrollport, mounted from the session header's independent slot.
-function StudioCanvasPortal(props) {
-  const anchor = useRef(null);
-  const [container, setContainer] = useState(null);
-  const view = props.useStore(value => value.view);
-  const active = view == null || view === 'chat' || view === 'workflow-studio';
-  React.useLayoutEffect(() => {
-    const root = anchor.current?.closest('[data-phase]');
-    if (!root) return;
-    const sync = () => setContainer(root.querySelector('[data-conversation-content]'));
-    sync();
-    const observer = new MutationObserver(sync);
-    observer.observe(root, { childList: true });
-    return () => observer.disconnect();
-  }, [props.sessionId]);
-  useEffect(() => { if (view === 'workflow-studio') props.restoreChat(); }, [view]);
-  return h(React.Fragment, null,
-    h('span', { ref: anchor, hidden: true }),
-    active && container ? ReactDOM.createPortal(h(StudioView, props), container) : null);
+function statusText(status, t) {
+  return t(status in { running: 1, completed: 1, failed: 1, cancelled: 1, interrupted: 1 } ? status : 'interrupted');
 }
 
-/** Workflow canvas with the native conversation mounted in its right sidebar. */
+function phaseName(phase, t) {
+  return phase === null || phase === '' ? t('unassigned') : phase;
+}
+
+function compact(text, fallback, limit = 92) {
+  const value = String(text ?? '').replace(/\s+/g, ' ').trim();
+  if (!value) return fallback;
+  return value.length > limit ? `${value.slice(0, limit - 1)}…` : value;
+}
+
+/** Dedicated Workflow view driven by durable workflow and child Session facts. */
 function StudioView(props) {
-  const { t } = props;
-  const rows = props.useStudio(v => v);
-  const sessions = props.useSessions(v => v);
-  const running = props.useSession(v => v.running);
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [expanded, setExpanded] = useState({});
-  const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState('');
-  const [error, setError] = useState('');
-  const [selectedVersion, setSelectedVersion] = useState(null);
-  const [offset, setOffset] = useState({ x: 36, y: 80, scale: 1 });
-  const [positions, setPositions] = useState({});
-  const viewport = useRef(null), gesture = useRef(null);
-  const focused = useRef(null), wasRunning = useRef(false);
+  const snapshot = props.useWorkflowStudio(value => value);
+  const runs = snapshot.runs;
+  const [requestedRun, setRequestedRun] = useState(null);
+  const run = runs.find(candidate => candidate.runId === requestedRun) ?? runs.at(-1);
+  const [selectedSeq, setSelectedSeq] = useState(null);
+  const selected = run?.members.find(member => member.seq === selectedSeq) ?? null;
+  const [previews, setPreviews] = useState({});
+  const selectedPreview = selected ? previews[selected.childId] : null;
+  const [unavailableChild, setUnavailableChild] = useState(false);
+  const [offset, setOffset] = useState({ x: 28, y: 28, scale: 1 });
+  const viewport = useRef(null);
+  const gesture = useRef(null);
+  const previousRun = useRef(null);
+  const positions = useMemo(() => run ? layoutFor(run) : new Map(), [run]);
+  const rootPosition = useMemo(() => run ? orchestratorPosition(run) : { x: 48, y: 116 }, [run]);
+  const childKey = run?.members.map(member => member.childId).join('\u0000') ?? '';
 
-  const versions = rows.filter(r => r.data.type === 'result');
-  const selected = versions.find(r => r.key === selectedVersion) ?? versions.at(-1);
-  const plan = selected?.data.plan;
-  const result = selected?.data.kind === RUN_KIND ? selected.data : null;
-  const liveRun = plan ? rows.filter(r => r.data.type === 'run' && r.data.name === runName(plan)).at(-1)?.data : null;
-  const run = result ? rows.find(r => r.data.type === 'run' && r.data.runId === result.runId)?.data : liveRun;
-
-  const statusFor = n => run?.members.find(m => m.phase === n.id)?.status ?? (run && run.status !== 'running' ? 'blocked' : 'ready');
-  const runRunning = run?.status === 'running';
-
-  // Fit once on entry/new workflow and at the start of an interaction. Streaming
-  // updates never reclaim the viewport after the user has panned or moved nodes.
   useEffect(() => {
-    if (plan && (focused.current !== plan.id || (running && !wasRunning.current))) {
-      fit(); focused.current = plan.id;
-    }
-    wasRunning.current = running;
-  }, [plan?.id, running]);
+    setPreviews({});
+    if (!run) return undefined;
+    return props.watchChildren(run.members.map(member => member.childId), setPreviews);
+  }, [run?.runId, childKey]);
 
-  const layout = useMemo(() => {
-    if (!plan) return {};
-    try { return Object.fromEntries(graphWaves(plan).flatMap((wave, x) => wave.map((n, y) => [n.id, { x: x * 320, y: y * 300 }]))); }
-    catch { return Object.fromEntries(plan.nodes.map((n, i) => [n.id, { x: i * 320, y: 0 }])); }
-  }, [plan]);
-  const pos = n => positions[n.id] ?? layout[n.id] ?? { x: 0, y: 0 };
-
-  function selectNode(id) { setSelectedNode(id); setExpanded(prev => ({ ...prev, [id]: true })); setError(''); }
-  function toggleExpand(id) { setExpanded(prev => ({ ...prev, [id]: false })); if (selectedNode === id) setSelectedNode(null); }
-
-  async function submitRun() {
-    if (!plan || busy || runRunning) return;
-    setBusy(true); setError(''); setNotice('');
-    try {
-      await props.send(t('runRequest'), undefined);
-      setNotice(t('pending'));
-    } catch (e) { setError(String(e.message ?? e)); }
-    finally { setBusy(false); }
-  }
-  function openChildFor(childId) {
-    if (!childId) { setError(t('noChild')); return; }
-    const child = sessions.byId?.[childId];
-    if (!child) { setError(t('unknown')); return; }
-    const mode = sessions.projectionsBySession?.[childId]?.values?.subagent?.mode;
-    props.openChild({ parentSessionId: props.sessionId, childSessionId: childId, ...(mode ? { mode } : {}) });
-  }
   function fit() {
-    if (!plan || !viewport.current) return;
-    const bounds = plan.nodes.map(n => pos(n));
-    const left = Math.min(...bounds.map(p => p.x)), top = Math.min(...bounds.map(p => p.y));
-    const width = Math.max(...bounds.map(p => p.x + 260)) - left;
-    const height = Math.max(...bounds.map(p => p.y + 260)) - top;
-    const w = viewport.current.clientWidth, h = viewport.current.clientHeight;
-    const scale = Math.min(1, Math.max(0.15, Math.min((w - 64) / width, (h - 100) / height)));
-    setOffset({ x: (w - width * scale) / 2 - left * scale, y: Math.max(24, (h - height * scale) / 2 - 25) - top * scale, scale });
-  }
-  function wheel(e) {
-    if (!e.ctrlKey && !e.metaKey) { setOffset(v => ({ ...v, x: v.x - e.deltaX, y: v.y - e.deltaY })); return; }
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left, y = e.clientY - rect.top;
-    setOffset(v => { const scale = Math.max(0.25, Math.min(2, v.scale * Math.exp(-e.deltaY / 500))); return { scale, x: x - (x - v.x) * scale / v.scale, y: y - (y - v.y) * scale / v.scale }; });
-  }
-  function begin(e, id) {
-    if (e.button !== 0 || e.target.closest('button,input,select,textarea')) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    gesture.current = { id, x: e.clientX, y: e.clientY, start: id ? pos({ id }) : offset };
-    if (id) setSelectedNode(id);
-    e.stopPropagation();
-  }
-  function move(e) {
-    const g = gesture.current;
-    if (!g) return;
-    const dx = e.clientX - g.x, dy = e.clientY - g.y;
-    if (g.id) setPositions(p => ({ ...p, [g.id]: { x: g.start.x + dx / offset.scale, y: g.start.y + dy / offset.scale } }));
-    else setOffset(p => ({ ...p, x: g.start.x + dx, y: g.start.y + dy }));
+    if (!run || !viewport.current || run.members.length === 0) {
+      setOffset({ x: 28, y: 28, scale: 1 });
+      return;
+    }
+    const points = [rootPosition, ...positions.values()];
+    const left = Math.min(...points.map(point => point.x));
+    const top = 24;
+    const right = Math.max(...points.map(point => point.x + 280));
+    const bottom = Math.max(...points.map(point => point.y + 172));
+    const width = right - left;
+    const height = bottom - top;
+    const availableWidth = viewport.current.clientWidth - 64;
+    const availableHeight = viewport.current.clientHeight - 64;
+    const scale = Math.min(1, Math.max(0.28, Math.min(availableWidth / width, availableHeight / height)));
+    setOffset({
+      x: (viewport.current.clientWidth - width * scale) / 2 - left * scale,
+      y: Math.max(24, (viewport.current.clientHeight - height * scale) / 2) - top * scale,
+      scale,
+    });
   }
 
-  function progress(status) {
-    return h('div', { className: 'ws-progress' }, h('div', { className: `ws-progress-fill ws-fill-${status}`, style: status === 'completed' || status === 'failed' ? { width: '100%' } : status === 'running' ? undefined : { width: '0%' } }));
+  useEffect(() => {
+    if (!run || previousRun.current === run.runId) return;
+    previousRun.current = run.runId;
+    setSelectedSeq(null);
+    setUnavailableChild(false);
+    fit();
+  }, [run?.runId]);
+
+  function beginPan(event) {
+    if (event.button !== 0 || event.target.closest('button,select')) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    gesture.current = { x: event.clientX, y: event.clientY, start: offset };
   }
 
-  function nodeCard(n) {
-    const status = statusFor(n);
-    const isOpen = expanded[n.id] === true || status === 'running' || n.id === selectedNode;
-    const out = result?.outputs?.[n.id];
-    const tr = result?.traces?.[n.id];
-    const member = run?.members.find(m => m.phase === n.id);
-    const childId = member?.childId ?? out?.childId;
-    const liveCalls = member?.calls;
-    const liveTool = member?.lastTool;
-    const upstreamIds = plan.edges.filter(e => e.to === n.id).map(e => e.from);
-    return h('article', {
-      key: n.id,
-      className: `ws-node ${selectedNode === n.id ? 'ws-selected' : ''} ${isOpen ? 'ws-open' : ''}`,
-      'data-status': status,
-      style: { left: pos(n).x, top: pos(n).y },
-      onPointerDown: e => begin(e, n.id),
-    },
-      h('div', { className: 'ws-node-top' }, h('span', { className: 'ws-dot' }), h('span', null, t(status)), childId && h('span', { className: 'ws-node-child' }, `· ${childId.slice(0, 8)}`)),
-      progress(status),
-      h('button', { className: 'ws-node-title', onClick: () => selectNode(n.id) }, n.label),
-      h('p', { className: 'ws-node-role' }, n.role),
-      h('div', { className: 'ws-inout' },
-        h('div', { className: 'ws-io' }, h('span', { className: 'ws-io-tag' }, t('in')), h('div', { className: 'ws-io-text' }, n.task)),
-        h('div', { className: 'ws-io' }, h('span', { className: 'ws-io-tag ws-io-out' }, t('out')), h('div', { className: 'ws-io-text' }, out?.text ?? n.output)),
-      ),
-      h('div', { className: 'ws-node-tools' }, `${n.skills.length} ${t('skillsCount')} · ${n.tools.length} ${t('toolsCount')}`),
-      status === 'running' && liveCalls != null && h('div', { className: 'ws-live' }, `${t('calls')}: ${liveCalls}${liveTool ? ` · ${liveTool}` : ''}`),
-      isOpen && h('div', { className: 'ws-node-detail' },
-        h('h4', null, t('task')), h('p', { className: 'ws-detail-text' }, n.task),
-        upstreamIds.length
-          ? h('div', null, h('h4', null, t('upstream')), h('p', { className: 'ws-detail-text' }, upstreamIds.map(id => plan.nodes.find(x => x.id === id)?.label ?? id).join(' → ')))
-          : h('p', { className: 'ws-help' }, t('noEdges')),
-        h('h4', null, t('actual')), h('pre', { className: 'ws-result' }, out?.text ?? t('noOutput')),
-        tr?.length
-          ? h('div', null, h('h4', null, t('trace')), tr.slice(0, 6).map((call, i) => h('div', { key: i, className: 'ws-call' }, `${call.isError ? '×' : '✓'} ${call.name}`)))
-          : h('p', { className: 'ws-help' }, t('noTrace')),
-        childId && h('button', { className: 'ws-child-btn', onClick: () => openChildFor(childId) }, t('openChild')),
-        h('button', { className: 'ws-collapse', onClick: () => toggleExpand(n.id) }, t('collapse')),
-      ),
-    );
+  function movePan(event) {
+    const current = gesture.current;
+    if (!current) return;
+    setOffset({ ...current.start, x: current.start.x + event.clientX - current.x, y: current.start.y + event.clientY - current.y });
   }
 
+  function wheel(event) {
+    event.preventDefault();
+    if (!event.ctrlKey && !event.metaKey) {
+      setOffset(current => ({ ...current, x: current.x - event.deltaX, y: current.y - event.deltaY }));
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    const pointerX = event.clientX - rect.left;
+    const pointerY = event.clientY - rect.top;
+    setOffset(current => {
+      const scale = Math.max(0.28, Math.min(1.8, current.scale * Math.exp(-event.deltaY / 500)));
+      return { scale, x: pointerX - (pointerX - current.x) * scale / current.scale, y: pointerY - (pointerY - current.y) * scale / current.scale };
+    });
+  }
+
+  function openSelected() {
+    if (selected) setUnavailableChild(!props.openChild(selected.childId));
+  }
+
+  const t = props.t;
   return h('section', { className: 'ws-root', 'data-workflow-studio': true },
     h('header', { className: 'ws-header' },
-      h('div', null, h('h2', null, plan?.title ?? t('title')), h('p', null, plan ? (run ? `${t(run.status)} · ${run.runId?.slice(0, 8)}` : t('ready')) : t('subtitle'))),
+      h('div', { className: 'ws-heading' },
+        h('div', { className: 'ws-title-row' },
+          h('h2', null, run?.name || t('title')),
+          run && h('span', { className: `ws-status ws-status-${run.status}` }, statusText(run.status, t))),
+        h('p', null, t('live'))),
       h('div', { className: 'ws-actions' },
-        versions.length > 1 && h('select', {
-          className: 'ws-history', value: selected?.key ?? '', 'aria-label': t('history'),
-          onChange: e => { setSelectedVersion(e.target.value); setSelectedNode(null); setPositions({}); setError(''); },
-        }, versions.map(v => h('option', { key: v.key, value: v.key }, `v${v.data.plan.revision} · ${v.data.status ? t(v.data.status) : t('ready')}`))),
-        plan && button(t('run'), submitRun, { className: 'ws-primary', disabled: busy || runRunning }),
-        button(t('reset'), fit)),
-    ),
-    (error || notice) && h('div', { className: error ? 'ws-notice ws-error' : 'ws-notice', role: error ? 'alert' : 'status' }, error || notice),
-    h('div', { className: 'ws-body' },
-      h('div', {
-        className: 'ws-canvas', ref: viewport, onWheel: wheel, onPointerDown: e => begin(e), onPointerMove: move,
-        onPointerUp: () => { gesture.current = null; }, onPointerCancel: () => { gesture.current = null; }, tabIndex: 0, 'aria-label': t('tab'),
-      },
-        !plan
-          ? h('div', { className: 'ws-empty' }, h('div', { className: 'ws-symbol' }, '◇'), h('h3', null, t('empty')), h('p', null, t('emptyHelp')))
-          : h('div', { className: 'ws-world', style: { transform: `translate(${offset.x}px, ${offset.y}px) scale(${offset.scale})` } },
-              h('svg', { className: 'ws-edges', width: 1, height: 1, 'aria-hidden': true }, plan.edges.map(e => {
-                const a = pos({ id: e.from }), b = pos({ id: e.to });
-                return h('path', { key: `${e.from}-${e.to}`, d: `M ${a.x + 260} ${a.y + 90} C ${a.x + 292} ${a.y + 90}, ${b.x - 32} ${b.y + 90}, ${b.x} ${b.y + 90}`, className: statusFor({ id: e.from }) === 'completed' ? 'ws-edge-done' : '' });
-              })),
-              plan.nodes.map(nodeCard)),
-        h('div', { className: 'ws-controls' },
-          button('−', () => setOffset(o => ({ ...o, scale: Math.max(0.25, o.scale - 0.1) })), { 'aria-label': t('zoomOut') }),
-          h('span', null, `${Math.round(offset.scale * 100)}%`),
-          button('+', () => setOffset(o => ({ ...o, scale: Math.min(2, o.scale + 0.1) })), { 'aria-label': t('zoomIn') }),
-          button(t('reset'), fit))),
-  ));
+        runs.length > 1 && h('select', {
+          value: run?.runId ?? '', 'aria-label': t('latest'), onChange: event => setRequestedRun(event.target.value),
+        }, runs.map((candidate, index) => h('option', { key: candidate.runId, value: candidate.runId },
+          `${index + 1}. ${candidate.name} · ${statusText(candidate.status, t)}`))),
+        h('button', { type: 'button', onClick: fit }, t('fit')))),
+    !run
+      ? h('div', { className: 'ws-empty' },
+          h('div', { className: 'ws-empty-icon', 'aria-hidden': true }, '⌘'),
+          h('h3', null, t('empty')),
+          h('p', null, t('emptyHelp')))
+      : h('div', { className: 'ws-content' },
+          h('div', {
+            className: 'ws-canvas', ref: viewport, tabIndex: 0, onWheel: wheel,
+            onPointerDown: beginPan, onPointerMove: movePan,
+            onPointerUp: () => { gesture.current = null; }, onPointerCancel: () => { gesture.current = null; },
+          },
+            run.members.length === 0
+              ? h('div', { className: 'ws-waiting' }, h('span', { className: 'ws-spinner' }), t('waiting'))
+              : h('div', { className: 'ws-world', style: { transform: `translate(${offset.x}px, ${offset.y}px) scale(${offset.scale})` } },
+                  h('svg', { className: 'ws-phase-links', width: 1, height: 1, 'aria-label': t('relation') },
+                    h('defs', null, h('marker', { id: 'ws-arrow', markerWidth: 8, markerHeight: 8, refX: 7, refY: 4, orient: 'auto' },
+                      h('path', { d: 'M0,0 L8,4 L0,8 Z', className: 'ws-arrow-head' }))),
+                    run.members.map(member => {
+                      const position = positions.get(member.seq);
+                      const x1 = rootPosition.x + 280;
+                      const y1 = rootPosition.y + 78;
+                      const x2 = position.x;
+                      const y2 = position.y + 78;
+                      return h('path', { key: member.seq, className: 'ws-agent-link', markerEnd: 'url(#ws-arrow)',
+                        d: `M ${x1} ${y1} C ${x1 + 54} ${y1}, ${x2 - 54} ${y2}, ${x2} ${y2}` });
+                    })),
+                  h('div', { className: 'ws-root-node', style: { left: rootPosition.x, top: rootPosition.y } },
+                    h('span', { className: 'ws-node-kicker' }, t('orchestratorRole')),
+                    h('strong', null, props.orchestrator.title),
+                    h('span', { className: 'ws-node-id' }, props.orchestrator.id),
+                    h('p', null, t('orchestratorHelp'))),
+                  run.phases.map((phase, index) => h('div', { key: phase.key, className: 'ws-phase-label', style: { left: 430 + index * 360, top: 30 } },
+                    h('span', { className: 'ws-phase-index' }, index + 1),
+                    h('span', null, phaseName(phase.phase, t)),
+                    h('small', null, `${phase.members.length} ${t('members')}`))),
+                  run.members.map(member => {
+                    const position = positions.get(member.seq);
+                    const preview = previews[member.childId];
+                    const runtime = [preview?.provider, preview?.model].filter(Boolean).join(' · ') || t('subagent');
+                    const inputFallback = preview?.limited ? t('previewLimited') : t('loadingInput');
+                    return h('button', {
+                      type: 'button', key: member.seq,
+                      className: `ws-node ${selected?.seq === member.seq ? 'ws-node-selected' : ''}`,
+                      'data-status': member.status, style: { left: position.x, top: position.y },
+                      onClick: event => { event.stopPropagation(); setSelectedSeq(member.seq); setUnavailableChild(false); },
+                      onDoubleClick: event => { event.stopPropagation(); setUnavailableChild(!props.openChild(member.childId)); },
+                    },
+                      h('span', { className: 'ws-node-top' },
+                        h('span', { className: 'ws-dot' }), h('span', null, statusText(member.status, t)),
+                        h('span', { className: 'ws-runtime' }, runtime)),
+                      h('strong', null, member.label || t('unnamed')),
+                      h('span', { className: 'ws-io' }, h('b', null, t('input')), compact(preview?.input, inputFallback)),
+                      h('span', { className: 'ws-io' }, h('b', null, t('output')), compact(preview?.output, member.status === 'running' ? t('generating') : t('noOutput'))),
+                      preview?.files?.length > 0 && h('span', { className: 'ws-file-count' }, t('filesCount', { count: preview.files.length })),
+                      h('span', { className: 'ws-progress' }, h('span', { className: 'ws-progress-fill' })));
+                  })),
+            h('div', { className: 'ws-legend' }, t('relation')),
+            h('div', { className: 'ws-controls' },
+              h('button', { type: 'button', 'aria-label': t('zoomOut'), onClick: () => setOffset(value => ({ ...value, scale: Math.max(0.28, value.scale - 0.1) })) }, '−'),
+              h('span', null, `${Math.round(offset.scale * 100)}%`),
+              h('button', { type: 'button', 'aria-label': t('zoomIn'), onClick: () => setOffset(value => ({ ...value, scale: Math.min(1.8, value.scale + 0.1) })) }, '+'))),
+          selected && h('aside', { className: 'ws-inspector' },
+            h('div', { className: 'ws-inspector-head' },
+              h('h3', null, t('details')),
+              h('button', { type: 'button', onClick: () => { setSelectedSeq(null); setUnavailableChild(false); }, 'aria-label': t('close') }, '×')),
+            h('span', { className: `ws-status ws-status-${selected.status}` }, statusText(selected.status, t)),
+            h('h4', null, selected.label || t('unnamed')),
+            h('dl', null,
+              h('dt', null, t('phase')), h('dd', null, phaseName(selected.phase ?? null, t)),
+              h('dt', null, t('runtime')), h('dd', null, [selectedPreview?.provider, selectedPreview?.model].filter(Boolean).join(' · ') || t('subagent')),
+              h('dt', null, t('childSession')), h('dd', { className: 'ws-mono' }, selected.childId)),
+            h('section', { className: 'ws-preview-section' }, h('h5', null, t('input')),
+              h('pre', null, selectedPreview?.input || (selectedPreview?.limited ? t('previewLimited') : t('loadingInput')))),
+            h('section', { className: 'ws-preview-section' }, h('h5', null, t('output')),
+              h('pre', null, selectedPreview?.output || (selected.status === 'running' ? t('generating') : t('noOutput')))),
+            h('section', { className: 'ws-preview-section' },
+              h('h5', null, t('artifacts')),
+              selectedPreview?.files?.length
+                ? h('div', { className: 'ws-artifacts' }, selectedPreview.files.map(path => h('button', {
+                    type: 'button', key: path, title: path, onClick: () => props.openFile(selected.childId, path),
+                  }, path)))
+                : h('p', { className: 'ws-hint' }, t('noArtifacts'))),
+            h('button', { type: 'button', className: 'ws-open-child', onClick: openSelected }, t('openChild')),
+            unavailableChild && h('p', { className: 'ws-child-unavailable', role: 'status' }, t('childUnavailable')),
+            h('p', { className: 'ws-hint' }, t('phaseHint')))));
 }
 
 
-const clientInject = ['slots', 'sessions', 'uiConversation', 'uiWorkspace', 'locale'];
-/** Registers a real Conversation target and hooks through the native renderer. */
+const clientInject = ['slots', 'sessions', 'uiConversation', 'uiWorkspace', 'sidebarRight', 'locale'];
+
+function sessionFileAddress(sessionId, path) {
+  const encodedId = encodeURIComponent(sessionId);
+  const encodedPath = path.replace(/\\/g, '/').replace(/^(?:\.\/)+/, '')
+    .split('/').map(segment => encodeURIComponent(segment).replace(/%3A/gi, ':')).join('/');
+  return `dsh-resource://file/session/${encodedId}/${encodedPath}`;
+}
+
+function watchChildren(ctx, parentSessionId, childIds, publish) {
+  const previews = {};
+  const releases = [];
+  let disposed = false;
+  const update = (childId, value) => {
+    if (disposed) return;
+    previews[childId] = value;
+    publish({ ...previews });
+  };
+  for (const childId of childIds.slice(64)) update(childId, { ...EMPTY_CHILD_PREVIEW, limited: true });
+  for (const childId of childIds.slice(0, 64)) {
+    const address = ctx.sessions.subagentAddress(childId);
+    if (!address || address.parentSessionId !== parentSessionId) {
+      update(childId, { ...EMPTY_CHILD_PREVIEW, unavailable: true });
+      continue;
+    }
+    const reference = ctx.sessions.retain(address, { source: 'controllerOperation' });
+    let unsubscribe = () => {};
+    releases.push(() => { unsubscribe(); reference.release(); });
+    reference.ready.then((binding) => {
+      if (disposed) return;
+      const emit = () => update(childId, childPreview(binding.eventSource.getSnapshot().entries));
+      unsubscribe = binding.eventSource.subscribe(emit);
+      emit();
+    }).catch(() => update(childId, { ...EMPTY_CHILD_PREVIEW, unavailable: true }));
+  }
+  return () => {
+    disposed = true;
+    for (const release of releases) release();
+  };
+}
+
+/** Register the Workflow view between Chat and Trajectory. */
 function applyClient(ctx) {
   ctx.effect(() => {
-    const style = document.createElement('style'); style.dataset.workflowStudio = 'true'; style.textContent = STUDIO_CSS;
-    document.head.appendChild(style); return () => style.remove();
+    const style = document.createElement('style');
+    style.dataset.workflowStudio = 'true';
+    style.textContent = STUDIO_CSS;
+    document.head.appendChild(style);
+    return () => style.remove();
   });
   ctx.effect(() => ctx.locale.register('workflowStudio', { zh, en }));
   const t = ctx.locale.bind('workflowStudio');
   ctx.uiConversation.events.register(studioDefinition);
-  ctx.uiConversation.views.register({ target: 'workflow-studio', create: createStudioBuilder, isActive: rows => rows.length > 0 });
-  const empty = [];
-  ctx.slots.inject('conversation.session.header.actions', () => {
-    const store = ctx.slots.entries('conversation.session.header').find(entry => entry.store)?.store;
-    if (!store) throw new Error('Workflow Studio requires the native Conversation store');
-    return ctx.slots.register({
-      name: 'conversation.session.header.actions', id: 'workflow-studio', store, locale: 'workflowStudio',
-      inject: (sessionId, actions) => {
-        const session = ctx.sessions.binding(sessionId)?.session;
-        if (!session) throw new Error('Workflow Studio: session unavailable');
-        const binding = ctx.uiConversation.binding(sessionId);
-        const target = binding.target('workflow-studio');
-        return {
-          hooks: { studio: { getSnapshot: () => target.getSnapshot() ?? empty, subscribe: listener => target.subscribe(listener) } },
-          restoreChat: () => { binding.activate('chat'); actions.setView('chat'); },
-          send: async text => {
-            const result = await session.prompt([{ type: 'text', text }], 'queue');
-            if (!result.ok) throw new Error(result.error.message);
-          },
-          openChild: target => ctx.uiWorkspace.openSession(target),
-        };
-      },
-    }, StudioCanvasPortal);
+  ctx.uiConversation.views.register({
+    target: 'workflow-studio',
+    create: createStudioBuilder,
+    isActive: snapshot => snapshot.runs.length > 0,
   });
+  ctx.slots.inject('conversation.view', () => ctx.slots.register({
+    name: 'conversation.view',
+    id: 'workflow-studio',
+    order: 5,
+    locale: 'workflowStudio',
+    label: () => t('tab'),
+    inject: (sessionId) => {
+      const binding = ctx.sessions.binding(sessionId);
+      if (!binding) throw new Error(`Workflow Studio: session "${sessionId}" is unavailable`);
+      const target = ctx.uiConversation.binding(binding).target('workflow-studio');
+      const summary = ctx.sessions.list.getSnapshot().byId[sessionId];
+      return {
+        hooks: {
+          workflowStudio: {
+            getSnapshot: () => target.getSnapshot() ?? EMPTY_STUDIO_SNAPSHOT,
+            subscribe: listener => target.subscribe(listener),
+          },
+        },
+        orchestrator: {
+          id: sessionId,
+          title: summary?.projectionValues?.title || t('orchestrator'),
+        },
+        watchChildren: (childIds, publish) => watchChildren(ctx, sessionId, childIds, publish),
+        openChild: (childId) => {
+          const address = ctx.sessions.subagentAddress(childId);
+          if (!address || address.parentSessionId !== sessionId) return false;
+          ctx.uiWorkspace.openSession(address);
+          return true;
+        },
+        openFile: (childId, path) => {
+          ctx.sidebarRight.openResource(sessionFileAddress(childId, path));
+        },
+      };
+    },
+  }, StudioView));
 }
 
 return {apply:applyClient,inject:clientInject};
