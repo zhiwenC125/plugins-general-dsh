@@ -151,12 +151,20 @@ const skills = screen('skills', 'Skills 与 MCP', 14, 'plugins'); for (const nam
 const schedules = screen('schedules', '自动化任务', 15, 'schedules'); const schedule = panel(schedules.body, 'Schedule item', 1128, 182); text(schedule, '每周产品研究', 24); text(schedule, '周一 09:00  ·  关联会话：DSH 工作流实验', 14, true); button(schedule, '打开关联会话', 'chat'); button(schedules.body, '新建任务', 'scheduleEdit', 'Primary');
 const scheduleEdit = screen('scheduleEdit', '新建自动化任务', 16, 'schedules'); const sf = panel(scheduleEdit.body, 'Schedule form', 1128, 350); text(sf, '任务设置', 24); instance(sf, 'Field', '每周产品研究'); instance(sf, 'Field', '每周一 09:00'); text(sf, '在关联会话中定期检查官方发布信息。', 14, true); button(sf, '保存任务', 'schedules', 'Primary'); button(sf, '取消', 'schedules');
 const lightScreen = screen('light', '设置 · 浅色外观', 17, 'general'); lightScreen.r.setExplicitVariableModeForCollection(color, light); const lp = panel(lightScreen.body, 'Light appearance', 1128, 260); text(lp, '浅色预览', 28); text(lp, '相同组件和变量，通过 Light/Dark 模式切换。', 16, true); button(lp, '返回深色', 'general', 'Primary');
+let interactionCount = 0;
 for (const link of links) {
   const target = screens[link.destination]; if (!target) throw new Error('Missing destination ' + link.destination);
   let root = link.node; while (root.parent && root.parent !== page) root = root.parent;
   if (root === target) continue;
   await link.node.setReactionsAsync([{ trigger: { type: 'ON_CLICK' }, actions: [{ type: 'NODE', destinationId: target.id, navigation: 'NAVIGATE', transition: { type: 'DISSOLVE', duration: 0.16, easing: { type: 'EASE_OUT' } }, resetScrollPosition: true }] }]);
+  interactionCount++;
 }
+for (const [prefix, states, x] of [['Button', ['Primary', 'Secondary', 'Disabled'], 100], ['Nav', ['Default', 'Selected'], 500]]) {
+  const nodes = states.map(state => { const n = comps[prefix + '/' + state].n; n.name = 'State=' + state; return n; });
+  const set = track(figma.combineAsVariants(nodes, page)); set.name = 'REV / ' + prefix; set.x = x; set.y = 5800;
+  set.layoutMode = 'VERTICAL'; set.itemSpacing = 20; set.paddingTop = 20; set.paddingBottom = 20; set.paddingLeft = 20; set.paddingRight = 20;
+}
+for (const [key, x, y] of [['Field', 900, 5800], ['Badge', 900, 5900], ['Agent', 1600, 5800]]) { comps[key].n.x = x; comps[key].n.y = y; }
 page.flowStartingPoints = [{ nodeId: home.r.id, name: 'Revolution · 完整产品旅程' }];
 const counts = Object.fromEntries(Object.entries(screens).map(([key, r]) => [key, { id: r.id, name: r.name, descendants: r.findAll(() => true).length, instances: r.findAllWithCriteria({ types: ['INSTANCE'] }).length }]));
-return { createdNodeIds: ids, createdStyleIds: Object.values(styles).filter(s => s.name.startsWith('REV/CN/')).map(s => s.id), pageId: page.id, screens: counts, componentIds: Object.fromEntries(Object.entries(comps).map(([key, c]) => [key, c.n.id])), interactionCount: links.length, flowStart: home.r.id };
+return { createdNodeIds: [page.id, ...page.findAll(() => true).map(n => n.id)], createdStyleIds: Object.values(styles).filter(s => s.name.startsWith('REV/CN/')).map(s => s.id), pageId: page.id, screens: counts, componentIds: Object.fromEntries(Object.entries(comps).map(([key, c]) => [key, c.n.id])), interactionCount, flowStart: home.r.id };
