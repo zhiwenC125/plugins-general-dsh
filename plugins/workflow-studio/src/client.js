@@ -1,6 +1,7 @@
 import { EMPTY_STUDIO_SNAPSHOT, studioDefinition, createStudioBuilder } from './projection.js';
 import { zh, en } from './locales.js';
 import { childPreview, EMPTY_CHILD_PREVIEW } from './child-preview.js';
+import { exportFileName } from './export-manifest.js';
 
 const clientInject = ['slots', 'sessions', 'uiConversation', 'uiWorkspace', 'sidebarRight', 'locale'];
 
@@ -91,6 +92,17 @@ function applyClient(ctx) {
         },
         openFile: (childId, path) => {
           ctx.sidebarRight.openResource(sessionFileAddress(childId, path));
+        },
+        downloadManifest: (runId, manifest) => {
+          const payload = JSON.stringify({ ...manifest, exportedAt: new Date().toISOString() }, null, 2);
+          const url = URL.createObjectURL(new Blob([payload], { type: 'application/json' }));
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = exportFileName(runId);
+          document.body.appendChild(anchor);
+          anchor.click();
+          anchor.remove();
+          URL.revokeObjectURL(url);
         },
       };
     },

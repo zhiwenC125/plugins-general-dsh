@@ -31,6 +31,8 @@ DeepSeek Harness 原生 `workflow` 流程的实时画布视图。
 
 子 Agent 本来就在当前 workspace 中执行，文件产物会保留在它实际写入的位置。插件不会默认复制到 `dshOutput/`：复制会改变工作区、污染 Git 状态，而且 alpha.4 对并行 Agent 的文件归属没有完整持久化协议。后续可以把 `dshOutput/` 实现为用户主动触发的导出功能，生成每个 Agent 的 input/output 清单并复制用户选择的文件，而不是影响正常执行。
 
+当前已实现安全的第一阶段：点击“导出清单”可选择要纳入的 Agent，并下载 `revolution.workflow-export/v1` JSON manifest。清单包含运行状态、phase、子会话 ID、模型、输入、输出和候选文件路径；它不会复制文件、推断 Agent 间依赖，也不会把任何候选文件自动标记为最终产物。
+
 ## 开发
 
 从项目根目录运行：

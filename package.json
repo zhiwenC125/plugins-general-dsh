@@ -8,7 +8,12 @@
     "build:harness": "./deepseek-harness/node_modules/.bin/pnpm --dir deepseek-harness run build",
     "start": "./dsh-studio",
     "version:dsh": "./dsh-studio --version",
-    "test:workflow": "node --test plugins/workflow-studio/tests/*.test.js"
+    "test:workflow": "node --test plugins/workflow-studio/tests/*.test.js",
+    "build:brand": "node scripts/build-brand.mjs",
+    "setup:revolution": "npm run build && npm run build:brand && npm --prefix apps/revolution install --install-links && node scripts/prepare-desktop.mjs",
+    "start:revolution": "npm --prefix apps/revolution start",
+    "web:revolution": "npm --prefix apps/revolution run web",
+    "package:revolution": "node scripts/prepare-desktop.mjs && npm --prefix apps/revolution run package"
   },
   "engines": {
     "node": "^22.19.0 || >=24.0.0"

@@ -15,3 +15,6 @@ node_modules/
 
 # Upstream DeepSeek Harness source (clean clone, not part of this repo)
 deepseek-harness/
+dist/
+apps/revolution/icon.png
+.revolution/

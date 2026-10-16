@@ -1,4 +1,6 @@
 import { layoutFor, orchestratorPosition } from './layout.js';
+import { buildExportManifest } from './export-manifest.js';
+import { artifactKind } from './artifact.js';
 
 const h = (...args) => React.createElement(...args);
 const { useEffect, useMemo, useRef, useState } = React;
@@ -28,19 +30,40 @@ function StudioView(props) {
   const [previews, setPreviews] = useState({});
   const selectedPreview = selected ? previews[selected.childId] : null;
   const [unavailableChild, setUnavailableChild] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [exportSelection, setExportSelection] = useState({});
   const [offset, setOffset] = useState({ x: 28, y: 28, scale: 1 });
   const viewport = useRef(null);
   const gesture = useRef(null);
   const previousRun = useRef(null);
+  const exportDialog = useRef(null);
+  const exportTrigger = useRef(null);
   const positions = useMemo(() => run ? layoutFor(run) : new Map(), [run]);
   const rootPosition = useMemo(() => run ? orchestratorPosition(run) : { x: 48, y: 116 }, [run]);
   const childKey = run?.members.map(member => member.childId).join('\u0000') ?? '';
 
   useEffect(() => {
     setPreviews({});
+    setExportOpen(false);
     if (!run) return undefined;
     return props.watchChildren(run.members.map(member => member.childId), setPreviews);
   }, [run?.runId, childKey]);
+
+  useEffect(() => {
+    if (!exportOpen) return undefined;
+    const previousFocus = document.activeElement;
+    exportDialog.current?.querySelector('button, input')?.focus();
+    return () => previousFocus?.focus();
+  }, [exportOpen]);
+
+  function exportKeyDown(event) {
+    if (event.key === 'Escape') { event.stopPropagation(); setExportOpen(false); }
+    if (event.key !== 'Tab') return;
+    const controls = [...event.currentTarget.querySelectorAll('button:not(:disabled), input:not(:disabled)')];
+    const first = controls[0]; const last = controls.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+  }
 
   function fit() {
     if (!run || !viewport.current || run.members.length === 0) {
@@ -103,6 +126,18 @@ function StudioView(props) {
     if (selected) setUnavailableChild(!props.openChild(selected.childId));
   }
 
+  function openExport() {
+    setExportSelection(Object.fromEntries((run?.members ?? []).map(member => [member.seq, true])));
+    setExportOpen(true);
+  }
+
+  function confirmExport() {
+    const includedSeqs = (run?.members ?? []).filter(member => exportSelection[member.seq]).map(member => member.seq);
+    const manifest = buildExportManifest(run, previews, props.orchestrator, includedSeqs);
+    if (manifest) props.downloadManifest(run.runId, manifest);
+    setExportOpen(false);
+  }
+
   const t = props.t;
   return h('section', { className: 'ws-root', 'data-workflow-studio': true },
     h('header', { className: 'ws-header' },
@@ -116,6 +151,7 @@ function StudioView(props) {
           value: run?.runId ?? '', 'aria-label': t('latest'), onChange: event => setRequestedRun(event.target.value),
         }, runs.map((candidate, index) => h('option', { key: candidate.runId, value: candidate.runId },
           `${index + 1}. ${candidate.name} · ${statusText(candidate.status, t)}`))),
+        run && h('button', { type: 'button', ref: exportTrigger, onClick: openExport }, t('export')),
         h('button', { type: 'button', onClick: fit }, t('fit')))),
     !run
       ? h('div', { className: 'ws-empty' },
@@ -173,6 +209,11 @@ function StudioView(props) {
                       preview?.files?.length > 0 && h('span', { className: 'ws-file-count' }, t('filesCount', { count: preview.files.length })),
                       h('span', { className: 'ws-progress' }, h('span', { className: 'ws-progress-fill' })));
                   })),
+            h('div', { className: 'ws-run-summary', 'aria-label': t('runSummary') },
+              h('span', null, `${run.members.length} ${t('members')}`),
+              h('span', null, `${run.members.filter(member => member.status === 'completed').length} ${t('completed')}`),
+              h('span', null, `${run.members.filter(member => member.status === 'failed').length} ${t('failed')}`),
+              h('span', null, t('filesCount', { count: new Set(Object.values(previews).flatMap(preview => preview.files ?? [])).size }))),
             h('div', { className: 'ws-legend' }, t('relation')),
             h('div', { className: 'ws-controls' },
               h('button', { type: 'button', 'aria-label': t('zoomOut'), onClick: () => setOffset(value => ({ ...value, scale: Math.max(0.28, value.scale - 0.1) })) }, '−'),
@@ -197,9 +238,28 @@ function StudioView(props) {
               selectedPreview?.files?.length
                 ? h('div', { className: 'ws-artifacts' }, selectedPreview.files.map(path => h('button', {
                     type: 'button', key: path, title: path, onClick: () => props.openFile(selected.childId, path),
-                  }, path)))
+                  }, h('span', { className: 'ws-artifact-kind' }, artifactKind(path).toUpperCase()), path)))
                 : h('p', { className: 'ws-hint' }, t('noArtifacts'))),
             h('button', { type: 'button', className: 'ws-open-child', onClick: openSelected }, t('openChild')),
             unavailableChild && h('p', { className: 'ws-child-unavailable', role: 'status' }, t('childUnavailable')),
-            h('p', { className: 'ws-hint' }, t('phaseHint')))));
+            h('p', { className: 'ws-hint' }, t('phaseHint')))),
+          run && exportOpen && h('div', { className: 'ws-export-backdrop', role: 'presentation', onMouseDown: event => {
+            if (event.target === event.currentTarget) setExportOpen(false);
+          } }, h('section', { className: 'ws-export-dialog', ref: exportDialog, role: 'dialog', 'aria-modal': true, 'aria-labelledby': 'ws-export-title', onKeyDown: exportKeyDown },
+            h('div', { className: 'ws-export-head' },
+              h('div', null, h('h3', { id: 'ws-export-title' }, t('exportTitle')), h('p', null, t('exportHelp'))),
+              h('button', { type: 'button', onClick: () => setExportOpen(false), 'aria-label': t('close') }, '×')),
+            h('div', { className: 'ws-export-warning' }, t('exportBoundary')),
+            h('div', { className: 'ws-export-list' }, run.members.map(member => {
+              const preview = previews[member.childId];
+              return h('label', { key: member.seq, className: 'ws-export-agent' },
+                h('input', { type: 'checkbox', checked: Boolean(exportSelection[member.seq]), onChange: event => setExportSelection(current => ({ ...current, [member.seq]: event.target.checked })) }),
+                h('span', { className: 'ws-export-agent-copy' },
+                  h('strong', null, member.label || t('unnamed')),
+                  h('small', null, `${phaseName(member.phase ?? null, t)} · ${[preview?.provider, preview?.model].filter(Boolean).join(' · ') || t('subagent')}`)),
+                h('span', { className: 'ws-export-count' }, t('filesCount', { count: preview?.files?.length ?? 0 })));
+            })),
+            h('div', { className: 'ws-export-actions' },
+              h('button', { type: 'button', onClick: () => setExportOpen(false) }, t('cancelExport')),
+              h('button', { type: 'button', className: 'ws-export-confirm', disabled: !run.members.some(member => exportSelection[member.seq]), onClick: confirmExport }, t('downloadManifest'))))));
 }

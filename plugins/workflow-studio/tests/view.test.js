@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { layoutFor, orchestratorPosition } from '../src/layout.js';
 import { childPreview } from '../src/child-preview.js';
+import { buildExportManifest, exportFileName } from '../src/export-manifest.js';
 
 test('canvas places phases in columns and parallel agents in rows', () => {
   const positions = layoutFor({
@@ -29,4 +30,25 @@ test('child session facts expose input, output, runtime, and produced files', ()
   ]), {
     input: 'Audit the renderer', output: 'Audit complete', files: ['/workspace/report.md'], provider: 'deepseek', model: 'v4',
   });
+});
+
+test('export manifest includes only confirmed agents and preserves fact boundaries', () => {
+  const run = {
+    runId: 'run/42', name: 'Audit', status: 'completed',
+    phases: [{ key: 'discover', phase: 'discover' }],
+    members: [
+      { seq: 1, childId: 'child-a', label: 'A', phase: 'discover', status: 'completed' },
+      { seq: 2, childId: 'child-b', label: 'B', phase: null, status: 'failed' },
+    ],
+  };
+  const manifest = buildExportManifest(run, {
+    'child-a': { input: 'in', output: 'out', provider: 'deepseek', model: 'reasoner', files: ['a.md', 'a.md'] },
+    'child-b': { input: 'skip', files: ['b.md'] },
+  }, { id: 'parent', title: 'Main' }, [1]);
+  assert.equal(manifest.schema, 'revolution.workflow-export/v1');
+  assert.deepEqual(manifest.agents.map(agent => agent.childSessionId), ['child-a']);
+  assert.deepEqual(manifest.agents[0].candidateFiles, ['a.md']);
+  assert.equal(manifest.semantics.agentDependenciesInferred, false);
+  assert.equal(manifest.semantics.filesCopied, false);
+  assert.equal(exportFileName(run.runId), 'workflow-run-42.json');
 });

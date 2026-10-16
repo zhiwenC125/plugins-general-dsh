@@ -1,0 +1,83 @@
+# Revolution 本地使用与发行
+
+## 当前交付
+
+Revolution v0.1.0 使用 npm 发布的 DeepSeek Harness **0.2.1-alpha.5**，包含完整 Web UI、Workflow Studio 和 Revolution Brand。它不依赖本仓库忽略的 `deepseek-harness/` 或 `.dsh-smoke/`。现有上游检出仍然是 alpha4，留作旧版本对照。
+
+默认数据位于 `~/.revolution`，通过 `REVOLUTION_HOME` 可指定其他目录。首次启动创建专用 `revolution` profile；原有 DSH 设置不会被复制。API、模型、插件、权限、会话与定时任务继续由 DSH 原生服务管理。
+
+## 使用
+
+已经生成的 macOS Apple Silicon 预览包位于 `dist/`。打开 `Revolution.app`，或通过 DMG 安装。此版未签名、未公证；macOS 可能要求用户在系统设置中允许打开。请先复制到应用程序目录，不要在只读 DMG 中长期运行。
+
+从源码运行：
+
+```sh
+npm run setup:revolution
+npm run start:revolution
+```
+
+浏览器版：
+
+```sh
+npm run web:revolution
+```
+
+终端会显示带一次性本地授权 token 的地址。服务绑定 `127.0.0.1`，使用后端内置鉴权。桌面包包含独立 Node 24，渲染进程禁用 Node integration。
+
+## 配置自己的 API
+
+1. 打开左下角账号菜单 → 设置 → 模型。
+2. 在 DeepSeek 提供商中输入自己的 API Key。
+3. 需要自定义地址时展开“自定义设置”；其他协议使用“添加模型提供商”。
+4. 保存后，在会话输入框选择模型并发送任务。
+
+API Key 通过 DSH 凭据服务保存；不填入仓库、构建参数或 GitHub Secrets。当前只验证了设置页和运行时启动，未使用用户 Key 发起计费模型调用。
+
+左侧“插件”保留原生插件管理、内置插件配置和实验性开关；“自动化任务”保留原生定时任务。Workflow 标签在会话内呈现原生运行记录；没有 Workflow 的新会话不会显示虚构运行。
+
+## UI 与品牌
+
+- Figma：[Revolution UI](https://www.figma.com/design/J3MYi2TF0UFcnzS86kZ2u3)。最新 `02 · Revolution / Interactive v0.1` 包含十八个核心流程页面、八个主组件与点击跳转。原页保留早期探索。
+- 实际应用复用 DSH 原生布局与设置逻辑；Figma 中新增设置样式是后续视觉目标，不能把设计截图当成已经逐像素实现的页面。
+- `plugins/revolution-brand/` 通过官方品牌 slots 替换 sidebar 和 hero 标识，并通过 ThemeRuntime 覆盖 light/dark token。
+- 应用图标为原创 R/V 联字：黑色底、米白 R、荧光绿 V。人物图像用于会话空状态。
+- Workflow 增加运行概览、文件类型标签、键盘可操作导出弹窗和减少动效支持。
+
+## 验证
+
+```sh
+npm run build
+npm run build:brand
+npm run test:workflow
+node scripts/prepare-desktop.mjs
+node scripts/smoke-runtime.mjs
+npm --prefix apps/revolution run package:dir
+node scripts/smoke-runtime.mjs dist/mac-arm64/Revolution.app/Contents/Resources/app/runtime.mjs
+```
+
+smoke 测试启动全新临时 profile，验证内置服务的 HTTP 鉴权握手以及两个客户端插件的 boot roster，结束后清理测试数据。它不发送模型请求。
+
+## GitHub CI/CD
+
+推荐 GitHub Actions + GitHub Releases。公开仓库的标准 GitHub-hosted runner 免费；私有仓库受所属账户免费分钟和存储额度限制。费用规则见 [GitHub 官方说明](https://docs.github.com/en/actions/concepts/billing-and-usage)。代码签名和 Apple 公证不包含在 GitHub 免费构建中。
+
+工作流：
+
+- `.github/workflows/ci.yml`：PR 和 main push 运行无依赖插件构建、语法与投影测试，检查 bundle 是否与源文件一致。
+- `.github/workflows/release.yml`：手动触发或推送 `revolution-v*` tag，在 macOS ARM64、Windows x64、Linux x64 上锁定安装、打包和验证包内运行时。
+- 手动构建仅上传三天有效的 artifacts；tag 构建在三平台成功后创建 **draft Release**，由仓库维护者审阅后公开。
+- 只用内置 `GITHUB_TOKEN`，发布 job 才获得 `contents: write`。不需要 API Key、COS、Vercel 或自建服务器。
+- PR 不进行昂贵的多平台打包；并发检查自动取消旧任务。
+
+操作步骤与免费边界见 [CI/CD 教程](docs/knowledge/01-ci-cd.md)。分支 CI 自动检查；手动构建生成三平台临时安装包；匹配版本的 tag 才建立草稿 Release。远端运行状态以 GitHub Actions 为准，不能仅凭 YAML 存在就声称已通过。Windows/Linux 需由对应 Runner 验证。
+
+如果仓库保持私有，请在 GitHub Billing 中设置付费用量预算，避免额度耗尽后继续计费。公开仓库标准 Runner 可作为接近零成本的首选方案。Artifacts 只保留三天，正式安装包放 Releases。
+
+## 尚待完成
+
+- Figma 设置视觉逐项落地；当前设置和插件使用完整原生 DSH UI。
+- 图片缩略图、JSON 内容格式化与 diff 深度预览；本轮仅完成文件类型分类与原生预览入口。
+- 原生桌面深度集成：目录选择、自动更新、签名、公证、平台菜单本地化。
+- 真实 API 与工具执行回归（需要用户选择提供商和凭据）。
+- Runtime DAG/Artifact 协议修改继续暂缓。

@@ -1,6 +1,6 @@
 window.__ModuleLoader__.load({id:"dsh-workflow-studio",factory:(require)=>{
 const React=require("react");
-const STUDIO_CSS=".ws-root {\n  --ws-bg: var(--dsw-alias-bg-base, #f6f7f9);\n  --ws-panel: var(--dsw-alias-bg-layer-1, #fff);\n  --ws-text: var(--dsw-alias-text-primary, #1e2430);\n  --ws-muted: var(--dsw-alias-text-secondary, #6d7687);\n  --ws-border: var(--dsw-alias-border-l4, #e1e5ec);\n  --ws-accent: var(--dsw-alias-brand-primary, #4d6bfe);\n  display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 0;\n  color: var(--ws-text); background: var(--ws-bg); font: 13px/1.5 var(--dsw-font-family, system-ui, sans-serif); overflow: hidden;\n}\n.ws-root * { box-sizing: border-box; }\n.ws-root button, .ws-root select { font: inherit; color: inherit; }\n.ws-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 20px; background: var(--ws-panel); border-bottom: 1px solid var(--ws-border); flex: none; }\n.ws-heading { min-width: 0; }\n.ws-title-row { display: flex; align-items: center; gap: 10px; }\n.ws-title-row h2 { font-size: 17px; line-height: 1.3; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-heading p { margin: 3px 0 0; color: var(--ws-muted); font-size: 11px; }\n.ws-actions { display: flex; align-items: center; gap: 8px; }\n.ws-actions button, .ws-actions select, .ws-controls button, .ws-open-child { border: 1px solid var(--ws-border); background: var(--ws-panel); border-radius: 8px; padding: 6px 10px; cursor: pointer; }\n.ws-actions select { max-width: 280px; }\n.ws-actions button:hover, .ws-controls button:hover, .ws-open-child:hover { border-color: var(--ws-accent); }\n.ws-content { display: flex; flex: 1; min-height: 0; }\n.ws-canvas { position: relative; flex: 1; min-width: 0; overflow: hidden; touch-action: none; cursor: grab; background-color: var(--ws-bg); background-image: radial-gradient(var(--ws-border) 1px, transparent 1px); background-size: 22px 22px; }\n.ws-canvas:active { cursor: grabbing; }\n.ws-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }\n.ws-phase-links { position: absolute; overflow: visible; pointer-events: none; }\n.ws-agent-link { fill: none; stroke: #9aa7c7; stroke-width: 2; }\n.ws-arrow-head { fill: #9aa7c7; }\n.ws-phase-label { position: absolute; width: 280px; height: 62px; display: grid; grid-template-columns: 24px 1fr; grid-template-rows: 28px 18px; column-gap: 8px; align-items: center; color: var(--ws-text); font-weight: 600; }\n.ws-phase-label small { grid-column: 2; color: var(--ws-muted); font-size: 10px; font-weight: 400; }\n.ws-phase-index { grid-row: 1/3; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ws-accent); color: #fff; font-size: 11px; }\n.ws-root-node, .ws-node { position: absolute; width: 280px; height: 172px; border: 1px solid var(--ws-border); border-radius: 14px; background: var(--ws-panel); box-shadow: 0 6px 18px #1018280a; }\n.ws-root-node { height: 156px; display: flex; flex-direction: column; padding: 16px; border-color: color-mix(in srgb, var(--ws-accent) 38%, var(--ws-border)); background: color-mix(in srgb, var(--ws-accent) 5%, var(--ws-panel)); }\n.ws-root-node strong { margin-top: 9px; font-size: 15px; }\n.ws-root-node p { margin: 10px 0 0; color: var(--ws-muted); font-size: 11px; line-height: 1.55; }\n.ws-node-kicker { color: var(--ws-accent); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }\n.ws-node { display: flex; flex-direction: column; align-items: stretch; text-align: left; padding: 13px 15px; cursor: pointer; overflow: hidden; }\n.ws-node:hover, .ws-node-selected { border-color: var(--ws-accent); box-shadow: 0 8px 24px #4d6bfe1c; }\n.ws-node-selected { outline: 2px solid color-mix(in srgb, var(--ws-accent) 22%, transparent); outline-offset: 2px; }\n.ws-node-top { display: flex; align-items: center; gap: 7px; color: var(--ws-muted); font-size: 10px; }\n.ws-runtime { margin-left: auto; max-width: 145px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-node strong { margin: 9px 0 7px; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-node-id { margin-top: 3px; color: var(--ws-muted); font: 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-io { display: grid; grid-template-columns: 36px 1fr; gap: 5px; margin-top: 5px; color: var(--ws-muted); font-size: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }\n.ws-io b { color: var(--ws-text); font-weight: 600; }\n.ws-file-count { margin-top: auto; color: var(--ws-accent); font-size: 10px; }\n.ws-dot { width: 7px; height: 7px; border-radius: 50%; background: #87909f; }\n.ws-node[data-status=running] .ws-dot { background: var(--ws-accent); box-shadow: 0 0 0 4px #4d6bfe18; animation: ws-pulse 1.4s ease-in-out infinite; }\n.ws-node[data-status=completed] .ws-dot { background: #23936f; }\n.ws-node[data-status=failed] .ws-dot { background: #d04f55; }\n.ws-node[data-status=cancelled] .ws-dot, .ws-node[data-status=interrupted] .ws-dot { background: #d18a24; }\n.ws-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--ws-border); }\n.ws-progress-fill { display: block; height: 100%; width: 0; background: #87909f; }\n.ws-node[data-status=running] .ws-progress-fill { width: 42%; background: var(--ws-accent); animation: ws-run 1.35s ease-in-out infinite; }\n.ws-node[data-status=completed] .ws-progress-fill { width: 100%; background: #23936f; }\n.ws-node[data-status=failed] .ws-progress-fill { width: 100%; background: #d04f55; }\n.ws-node[data-status=cancelled] .ws-progress-fill, .ws-node[data-status=interrupted] .ws-progress-fill { width: 100%; background: #d18a24; }\n.ws-legend { position: absolute; right: 16px; bottom: 16px; max-width: 310px; padding: 7px 10px; border: 1px solid var(--ws-border); border-radius: 8px; color: var(--ws-muted); background: var(--ws-panel); font-size: 10px; }\n.ws-controls { position: absolute; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 3px; padding: 4px; border: 1px solid var(--ws-border); border-radius: 10px; background: var(--ws-panel); box-shadow: 0 6px 20px #10182812; cursor: default; }\n.ws-controls button { border: 0; padding: 5px 9px; }\n.ws-controls span { min-width: 44px; text-align: center; color: var(--ws-muted); font-size: 11px; }\n.ws-inspector { width: 340px; flex: none; padding: 18px; background: var(--ws-panel); border-left: 1px solid var(--ws-border); overflow: auto; }\n.ws-inspector-head { display: flex; justify-content: space-between; align-items: center; }\n.ws-inspector-head h3 { margin: 0; font-size: 15px; }\n.ws-inspector-head button { border: 0; background: none; font-size: 20px; cursor: pointer; }\n.ws-inspector h4 { font-size: 16px; margin: 18px 0; }\n.ws-inspector dl { margin: 18px 0; }\n.ws-inspector dt { color: var(--ws-muted); font-size: 11px; margin-top: 12px; }\n.ws-inspector dd { margin: 4px 0 0; overflow-wrap: anywhere; }\n.ws-mono { font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }\n.ws-preview-section { margin: 18px 0; }\n.ws-preview-section h5 { margin: 0 0 7px; font-size: 11px; color: var(--ws-muted); }\n.ws-preview-section pre { max-height: 190px; margin: 0; padding: 10px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--ws-border); border-radius: 8px; background: var(--ws-bg); font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }\n.ws-artifacts { display: flex; flex-direction: column; gap: 6px; }\n.ws-artifacts button { width: 100%; padding: 7px 9px; border: 1px solid var(--ws-border); border-radius: 7px; background: var(--ws-bg); color: var(--ws-accent); text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }\n.ws-open-child { width: 100%; background: var(--ws-accent); border-color: var(--ws-accent); color: #fff; }\n.ws-child-unavailable { margin: 9px 0 0; color: #b94147; font-size: 11px; }\n.ws-hint { margin-top: 12px; color: var(--ws-muted); font-size: 11px; line-height: 1.7; }\n.ws-status { display: inline-flex; align-items: center; border-radius: 999px; padding: 2px 8px; background: var(--ws-border); color: var(--ws-muted); font-size: 10px; white-space: nowrap; }\n.ws-status-running { background: #4d6bfe14; color: var(--ws-accent); }\n.ws-status-completed { background: #23936f16; color: #238366; }\n.ws-status-failed { background: #d04f5516; color: #b94147; }\n.ws-status-cancelled, .ws-status-interrupted { background: #d18a2418; color: #a96d17; }\n.ws-empty, .ws-waiting { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; color: var(--ws-muted); }\n.ws-empty h3 { color: var(--ws-text); font-size: 20px; margin: 14px 0 6px; }\n.ws-empty p { max-width: 520px; margin: 0; line-height: 1.8; }\n.ws-empty-icon { display: grid; place-items: center; width: 58px; height: 58px; border: 1px solid var(--ws-border); border-radius: 18px; background: var(--ws-panel); color: var(--ws-accent); font-size: 28px; box-shadow: 0 8px 28px #1018280d; }\n.ws-waiting { position: absolute; inset: 0; flex-direction: row; gap: 10px; }\n.ws-spinner { width: 14px; height: 14px; border: 2px solid var(--ws-border); border-top-color: var(--ws-accent); border-radius: 50%; animation: ws-spin .8s linear infinite; }\n@keyframes ws-spin { to { transform: rotate(360deg); } }\n@keyframes ws-pulse { 50% { opacity: .45; } }\n@keyframes ws-run { 0% { margin-left: -42%; } 100% { margin-left: 100%; } }\n@media (max-width: 760px) { .ws-header { padding: 10px 12px; } .ws-heading p { display: none; } .ws-inspector { width: 280px; } .ws-actions select { max-width: 170px; } .ws-legend { display: none; } }\n@media (max-width: 560px) { .ws-inspector { position: absolute; right: 0; top: 0; bottom: 0; z-index: 4; width: min(88%, 340px); box-shadow: -12px 0 30px #1018281a; } .ws-title-row h2 { font-size: 14px; } .ws-actions select { max-width: 120px; } }\n";
+const STUDIO_CSS=".ws-root {\n  --ws-bg: var(--dsw-alias-bg-base, #f6f7f9);\n  --ws-panel: var(--dsw-alias-bg-layer-1, #fff);\n  --ws-text: var(--dsw-alias-label-primary, #1e2430);\n  --ws-muted: var(--dsw-alias-label-secondary, #6d7687);\n  --ws-border: var(--dsw-alias-border-l4, #e1e5ec);\n  --ws-accent: var(--dsw-alias-brand-primary, #4d6bfe);\n  position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 0;\n  color: var(--ws-text); background: var(--ws-bg); font: 13px/1.5 var(--dsw-font-family, system-ui, sans-serif); overflow: hidden;\n}\n.ws-root * { box-sizing: border-box; }\n.ws-run-summary { position: absolute; top: 12px; left: 16px; display: flex; gap: 14px; padding: 8px 12px; border: 1px solid var(--ws-border); border-radius: 10px; background: var(--ws-panel); color: var(--ws-muted); font-size: 11px; pointer-events: none; }\n.ws-artifact-kind { display: inline-block; margin-right: 8px; padding: 1px 5px; background: var(--ws-panel); border-radius: 4px; color: var(--ws-muted); font-size: 9px; }\n.ws-root button:focus-visible, .ws-root select:focus-visible { outline: 2px solid var(--ws-accent); outline-offset: 3px; }\n@media (prefers-reduced-motion: reduce) { .ws-root *, .ws-root *::before, .ws-root *::after { animation: none !important; transition: none !important; } }\n.ws-root button, .ws-root select { font: inherit; color: inherit; }\n.ws-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 20px; background: var(--ws-panel); border-bottom: 1px solid var(--ws-border); flex: none; }\n.ws-heading { min-width: 0; }\n.ws-title-row { display: flex; align-items: center; gap: 10px; }\n.ws-title-row h2 { font-size: 17px; line-height: 1.3; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-heading p { margin: 3px 0 0; color: var(--ws-muted); font-size: 11px; }\n.ws-actions { display: flex; align-items: center; gap: 8px; }\n.ws-actions button, .ws-actions select, .ws-controls button, .ws-open-child { border: 1px solid var(--ws-border); background: var(--ws-panel); border-radius: 8px; padding: 6px 10px; cursor: pointer; }\n.ws-actions select { max-width: 280px; }\n.ws-actions button:hover, .ws-controls button:hover, .ws-open-child:hover { border-color: var(--ws-accent); }\n.ws-content { display: flex; flex: 1; min-height: 0; }\n.ws-canvas { position: relative; flex: 1; min-width: 0; overflow: hidden; touch-action: none; cursor: grab; background-color: var(--ws-bg); background-image: radial-gradient(var(--ws-border) 1px, transparent 1px); background-size: 22px 22px; }\n.ws-canvas:active { cursor: grabbing; }\n.ws-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }\n.ws-phase-links { position: absolute; overflow: visible; pointer-events: none; }\n.ws-agent-link { fill: none; stroke: #9aa7c7; stroke-width: 2; }\n.ws-arrow-head { fill: #9aa7c7; }\n.ws-phase-label { position: absolute; width: 280px; height: 62px; display: grid; grid-template-columns: 24px 1fr; grid-template-rows: 28px 18px; column-gap: 8px; align-items: center; color: var(--ws-text); font-weight: 600; }\n.ws-phase-label small { grid-column: 2; color: var(--ws-muted); font-size: 10px; font-weight: 400; }\n.ws-phase-index { grid-row: 1/3; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ws-accent); color: #fff; font-size: 11px; }\n.ws-root-node, .ws-node { position: absolute; width: 280px; height: 172px; border: 1px solid var(--ws-border); border-radius: 14px; background: var(--ws-panel); box-shadow: 0 6px 18px #1018280a; }\n.ws-root-node { height: 156px; display: flex; flex-direction: column; padding: 16px; border-color: color-mix(in srgb, var(--ws-accent) 38%, var(--ws-border)); background: color-mix(in srgb, var(--ws-accent) 5%, var(--ws-panel)); }\n.ws-root-node strong { margin-top: 9px; font-size: 15px; }\n.ws-root-node p { margin: 10px 0 0; color: var(--ws-muted); font-size: 11px; line-height: 1.55; }\n.ws-node-kicker { color: var(--ws-accent); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }\n.ws-node { display: flex; flex-direction: column; align-items: stretch; text-align: left; padding: 13px 15px; cursor: pointer; overflow: hidden; }\n.ws-node:hover, .ws-node-selected { border-color: var(--ws-accent); box-shadow: 0 8px 24px #4d6bfe1c; }\n.ws-node-selected { outline: 2px solid color-mix(in srgb, var(--ws-accent) 22%, transparent); outline-offset: 2px; }\n.ws-node-top { display: flex; align-items: center; gap: 7px; color: var(--ws-muted); font-size: 10px; }\n.ws-runtime { margin-left: auto; max-width: 145px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-node strong { margin: 9px 0 7px; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-node-id { margin-top: 3px; color: var(--ws-muted); font: 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.ws-io { display: grid; grid-template-columns: 36px 1fr; gap: 5px; margin-top: 5px; color: var(--ws-muted); font-size: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }\n.ws-io b { color: var(--ws-text); font-weight: 600; }\n.ws-file-count { margin-top: auto; color: var(--ws-accent); font-size: 10px; }\n.ws-dot { width: 7px; height: 7px; border-radius: 50%; background: #87909f; }\n.ws-node[data-status=running] .ws-dot { background: var(--ws-accent); box-shadow: 0 0 0 4px #4d6bfe18; animation: ws-pulse 1.4s ease-in-out infinite; }\n.ws-node[data-status=completed] .ws-dot { background: #23936f; }\n.ws-node[data-status=failed] .ws-dot { background: #d04f55; }\n.ws-node[data-status=cancelled] .ws-dot, .ws-node[data-status=interrupted] .ws-dot { background: #d18a24; }\n.ws-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--ws-border); }\n.ws-progress-fill { display: block; height: 100%; width: 0; background: #87909f; }\n.ws-node[data-status=running] .ws-progress-fill { width: 42%; background: var(--ws-accent); animation: ws-run 1.35s ease-in-out infinite; }\n.ws-node[data-status=completed] .ws-progress-fill { width: 100%; background: #23936f; }\n.ws-node[data-status=failed] .ws-progress-fill { width: 100%; background: #d04f55; }\n.ws-node[data-status=cancelled] .ws-progress-fill, .ws-node[data-status=interrupted] .ws-progress-fill { width: 100%; background: #d18a24; }\n.ws-legend { position: absolute; right: 16px; bottom: 16px; max-width: 310px; padding: 7px 10px; border: 1px solid var(--ws-border); border-radius: 8px; color: var(--ws-muted); background: var(--ws-panel); font-size: 10px; }\n.ws-controls { position: absolute; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 3px; padding: 4px; border: 1px solid var(--ws-border); border-radius: 10px; background: var(--ws-panel); box-shadow: 0 6px 20px #10182812; cursor: default; }\n.ws-controls button { border: 0; padding: 5px 9px; }\n.ws-controls span { min-width: 44px; text-align: center; color: var(--ws-muted); font-size: 11px; }\n.ws-inspector { width: 340px; flex: none; padding: 18px; background: var(--ws-panel); border-left: 1px solid var(--ws-border); overflow: auto; }\n.ws-inspector-head { display: flex; justify-content: space-between; align-items: center; }\n.ws-inspector-head h3 { margin: 0; font-size: 15px; }\n.ws-inspector-head button { border: 0; background: none; font-size: 20px; cursor: pointer; }\n.ws-inspector h4 { font-size: 16px; margin: 18px 0; }\n.ws-inspector dl { margin: 18px 0; }\n.ws-inspector dt { color: var(--ws-muted); font-size: 11px; margin-top: 12px; }\n.ws-inspector dd { margin: 4px 0 0; overflow-wrap: anywhere; }\n.ws-mono { font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }\n.ws-preview-section { margin: 18px 0; }\n.ws-preview-section h5 { margin: 0 0 7px; font-size: 11px; color: var(--ws-muted); }\n.ws-preview-section pre { max-height: 190px; margin: 0; padding: 10px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--ws-border); border-radius: 8px; background: var(--ws-bg); font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }\n.ws-artifacts { display: flex; flex-direction: column; gap: 6px; }\n.ws-artifacts button { width: 100%; padding: 7px 9px; border: 1px solid var(--ws-border); border-radius: 7px; background: var(--ws-bg); color: var(--ws-accent); text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }\n.ws-open-child { width: 100%; background: var(--ws-accent); border-color: var(--ws-accent); color: #fff; }\n.ws-child-unavailable { margin: 9px 0 0; color: #b94147; font-size: 11px; }\n.ws-hint { margin-top: 12px; color: var(--ws-muted); font-size: 11px; line-height: 1.7; }\n.ws-status { display: inline-flex; align-items: center; border-radius: 999px; padding: 2px 8px; background: var(--ws-border); color: var(--ws-muted); font-size: 10px; white-space: nowrap; }\n.ws-status-running { background: #4d6bfe14; color: var(--ws-accent); }\n.ws-status-completed { background: #23936f16; color: #238366; }\n.ws-status-failed { background: #d04f5516; color: #b94147; }\n.ws-status-cancelled, .ws-status-interrupted { background: #d18a2418; color: #a96d17; }\n.ws-export-backdrop { position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; padding: 24px; background: #10182842; backdrop-filter: blur(3px); }\n.ws-export-dialog { width: min(620px, 100%); max-height: min(720px, calc(100% - 24px)); display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--ws-border); border-radius: 16px; background: var(--ws-panel); box-shadow: 0 24px 80px #10182838; }\n.ws-export-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 20px 22px 14px; }\n.ws-export-head h3 { margin: 0; font-size: 17px; }\n.ws-export-head p { margin: 5px 0 0; color: var(--ws-muted); font-size: 11px; line-height: 1.6; }\n.ws-export-head button { border: 0; background: none; font-size: 22px; cursor: pointer; }\n.ws-export-warning { margin: 0 22px 14px; padding: 10px 12px; border-radius: 9px; background: color-mix(in srgb, #d18a24 10%, var(--ws-panel)); color: color-mix(in srgb, #a96d17 85%, var(--ws-text)); font-size: 11px; line-height: 1.55; }\n.ws-export-list { min-height: 0; padding: 0 22px; overflow: auto; }\n.ws-export-agent { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 11px 4px; border-top: 1px solid var(--ws-border); cursor: pointer; }\n.ws-export-agent-copy { min-width: 0; display: flex; flex-direction: column; }\n.ws-export-agent-copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }\n.ws-export-agent-copy small, .ws-export-count { color: var(--ws-muted); font-size: 10px; }\n.ws-export-count { white-space: nowrap; }\n.ws-export-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 22px 20px; border-top: 1px solid var(--ws-border); }\n.ws-export-actions button { padding: 7px 12px; border: 1px solid var(--ws-border); border-radius: 8px; background: var(--ws-panel); cursor: pointer; }\n.ws-export-actions .ws-export-confirm { border-color: var(--ws-accent); background: var(--ws-accent); color: #fff; }\n.ws-export-actions .ws-export-confirm:disabled { opacity: .45; cursor: not-allowed; }\n.ws-empty, .ws-waiting { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; color: var(--ws-muted); }\n.ws-empty h3 { color: var(--ws-text); font-size: 20px; margin: 14px 0 6px; }\n.ws-empty p { max-width: 520px; margin: 0; line-height: 1.8; }\n.ws-empty-icon { display: grid; place-items: center; width: 58px; height: 58px; border: 1px solid var(--ws-border); border-radius: 18px; background: var(--ws-panel); color: var(--ws-accent); font-size: 28px; box-shadow: 0 8px 28px #1018280d; }\n.ws-waiting { position: absolute; inset: 0; flex-direction: row; gap: 10px; }\n.ws-spinner { width: 14px; height: 14px; border: 2px solid var(--ws-border); border-top-color: var(--ws-accent); border-radius: 50%; animation: ws-spin .8s linear infinite; }\n@keyframes ws-spin { to { transform: rotate(360deg); } }\n@keyframes ws-pulse { 50% { opacity: .45; } }\n@keyframes ws-run { 0% { margin-left: -42%; } 100% { margin-left: 100%; } }\n@media (max-width: 760px) { .ws-header { padding: 10px 12px; } .ws-heading p { display: none; } .ws-inspector { width: 280px; } .ws-actions select { max-width: 170px; } .ws-legend { display: none; } }\n@media (max-width: 560px) { .ws-inspector { position: absolute; right: 0; top: 0; bottom: 0; z-index: 4; width: min(88%, 340px); box-shadow: -12px 0 30px #1018281a; } .ws-title-row h2 { font-size: 14px; } .ws-actions select { max-width: 120px; } }\n";
 /** Status vocabulary shared by run and member cards. */
 const RUNNING = 'running';
 
@@ -151,6 +151,13 @@ const zh = {
   members: 'Agent',
   latest: '最新运行',
   fit: '适应画布',
+  export: '导出清单',
+  runSummary: '运行概览',
+  exportTitle: '导出本次 Workflow',
+  exportHelp: '选择要写入 manifest 的 Agent。输入、输出、运行模型与候选文件路径会被保留。',
+  exportBoundary: '此版本只下载清单，不复制工作区文件，也不会推断 Agent 依赖或最终产物。',
+  cancelExport: '取消',
+  downloadManifest: '下载 manifest',
   zoomIn: '放大',
   zoomOut: '缩小',
   details: 'Agent 详情',
@@ -194,6 +201,13 @@ const en = {
   members: 'agents',
   latest: 'Latest run',
   fit: 'Fit canvas',
+  export: 'Export manifest',
+  runSummary: 'Run summary',
+  exportTitle: 'Export this workflow',
+  exportHelp: 'Choose the agents to include. Inputs, outputs, runtime metadata, and candidate file paths are preserved.',
+  exportBoundary: 'This version downloads a manifest only. It does not copy workspace files or infer agent dependencies or final artifacts.',
+  cancelExport: 'Cancel',
+  downloadManifest: 'Download manifest',
   zoomIn: 'Zoom in',
   zoomOut: 'Zoom out',
   details: 'Agent details',
@@ -304,6 +318,73 @@ function childPreview(entries) {
 
 const EMPTY_CHILD_PREVIEW = EMPTY;
 
+/** Classification only; contents continue through DSH's bounded resource preview. */
+function artifactKind(path) {
+  const ext = String(path).split(/[?#]/, 1)[0].split('.').at(-1).toLowerCase();
+  if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'avif'].includes(ext)) return 'image';
+  if (['json', 'jsonl'].includes(ext)) return 'json';
+  if (['diff', 'patch'].includes(ext)) return 'diff';
+  if (['md', 'txt', 'csv', 'tsv', 'yaml', 'yml', 'toml', 'xml', 'html', 'js', 'ts', 'py', 'css'].includes(ext)) return 'text';
+  return 'file';
+}
+
+function stringValue(value) {
+  return typeof value === 'string' ? value : '';
+}
+
+function uniqueFiles(files) {
+  return [...new Set(Array.isArray(files) ? files.filter(file => typeof file === 'string' && file) : [])];
+}
+
+/** Build a deterministic, downstream-only export manifest from persisted Workflow facts. */
+function buildExportManifest(run, previews, orchestrator, includedSeqs) {
+  if (!run) return null;
+  const included = includedSeqs ? new Set(includedSeqs) : null;
+  return {
+    schema: 'revolution.workflow-export/v1',
+    run: {
+      id: stringValue(run.runId),
+      name: stringValue(run.name),
+      status: stringValue(run.status),
+      phases: (run.phases ?? []).map(phase => ({
+        key: stringValue(phase.key),
+        name: phase.phase === null || phase.phase === undefined ? null : String(phase.phase),
+      })),
+    },
+    orchestrator: {
+      id: stringValue(orchestrator?.id),
+      title: stringValue(orchestrator?.title),
+    },
+    agents: (run.members ?? []).filter(member => !included || included.has(member.seq)).map(member => {
+      const preview = previews?.[member.childId] ?? {};
+      return {
+        seq: member.seq,
+        childSessionId: stringValue(member.childId),
+        label: stringValue(member.label),
+        phase: member.phase === null || member.phase === undefined ? null : String(member.phase),
+        status: stringValue(member.status),
+        runtime: { provider: stringValue(preview.provider), model: stringValue(preview.model) },
+        input: stringValue(preview.input),
+        output: stringValue(preview.output),
+        candidateFiles: uniqueFiles(preview.files),
+        previewLimited: Boolean(preview.limited),
+        previewUnavailable: Boolean(preview.unavailable),
+      };
+    }),
+    semantics: {
+      relations: 'orchestrator-to-child execution only',
+      agentDependenciesInferred: false,
+      filesCopied: false,
+      finalArtifactsInferred: false,
+    },
+  };
+}
+
+function exportFileName(runId) {
+  const safe = String(runId || 'workflow').replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-+|-+$/g, '');
+  return `workflow-${safe || 'workflow'}.json`;
+}
+
 
 const h = (...args) => React.createElement(...args);
 const { useEffect, useMemo, useRef, useState } = React;
@@ -333,19 +414,40 @@ function StudioView(props) {
   const [previews, setPreviews] = useState({});
   const selectedPreview = selected ? previews[selected.childId] : null;
   const [unavailableChild, setUnavailableChild] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [exportSelection, setExportSelection] = useState({});
   const [offset, setOffset] = useState({ x: 28, y: 28, scale: 1 });
   const viewport = useRef(null);
   const gesture = useRef(null);
   const previousRun = useRef(null);
+  const exportDialog = useRef(null);
+  const exportTrigger = useRef(null);
   const positions = useMemo(() => run ? layoutFor(run) : new Map(), [run]);
   const rootPosition = useMemo(() => run ? orchestratorPosition(run) : { x: 48, y: 116 }, [run]);
   const childKey = run?.members.map(member => member.childId).join('\u0000') ?? '';
 
   useEffect(() => {
     setPreviews({});
+    setExportOpen(false);
     if (!run) return undefined;
     return props.watchChildren(run.members.map(member => member.childId), setPreviews);
   }, [run?.runId, childKey]);
+
+  useEffect(() => {
+    if (!exportOpen) return undefined;
+    const previousFocus = document.activeElement;
+    exportDialog.current?.querySelector('button, input')?.focus();
+    return () => previousFocus?.focus();
+  }, [exportOpen]);
+
+  function exportKeyDown(event) {
+    if (event.key === 'Escape') { event.stopPropagation(); setExportOpen(false); }
+    if (event.key !== 'Tab') return;
+    const controls = [...event.currentTarget.querySelectorAll('button:not(:disabled), input:not(:disabled)')];
+    const first = controls[0]; const last = controls.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+  }
 
   function fit() {
     if (!run || !viewport.current || run.members.length === 0) {
@@ -408,6 +510,18 @@ function StudioView(props) {
     if (selected) setUnavailableChild(!props.openChild(selected.childId));
   }
 
+  function openExport() {
+    setExportSelection(Object.fromEntries((run?.members ?? []).map(member => [member.seq, true])));
+    setExportOpen(true);
+  }
+
+  function confirmExport() {
+    const includedSeqs = (run?.members ?? []).filter(member => exportSelection[member.seq]).map(member => member.seq);
+    const manifest = buildExportManifest(run, previews, props.orchestrator, includedSeqs);
+    if (manifest) props.downloadManifest(run.runId, manifest);
+    setExportOpen(false);
+  }
+
   const t = props.t;
   return h('section', { className: 'ws-root', 'data-workflow-studio': true },
     h('header', { className: 'ws-header' },
@@ -421,6 +535,7 @@ function StudioView(props) {
           value: run?.runId ?? '', 'aria-label': t('latest'), onChange: event => setRequestedRun(event.target.value),
         }, runs.map((candidate, index) => h('option', { key: candidate.runId, value: candidate.runId },
           `${index + 1}. ${candidate.name} · ${statusText(candidate.status, t)}`))),
+        run && h('button', { type: 'button', ref: exportTrigger, onClick: openExport }, t('export')),
         h('button', { type: 'button', onClick: fit }, t('fit')))),
     !run
       ? h('div', { className: 'ws-empty' },
@@ -478,6 +593,11 @@ function StudioView(props) {
                       preview?.files?.length > 0 && h('span', { className: 'ws-file-count' }, t('filesCount', { count: preview.files.length })),
                       h('span', { className: 'ws-progress' }, h('span', { className: 'ws-progress-fill' })));
                   })),
+            h('div', { className: 'ws-run-summary', 'aria-label': t('runSummary') },
+              h('span', null, `${run.members.length} ${t('members')}`),
+              h('span', null, `${run.members.filter(member => member.status === 'completed').length} ${t('completed')}`),
+              h('span', null, `${run.members.filter(member => member.status === 'failed').length} ${t('failed')}`),
+              h('span', null, t('filesCount', { count: new Set(Object.values(previews).flatMap(preview => preview.files ?? [])).size }))),
             h('div', { className: 'ws-legend' }, t('relation')),
             h('div', { className: 'ws-controls' },
               h('button', { type: 'button', 'aria-label': t('zoomOut'), onClick: () => setOffset(value => ({ ...value, scale: Math.max(0.28, value.scale - 0.1) })) }, '−'),
@@ -502,11 +622,30 @@ function StudioView(props) {
               selectedPreview?.files?.length
                 ? h('div', { className: 'ws-artifacts' }, selectedPreview.files.map(path => h('button', {
                     type: 'button', key: path, title: path, onClick: () => props.openFile(selected.childId, path),
-                  }, path)))
+                  }, h('span', { className: 'ws-artifact-kind' }, artifactKind(path).toUpperCase()), path)))
                 : h('p', { className: 'ws-hint' }, t('noArtifacts'))),
             h('button', { type: 'button', className: 'ws-open-child', onClick: openSelected }, t('openChild')),
             unavailableChild && h('p', { className: 'ws-child-unavailable', role: 'status' }, t('childUnavailable')),
-            h('p', { className: 'ws-hint' }, t('phaseHint')))));
+            h('p', { className: 'ws-hint' }, t('phaseHint')))),
+          run && exportOpen && h('div', { className: 'ws-export-backdrop', role: 'presentation', onMouseDown: event => {
+            if (event.target === event.currentTarget) setExportOpen(false);
+          } }, h('section', { className: 'ws-export-dialog', ref: exportDialog, role: 'dialog', 'aria-modal': true, 'aria-labelledby': 'ws-export-title', onKeyDown: exportKeyDown },
+            h('div', { className: 'ws-export-head' },
+              h('div', null, h('h3', { id: 'ws-export-title' }, t('exportTitle')), h('p', null, t('exportHelp'))),
+              h('button', { type: 'button', onClick: () => setExportOpen(false), 'aria-label': t('close') }, '×')),
+            h('div', { className: 'ws-export-warning' }, t('exportBoundary')),
+            h('div', { className: 'ws-export-list' }, run.members.map(member => {
+              const preview = previews[member.childId];
+              return h('label', { key: member.seq, className: 'ws-export-agent' },
+                h('input', { type: 'checkbox', checked: Boolean(exportSelection[member.seq]), onChange: event => setExportSelection(current => ({ ...current, [member.seq]: event.target.checked })) }),
+                h('span', { className: 'ws-export-agent-copy' },
+                  h('strong', null, member.label || t('unnamed')),
+                  h('small', null, `${phaseName(member.phase ?? null, t)} · ${[preview?.provider, preview?.model].filter(Boolean).join(' · ') || t('subagent')}`)),
+                h('span', { className: 'ws-export-count' }, t('filesCount', { count: preview?.files?.length ?? 0 })));
+            })),
+            h('div', { className: 'ws-export-actions' },
+              h('button', { type: 'button', onClick: () => setExportOpen(false) }, t('cancelExport')),
+              h('button', { type: 'button', className: 'ws-export-confirm', disabled: !run.members.some(member => exportSelection[member.seq]), onClick: confirmExport }, t('downloadManifest'))))));
 }
 
 
@@ -599,6 +738,17 @@ function applyClient(ctx) {
         },
         openFile: (childId, path) => {
           ctx.sidebarRight.openResource(sessionFileAddress(childId, path));
+        },
+        downloadManifest: (runId, manifest) => {
+          const payload = JSON.stringify({ ...manifest, exportedAt: new Date().toISOString() }, null, 2);
+          const url = URL.createObjectURL(new Blob([payload], { type: 'application/json' }));
+          const anchor = document.createElement('a');
+          anchor.href = url;
+          anchor.download = exportFileName(runId);
+          document.body.appendChild(anchor);
+          anchor.click();
+          anchor.remove();
+          URL.revokeObjectURL(url);
         },
       };
     },
