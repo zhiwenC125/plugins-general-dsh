@@ -1,14 +1,18 @@
 .ws-root {
   --ws-bg: var(--dsw-alias-bg-base, #f6f7f9);
   --ws-panel: var(--dsw-alias-bg-layer-1, #fff);
-  --ws-text: var(--dsw-alias-text-primary, #1e2430);
-  --ws-muted: var(--dsw-alias-text-secondary, #6d7687);
+  --ws-text: var(--dsw-alias-label-primary, #1e2430);
+  --ws-muted: var(--dsw-alias-label-secondary, #6d7687);
   --ws-border: var(--dsw-alias-border-l4, #e1e5ec);
   --ws-accent: var(--dsw-alias-brand-primary, #4d6bfe);
-  display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 0;
+  position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 0;
   color: var(--ws-text); background: var(--ws-bg); font: 13px/1.5 var(--dsw-font-family, system-ui, sans-serif); overflow: hidden;
 }
 .ws-root * { box-sizing: border-box; }
+.ws-run-summary { position: absolute; top: 12px; left: 16px; display: flex; gap: 14px; padding: 8px 12px; border: 1px solid var(--ws-border); border-radius: 10px; background: var(--ws-panel); color: var(--ws-muted); font-size: 11px; pointer-events: none; }
+.ws-artifact-kind { display: inline-block; margin-right: 8px; padding: 1px 5px; background: var(--ws-panel); border-radius: 4px; color: var(--ws-muted); font-size: 9px; }
+.ws-root button:focus-visible, .ws-root select:focus-visible { outline: 2px solid var(--ws-accent); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .ws-root *, .ws-root *::before, .ws-root *::after { animation: none !important; transition: none !important; } }
 .ws-root button, .ws-root select { font: inherit; color: inherit; }
 .ws-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 20px; background: var(--ws-panel); border-bottom: 1px solid var(--ws-border); flex: none; }
 .ws-heading { min-width: 0; }
@@ -81,6 +85,23 @@
 .ws-status-completed { background: #23936f16; color: #238366; }
 .ws-status-failed { background: #d04f5516; color: #b94147; }
 .ws-status-cancelled, .ws-status-interrupted { background: #d18a2418; color: #a96d17; }
+.ws-export-backdrop { position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; padding: 24px; background: #10182842; backdrop-filter: blur(3px); }
+.ws-export-dialog { width: min(620px, 100%); max-height: min(720px, calc(100% - 24px)); display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--ws-border); border-radius: 16px; background: var(--ws-panel); box-shadow: 0 24px 80px #10182838; }
+.ws-export-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 20px 22px 14px; }
+.ws-export-head h3 { margin: 0; font-size: 17px; }
+.ws-export-head p { margin: 5px 0 0; color: var(--ws-muted); font-size: 11px; line-height: 1.6; }
+.ws-export-head button { border: 0; background: none; font-size: 22px; cursor: pointer; }
+.ws-export-warning { margin: 0 22px 14px; padding: 10px 12px; border-radius: 9px; background: color-mix(in srgb, #d18a24 10%, var(--ws-panel)); color: color-mix(in srgb, #a96d17 85%, var(--ws-text)); font-size: 11px; line-height: 1.55; }
+.ws-export-list { min-height: 0; padding: 0 22px; overflow: auto; }
+.ws-export-agent { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 11px 4px; border-top: 1px solid var(--ws-border); cursor: pointer; }
+.ws-export-agent-copy { min-width: 0; display: flex; flex-direction: column; }
+.ws-export-agent-copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+.ws-export-agent-copy small, .ws-export-count { color: var(--ws-muted); font-size: 10px; }
+.ws-export-count { white-space: nowrap; }
+.ws-export-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 22px 20px; border-top: 1px solid var(--ws-border); }
+.ws-export-actions button { padding: 7px 12px; border: 1px solid var(--ws-border); border-radius: 8px; background: var(--ws-panel); cursor: pointer; }
+.ws-export-actions .ws-export-confirm { border-color: var(--ws-accent); background: var(--ws-accent); color: #fff; }
+.ws-export-actions .ws-export-confirm:disabled { opacity: .45; cursor: not-allowed; }
 .ws-empty, .ws-waiting { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; color: var(--ws-muted); }
 .ws-empty h3 { color: var(--ws-text); font-size: 20px; margin: 14px 0 6px; }
 .ws-empty p { max-width: 520px; margin: 0; line-height: 1.8; }

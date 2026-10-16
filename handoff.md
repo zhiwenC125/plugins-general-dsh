@@ -1,8 +1,10 @@
 # Workflow Studio 开发交接
 
-最后更新：2026-10-16
+最后更新：2026-10-17
 
 ## 1. 项目目标
+
+2026-10-17 后续：已增加 `apps/revolution/` 独立 Electron 宿主、DSH alpha5 npm runtime、`revolution-brand` 下游插件及 GitHub Actions。使用与验证边界见 `REVOLUTION_DESKTOP.md`。原 `deepseek-harness/` alpha4 检出保持原状。Figma 已扩展 Settings、Plugins 和 Workflow 运行概览，并替换原创 RV 图标。
 
 本项目基于 DeepSeek Harness（DSH）开发一个 Workflow 可视化界面。它位于原生会话的“对话”和“轨迹”之间，以画布形式实时展示当前会话调用官方 `workflow` 工具后产生的执行过程。
 
@@ -65,11 +67,19 @@ npm run test:workflow
 - provider/model 取自 `request/header` 中的配置。
 - 文件只从成功的 `write`、`edit`、`str_replace_editor` 工具调用及其结果中提取，避免把只读工具返回的路径误判为产物。
 
+### 导出清单（第一阶段）
+
+- Workflow 顶栏新增“导出清单”。
+- 用户可选择要纳入的 Agent，并下载 `revolution.workflow-export/v1` JSON manifest。
+- manifest 包含 run、phase、子会话、provider/model、输入、输出与候选文件路径。
+- 此阶段不会复制文件、推断 Agent 间依赖或自动标记最终产物，保持 alpha.4/alpha.5 事实边界。
+- `REVOLUTION_EXPLORATION.md` 记录 alpha.4/alpha.5 差异、Revolution 架构建议与后续开发顺序。
+
 ### 验证状态
 
 - `npm run build` 通过。
 - 生成文件 `plugins/workflow-studio/lib/client.js` 通过 Node 语法检查。
-- `npm run test:workflow` 当前共有 6 项测试，全部通过。
+- `npm run test:workflow` 当前共有 7 项测试，全部通过。
 - 已使用真实 alpha.4 会话在浏览器中验证画布、phase、卡片输入输出、详情面板和父子连线。
 - `workflow-smoke-test/` 保存了可重复使用的端到端检验场景和验收清单。
 

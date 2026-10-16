@@ -1,6 +1,6 @@
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 const root = new URL('../', import.meta.url);
-const files = ['projection.js', 'locales.js', 'layout.js', 'child-preview.js', 'view.js', 'client.js'];
+const files = ['projection.js', 'locales.js', 'layout.js', 'child-preview.js', 'artifact.js', 'export-manifest.js', 'view.js', 'client.js'];
 const sources = await Promise.all(files.map(f => readFile(new URL(`src/${f}`, root), 'utf8')));
 // This package's browser sources use only named exports and local one-line imports.
 const body = sources.map(s => s.replace(/^import .*;\n/gm, '').replace(/^export /gm, '')).join('\n');

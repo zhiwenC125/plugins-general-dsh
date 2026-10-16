@@ -1,0 +1,26 @@
+name: Revolution checks
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main, 'codex/**']
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  workflow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm run build && npm run build:brand
+      - run: node --check plugins/workflow-studio/lib/client.js && node --check plugins/revolution-brand/lib/client.js
+      - run: node --check apps/revolution/main.cjs && node --check apps/revolution/runtime.mjs
+      - run: npm run test:workflow
+      - run: node scripts/check-release.mjs
+      - run: git diff --exit-code -- plugins/workflow-studio/lib/client.js plugins/revolution-brand/lib/client.js

@@ -1,4 +1,15 @@
-# Plugins for General DSH
+# Revolution · Plugins for General DSH
+
+桌面预览版、自己的 API 配置、Figma 与 GitHub 构建流程见 [REVOLUTION_DESKTOP.md](REVOLUTION_DESKTOP.md)。
+
+学习与交付文档见 [个人知识库](docs/knowledge/README.md)：CI/CD、Agent/DSH、Jev 路由方案和可点击 Figma 原型。
+
+```sh
+npm run setup:revolution
+npm run start:revolution
+```
+
+新产品使用锁定的 DSH alpha5 npm 运行时。下面的 `dsh-studio` 命令继续用于现有 alpha4 源码开发环境。
 
 基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的二次开发集合。
 
