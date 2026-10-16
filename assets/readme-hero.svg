@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="460" viewBox="0 0 1280 460" fill="none">
+  <title>REVOLUTION — Write your own chapter</title>
+  <desc>Charcoal, ivory and electric lime. An original RV monogram rises over a precision grid.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="460" gradientUnits="userSpaceOnUse"><stop stop-color="#171C18"/><stop offset=".55" stop-color="#101214"/><stop offset="1" stop-color="#1B2414"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#C7F36B" stop-opacity=".2"/><stop offset="1" stop-color="#C7F36B" stop-opacity="0"/></radialGradient>
+    <linearGradient id="rule"><stop stop-color="#C7F36B"/><stop offset="1" stop-color="#C7F36B" stop-opacity="0"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" stroke="#D8E2CC" stroke-opacity=".045"/></pattern>
+    <clipPath id="clip"><rect width="1280" height="460" rx="24"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="1280" height="460" fill="url(#bg)"/>
+    <rect width="1280" height="460" fill="url(#grid)"/>
+    <ellipse cx="1060" cy="228" rx="300" ry="310" fill="url(#glow)"/>
+    <circle cx="1060" cy="228" r="177" stroke="#C7F36B" stroke-opacity=".13"/>
+    <circle cx="1060" cy="228" r="220" stroke="#C7F36B" stroke-opacity=".07" stroke-dasharray="3 10"/>
+    <path d="M840 228h440M1060 8v440" stroke="#C7F36B" stroke-opacity=".08"/>
+    <g transform="translate(905 68) scale(.61)">
+      <rect width="512" height="512" rx="112" fill="#17191D" stroke="#C7F36B" stroke-opacity=".25" stroke-width="2"/>
+      <path d="M110 112h133c79 0 124 37 124 98 0 42-24 75-65 91l49 99h-83l-67-145h40c30 0 47-15 47-42s-17-41-47-41h-53v228h-78z" fill="#F5F4EF"/>
+      <path d="m285 330 49 70h45l60-184h-66l-25 99-21-35z" fill="#C7F36B"/>
+    </g>
+    <path d="M56 54h16M64 46v16M1208 406h16M1216 398v16" stroke="#C7F36B" stroke-opacity=".65"/>
+    <rect x="56" y="94" width="8" height="8" rx="2" fill="#C7F36B"/>
+    <text x="78" y="103" fill="#C7F36B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" letter-spacing="3">INDEPENDENT AGENT WORKSPACE</text>
+    <text x="52" y="217" fill="#F5F4EF" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="900" letter-spacing="-5">REVOLUTION</text>
+    <text x="58" y="268" fill="#C7F36B" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="600" letter-spacing="1">WRITE YOUR OWN CHAPTER.</text>
+    <text x="58" y="309" fill="#AAB1A3" font-family="Arial, Helvetica, sans-serif" font-size="17">Your models. Your workflows. Your next move.</text>
+    <path d="M58 348h680" stroke="url(#rule)"/>
+    <text x="58" y="390" fill="#929B89" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" letter-spacing="1.5">DEEPSEEK HARNESS / LOCAL-FIRST / CROSS-PLATFORM</text>
+    <text x="1034" y="420" fill="#C7F36B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="3">REV / 001</text>
+  </g>
+</svg>
