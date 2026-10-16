@@ -2,6 +2,8 @@
 
 最后更新：2026-10-17
 
+本轮交付：主页使用原创光影拳头 SVG，中文标题为“编写自之史章”；不改变 Workflow Studio 的设置可见性。知识库位于 `docs/knowledge/`。Figma 新交互页有 18 个可达页面、245 处跳转，见 `design/PROTOTYPE_STATE.md`。已建立草稿 PR https://github.com/zhiwenC125/plugins-general-dsh/pull/1，首轮远端轻量 CI 成功；三平台预览构建与正式发布不同，发布仍需审核。Jev 仅研究与设计，未接通外发 prompt。
+
 ## 1. 项目目标
 
 2026-10-17 后续：已增加 `apps/revolution/` 独立 Electron 宿主、DSH alpha5 npm runtime、`revolution-brand` 下游插件及 GitHub Actions。使用与验证边界见 `REVOLUTION_DESKTOP.md`。原 `deepseek-harness/` alpha4 检出保持原状。Figma 已扩展 Settings、Plugins 和 Workflow 运行概览，并替换原创 RV 图标。

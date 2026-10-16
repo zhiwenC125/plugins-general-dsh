@@ -2,6 +2,7 @@ name: Revolution desktop release
 on:
   workflow_dispatch:
   push:
+    branches: ['codex/release-preview/**']
     tags: ['revolution-v*']
 permissions:
   contents: read

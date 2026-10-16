@@ -38,7 +38,7 @@ API Key 通过 DSH 凭据服务保存；不填入仓库、构建参数或 GitHub
 
 ## UI 与品牌
 
-- Figma：[Revolution UI](https://www.figma.com/design/J3MYi2TF0UFcnzS86kZ2u3)。包含 Workflow、Models/API、Plugins 三张设计与原创 RV 图标。
+- Figma：[Revolution UI](https://www.figma.com/design/J3MYi2TF0UFcnzS86kZ2u3)。最新 `02 · Revolution / Interactive v0.1` 包含十八个核心流程页面、八个主组件与点击跳转。原页保留早期探索。
 - 实际应用复用 DSH 原生布局与设置逻辑；Figma 中新增设置样式是后续视觉目标，不能把设计截图当成已经逐像素实现的页面。
 - `plugins/revolution-brand/` 通过官方品牌 slots 替换 sidebar 和 hero 标识，并通过 ThemeRuntime 覆盖 light/dark token。
 - 应用图标为原创 R/V 联字：黑色底、米白 R、荧光绿 V。人物图像用于会话空状态。
@@ -70,7 +70,7 @@ smoke 测试启动全新临时 profile，验证内置服务的 HTTP 鉴权握手
 - 只用内置 `GITHUB_TOKEN`，发布 job 才获得 `contents: write`。不需要 API Key、COS、Vercel 或自建服务器。
 - PR 不进行昂贵的多平台打包；并发检查自动取消旧任务。
 
-启用流程：将这些文件和 `apps/revolution/package-lock.json` 提交到 GitHub。在 Actions 中手动运行一次桌面构建。准备发布时，将应用版本改为对应版本并推送 `revolution-v0.1.0` 这类 tag。CI/CD 文件已在本地实现；未推送本次工作，也没有声称远端 Actions 已跑通。Windows/Linux 需由对应 Runner 验证。
+操作步骤与免费边界见 [CI/CD 教程](docs/knowledge/01-ci-cd.md)。分支 CI 自动检查；手动构建生成三平台临时安装包；匹配版本的 tag 才建立草稿 Release。远端运行状态以 GitHub Actions 为准，不能仅凭 YAML 存在就声称已通过。Windows/Linux 需由对应 Runner 验证。
 
 如果仓库保持私有，请在 GitHub Billing 中设置付费用量预算，避免额度耗尽后继续计费。公开仓库标准 Runner 可作为接近零成本的首选方案。Artifacts 只保留三天，正式安装包放 Releases。
 

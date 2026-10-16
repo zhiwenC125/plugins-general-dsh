@@ -21,6 +21,8 @@ CI 是每次提交的自动检查。CD 在本项目是自动打包并准备草�
 
 手动运行不会建立 Release。若构建失败，先看第一个红色 step，不要靠重新运行掩盖依赖或打包错误。
 
+在尚未合并默认分支、没有 Run workflow 按钮时，也可显式推送到 `codex/release-preview/任意名称` 分支触发预览构建。普通 codex 分支只跑轻量 CI；preview 分支会跑三平台打包，但不建立 Release。
+
 ## 发布一个版本
 
 先修改 `apps/revolution/package.json` 的 version，再用 `npm --prefix apps/revolution install --package-lock-only --install-links` 同步锁文件。检查、提交、审核并合并。以下例子假定版本确实为 0.1.1：
