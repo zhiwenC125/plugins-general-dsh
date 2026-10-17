@@ -1,0 +1,49 @@
+name: "内测体验反馈"
+description: "报告使用问题、交互困惑或建议"
+title: "[体验] 简述任务或问题"
+body:
+  - type: markdown
+    attributes:
+      value: "感谢参与 Revolution 内测。这里公开可见；只提供脱敏的步骤和截图，不上传 API Key 或私人会话。"
+  - type: input
+    id: environment
+    attributes:
+      label: 应用版本 / 系统与架构 / 提供商与模型名
+      description: "只填提供商和模型名称，不填 Key、自定义私有地址。"
+    validations:
+      required: true
+  - type: dropdown
+    id: task
+    attributes:
+      label: 体验环节
+      options:
+        - 配置 API 和首次对话
+        - Workflow 发起与观察
+        - 子 Agent 与产物查看
+        - 导出清单
+        - 重启与历史会话
+        - 其他界面体验
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: 目标、复现步骤、预期与实际结果
+      description: "区分应用问题、模型输出问题及网络问题；不确定也可以说明。"
+    validations:
+      required: true
+  - type: input
+    id: rating
+    attributes:
+      label: 完成任务所需时间 / 体验评分（1–5）
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: 最希望改进的一件事
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 提交前检查
+      options:
+        - label: "内容已脱敏，不包含凭据、私人文件或授权 URL。"
+          required: true

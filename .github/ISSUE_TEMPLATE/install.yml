@@ -1,0 +1,49 @@
+name: "安装 / 启动失败"
+description: "报告内测包无法下载、安装或启动（请勿上传凭据）"
+title: "[安装] 简述现象"
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: "这是公开 Issue。不要上传 API Key、授权 URL、完整配置、私人会话或未经检查的日志。若安全软件提示恶意内容，请停止运行。"
+  - type: input
+    id: version
+    attributes:
+      label: 应用版本与安装包文件名
+      placeholder: "0.1.1 / Revolution-0.1.1-arm64.dmg"
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: 系统版本与架构
+      placeholder: "macOS 版本 / Apple Silicon；Windows 版本 / x64；Linux 发行版 / x64"
+    validations:
+      required: true
+  - type: dropdown
+    id: stage
+    attributes:
+      label: 卡在哪一步
+      options:
+        - 下载或校验
+        - 打开安装包
+        - 安装或复制应用
+        - 首次启动安全提示
+        - 应用打开后无法加载
+        - 配置模型后无法使用
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 操作步骤、完整报错与预期
+      description: "截图先遮盖姓名、路径、账号、Key 和 URL token。注明 SHA256 是否匹配。"
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 提交前检查
+      options:
+        - label: "我已检查内容，不包含凭据或私人数据。"
+          required: true

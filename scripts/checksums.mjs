@@ -1,7 +1,9 @@
 import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { readdir, writeFile } from 'node:fs/promises';
-const dir = new URL('../dist/', import.meta.url);
+import { resolve, sep } from 'node:path';
+import { pathToFileURL } from 'node:url';
+const dir = process.argv[2] ? pathToFileURL(resolve(process.argv[2]) + sep) : new URL('../dist/', import.meta.url);
 const names = (await readdir(dir)).filter(n => /\.(dmg|zip|exe|AppImage)$/.test(n)).sort();
 if (!names.length) throw new Error('No installers found');
 const lines = [];

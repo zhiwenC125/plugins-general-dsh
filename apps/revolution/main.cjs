@@ -19,6 +19,7 @@ else {
       window.webContents.on('will-navigate', (event, target) => { if (new URL(target).origin !== origin) { event.preventDefault(); if (/^https?:/.test(target)) shell.openExternal(target); } });
       window.on('page-title-updated', event => event.preventDefault());
       await window.loadURL(url);
+      if (process.env.REVOLUTION_SMOKE_TEST === '1') console.log('Revolution desktop ready');
       backend.once('exit', code => { if (!app.isQuitting) { dialog.showErrorBox('Revolution backend stopped', `DSH exited (${code}). Restart Revolution to reconnect.`); app.quit(); } });
     } catch (error) { dialog.showErrorBox('Revolution startup failed', error.message); app.quit(); }
   });

@@ -21,6 +21,7 @@ jobs:
       - run: npm run build && npm run build:brand
       - run: node --check plugins/workflow-studio/lib/client.js && node --check plugins/revolution-brand/lib/client.js
       - run: node --check apps/revolution/main.cjs && node --check apps/revolution/runtime.mjs
+      - run: node --check apps/revolution/after-pack.cjs && node --check scripts/verify-mac.mjs && node --check scripts/smoke-desktop-mac.mjs
       - run: npm run test:workflow
       - run: node scripts/check-release.mjs
       - run: git diff --exit-code -- plugins/workflow-studio/lib/client.js plugins/revolution-brand/lib/client.js
