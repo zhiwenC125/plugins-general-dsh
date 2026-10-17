@@ -81,4 +81,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.ref_name }}
-        run: gh release create "$RELEASE_TAG" release-assets/* --draft --prerelease --title "Revolution $RELEASE_TAG Preview" --notes "Internal testing preview. macOS is ad-hoc signed only: no Developer ID or Apple notarization; Gatekeeper may block downloaded copies. Windows is unsigned. Do not disable system-wide security protections. Configure your own API key in Settings → Models; provider usage may incur charges. See docs/BETA_TESTING.md in this tag for installation, privacy and feedback instructions."
+        run: >-
+          gh release create "$RELEASE_TAG" release-assets/* --draft --prerelease
+          --title "Revolution $RELEASE_TAG Preview"
+          --notes "Internal testing preview. macOS is ad-hoc signed only: no Developer ID or Apple notarization; Gatekeeper may block downloaded copies. Windows is unsigned. Do not disable system-wide security protections. Configure your own API key in Settings → Models; provider usage may incur charges. See docs/BETA_TESTING.md in this tag for installation, privacy and feedback instructions."
