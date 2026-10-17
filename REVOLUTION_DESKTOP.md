@@ -2,7 +2,9 @@
 
 ## 当前交付
 
-Revolution v0.1.0 使用 npm 发布的 DeepSeek Harness **0.2.1-alpha.5**，包含完整 Web UI、Workflow Studio 和 Revolution Brand。它不依赖本仓库忽略的 `deepseek-harness/` 或 `.dsh-smoke/`。现有上游检出仍然是 alpha4，留作旧版本对照。
+Revolution v0.1.1 内测候选使用 npm 发布的 DeepSeek Harness **0.2.1-alpha.5**，包含完整 Web UI、Workflow Studio 和 Revolution Brand。它不依赖本仓库忽略的 `deepseek-harness/` 或 `.dsh-smoke/`。现有上游检出仍然是 alpha4，留作旧版本对照。
+
+0.1.0 macOS 安装包存在包内签名完整性问题，不再推荐。0.1.1 改用 ad-hoc 签名和签名/窗口加载检查，但没有 Developer ID 或 Apple 公证，仍可能被 Gatekeeper 拦截。发放与人工验收见 [内测指南](docs/BETA_TESTING.md)。
 
 默认数据位于 `~/.revolution`，通过 `REVOLUTION_HOME` 可指定其他目录。首次启动创建专用 `revolution` profile；原有 DSH 设置不会被复制。API、模型、插件、权限、会话与定时任务继续由 DSH 原生服务管理。
 
@@ -41,7 +43,7 @@ API Key 通过 DSH 凭据服务保存；不填入仓库、构建参数或 GitHub
 - Figma：[Revolution UI](https://www.figma.com/design/J3MYi2TF0UFcnzS86kZ2u3)。最新 `02 · Revolution / Interactive v0.1` 包含十八个核心流程页面、八个主组件与点击跳转。原页保留早期探索。
 - 实际应用复用 DSH 原生布局与设置逻辑；Figma 中新增设置样式是后续视觉目标，不能把设计截图当成已经逐像素实现的页面。
 - `plugins/revolution-brand/` 通过官方品牌 slots 替换 sidebar 和 hero 标识，并通过 ThemeRuntime 覆盖 light/dark token。
-- 应用图标为原创 R/V 联字：黑色底、米白 R、荧光绿 V。人物图像用于会话空状态。
+- 应用图标为原创 R/V 联字：黑色底、米白 R、荧光绿 V。会话空状态使用原创光影拳头矢量。
 - Workflow 增加运行概览、文件类型标签、键盘可操作导出弹窗和减少动效支持。
 
 ## 验证

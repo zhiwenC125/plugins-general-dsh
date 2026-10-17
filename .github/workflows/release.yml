@@ -34,8 +34,14 @@ jobs:
         run: npm --prefix apps/revolution ci --install-links
       - name: Prepare icon
         run: node scripts/prepare-desktop.mjs
-      - name: Package unsigned preview
+      - name: Package internal preview (macOS ad-hoc, not notarized)
         run: npm --prefix apps/revolution run package
+      - name: Verify macOS application signatures
+        if: runner.os == 'macOS'
+        run: node scripts/verify-mac.mjs
+      - name: Verify macOS desktop launch and page load
+        if: runner.os == 'macOS'
+        run: node scripts/smoke-desktop-mac.mjs
       - name: Verify packaged runtime on Linux
         if: runner.os == 'Linux'
         run: node scripts/smoke-runtime.mjs dist/linux-unpacked/resources/app/runtime.mjs
@@ -75,4 +81,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.ref_name }}
-        run: gh release create "$RELEASE_TAG" release-assets/* --draft --title "Revolution $RELEASE_TAG" --notes "Unsigned preview. Runtime and settings are stored locally. Configure your provider and API key in Settings → Models. macOS/Windows signing is not enabled."
+        run: gh release create "$RELEASE_TAG" release-assets/* --draft --prerelease --title "Revolution $RELEASE_TAG Preview" --notes "Internal testing preview. macOS is ad-hoc signed only: no Developer ID or Apple notarization; Gatekeeper may block downloaded copies. Windows is unsigned. Do not disable system-wide security protections. Configure your own API key in Settings → Models; provider usage may incur charges. See docs/BETA_TESTING.md in this tag for installation, privacy and feedback instructions."

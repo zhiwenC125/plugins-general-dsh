@@ -41,6 +41,8 @@ Revolution 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-
 
 前往 [Releases](https://github.com/zhiwenC125/plugins-general-dsh/releases)，按设备选择安装包：
 
+> **内测提醒：** 0.1.0 macOS 包存在签名完整性问题，不再推荐使用。0.1.1 正在修复与验收；ad-hoc 签名不等于 Apple 公证。参与测试前请阅读 [内测发放与反馈指南](docs/BETA_TESTING.md)，不要绕过系统安全警告。
+
 | 系统 | 架构 | 文件 |
 | --- | --- | --- |
 | macOS | Apple Silicon / ARM64 | `.dmg` 或 `-arm64-mac.zip` |

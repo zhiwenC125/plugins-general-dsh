@@ -1,7 +1,7 @@
 {
   "name": "revolution-desktop",
   "productName": "Revolution",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Revolution workflow workspace powered by DeepSeek Harness",
   "author": "Revolution",
@@ -49,9 +49,10 @@
     "productName": "Revolution",
     "asar": false,
     "npmRebuild": false,
+    "afterPack": "./after-pack.cjs",
     "directories": { "output": "../../dist" },
     "files": ["main.cjs", "runtime.mjs", "icon.png", "package.json"],
-    "mac": { "target": ["dmg", "zip"], "category": "public.app-category.developer-tools", "identity": null, "icon": "icon.png" },
+    "mac": { "target": ["dmg", "zip"], "category": "public.app-category.developer-tools", "identity": "-", "timestamp": null, "hardenedRuntime": true, "entitlements": "entitlements.mac.plist", "entitlementsInherit": "entitlements.mac.plist", "binaries": ["Contents/Resources/app/node_modules/node/bin/node"], "icon": "icon.png" },
     "win": { "target": ["nsis"], "icon": "icon.png", "signAndEditExecutable": false },
     "linux": { "target": ["AppImage"], "category": "Development", "icon": "icon.png" },
     "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true }
