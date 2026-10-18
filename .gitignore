@@ -18,3 +18,6 @@ deepseek-harness/
 dist/
 apps/revolution/icon.png
 .revolution/
+
+# Local-only workflow compatibility notes
+WORKFLOW_COMPATIBILITY.md
