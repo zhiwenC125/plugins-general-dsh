@@ -85,7 +85,8 @@ export async function main(argv = process.argv.slice(2), env = process.env) {
   if (['sync-docs', 'sync-all'].includes(command) && !folderToken) throw new Error('Personal Feishu ordinary-document folder token is required');
   if (['sync-wiki', 'sync-all'].includes(command) && !spaceId) throw new Error('Personal Feishu Wiki space ID is required');
   if (command === 'sync-all' && !vault) throw new Error('Obsidian vault path is required');
-  const client = new FeishuClient({ token: env.FEISHU_USER_ACCESS_TOKEN });
+  if (!env.FEISHU_USER_ACCESS_TOKEN && !options.dryRun) throw new Error('FEISHU_USER_ACCESS_TOKEN is required for Feishu read or write');
+  const client = env.FEISHU_USER_ACCESS_TOKEN ? new FeishuClient({ token: env.FEISHU_USER_ACCESS_TOKEN }) : null;
   const feishuOptions = { folderToken, spaceId, parentNodeToken, dryRun: options.dryRun, persist };
   if (command === 'pull-docs' || command === 'pull-wiki') {
     return JSON.stringify(await pullFeishu(entries, command.endsWith('docs') ? 'docs' : 'wiki', state, client, feishuOptions), null, 2);
