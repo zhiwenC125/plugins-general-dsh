@@ -17,6 +17,16 @@ test('doctor reports configuration without exposing the user token', async () =>
   assert.doesNotMatch(output, /secret-token|folder-id/);
 });
 
+test('first Feishu dry-runs need destination IDs but no user token', async t => {
+  const { root } = await fixture(t);
+  const common = ['--repo', root, '--state', join(root, 'state.json'), '--dry-run'];
+  const docs = JSON.parse(await knowledgeCli(['sync-docs', '--folder-token', 'personal-folder', ...common], {}));
+  const wiki = JSON.parse(await knowledgeCli(['sync-wiki', '--space-id', 'personal-space', ...common], {}));
+  assert.deepEqual(docs.map(item => item.action), ['create', 'create']);
+  assert.deepEqual(wiki.map(item => item.action), ['create', 'create']);
+  await assert.rejects(knowledgeCli(['sync-docs', '--folder-token', 'personal-folder', ...common.filter(value => value !== '--dry-run')], {}), /FEISHU_USER_ACCESS_TOKEN/);
+});
+
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), 'revolution-kb-'));
   t.after(() => rm(root, { recursive: true, force: true }));
