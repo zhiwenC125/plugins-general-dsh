@@ -11,3 +11,7 @@
 使用方法：读一篇，做一次练习，记录自己的结果、失败原因和下一次要验证的假设。不要把 API Key、会话日志或私人文件上传到这个公开仓库。
 
 实际邀请用户测试见 [内测发放与反馈指南](../BETA_TESTING.md)，包含分批发放、平台验收、邀请函和隐私要求。
+
+下一阶段的知识库结构、个人飞书普通文档与 Wiki 双形态试验、飞书/微信机器人设计见 [实施方案](../REVOLUTION-KNOWLEDGE-AND-BOTS.md)。
+
+这五篇文章已经加入 [Revolution 并列知识库清单](../../knowledge/catalog.json)，可使用 [同步命令](../../knowledge/README.md) 镜像到 Obsidian、个人飞书普通文档和个人飞书 Wiki。
