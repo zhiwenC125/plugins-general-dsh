@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   pull_request:
   push:
-    branches: [main, 'codex/**']
+    branches: [main]
 permissions:
   contents: read
 concurrency:
@@ -15,15 +15,38 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: npm run build && npm run build:brand
-      - run: node --check plugins/workflow-studio/lib/client.js && node --check plugins/revolution-brand/lib/client.js
-      - run: node --check apps/revolution/main.cjs && node --check apps/revolution/runtime.mjs
-      - run: node --check apps/revolution/after-pack.cjs && node --check scripts/verify-mac.mjs && node --check scripts/smoke-desktop-mac.mjs
-      - run: npm run test:workflow
-      - run: npm run kb -- check && npm run test:knowledge
-      - run: npm run test:bot
-      - run: node scripts/check-release.mjs
-      - run: git diff --exit-code -- plugins/workflow-studio/lib/client.js plugins/revolution-brand/lib/client.js
+      - name: Select checks from changed files
+        id: impact
+        env:
+          CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          CI_HEAD_SHA: ${{ github.sha }}
+        run: node scripts/ci-impact.mjs
+      - name: Build and verify plugins
+        if: steps.impact.outputs.plugins == 'true'
+        run: |
+          npm run build && npm run build:brand
+          node --check plugins/workflow-studio/lib/client.js
+          node --check plugins/revolution-brand/lib/client.js
+          npm run test:workflow
+          git diff --exit-code -- plugins/workflow-studio/lib/client.js plugins/revolution-brand/lib/client.js
+      - name: Check knowledge library
+        if: steps.impact.outputs.knowledge == 'true'
+        run: npm run kb -- check && npm run test:knowledge
+      - name: Check bot routing
+        if: steps.impact.outputs.bot == 'true'
+        run: npm run test:bot
+      - name: Check desktop and release configuration
+        if: steps.impact.outputs.desktop == 'true'
+        run: |
+          node --check apps/revolution/main.cjs
+          node --check apps/revolution/runtime.mjs
+          node --check apps/revolution/after-pack.cjs
+          node --check scripts/verify-mac.mjs
+          node --check scripts/smoke-desktop-mac.mjs
+          node --test scripts/ci-impact.test.mjs
+          node scripts/check-release.mjs

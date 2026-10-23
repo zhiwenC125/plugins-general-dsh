@@ -1,6 +1,6 @@
 # CI/CD：从一次改动到桌面安装包
 
-最后更新：2026-10-17。本篇包含本项目的配置说明，以及首次发布 `revolution-v0.1.0` 的实操复盘。
+最后更新：2026-10-24。本篇包含本项目的配置说明，以及首次发布 `revolution-v0.1.0` 的实操复盘。
 
 ## 先理解三个词
 
@@ -8,9 +8,9 @@ CI 是每次提交的自动检查。CD 在本项目是自动打包并准备草�
 
 ## 本仓库已实现
 
-`.github/workflows/ci.yml`：PR、main、codex 分支提交或手动触发；Node 24 构建两个插件、语法检查、Workflow 测试、生成文件一致性与依赖版本检查。它不调用付费模型。
+`.github/workflows/ci.yml`：PR、main 分支提交或手动触发；Node 24 按变更路径选运行插件、知识库、机器人与桌面版本检查。未知改动或无法确定差异时运行全套检查。codex 分支创建 PR 后执行 CI，避免同一提交的分支 push 与 PR 双重运行。它不调用付费模型，也不在用户电脑上运行。
 
-`.github/workflows/release.yml`：手动或 `revolution-v*` 标签触发；macOS ARM64、Windows x64、Linux x64 三个平台分别锁定安装依赖、准备品牌、打包、启动独立 DSH 后端检查 HTTP 与插件注册、计算 SHA256、上传安装包。标签构建全部通过才建立 **draft Release**。这不是完整的 GUI E2E，也未验证真实模型推理。
+`.github/workflows/release.yml`：手动、`codex/release-preview/**` 分支或 `revolution-v*` 标签触发；GitHub 托管的 macOS ARM64、Windows x64、Linux x64 runner 分别锁定安装依赖、准备品牌、完整打包、启动独立 DSH 后端检查 HTTP 与插件注册、计算 SHA256、上传安装包。npm 下载缓存可跨运行复用，但每个平台的安装包仍完整生成。标签构建全部通过才建立 **draft Release**。这不是完整的 GUI E2E，也未验证真实模型推理。
 
 安全边界：普通任务 `contents: read`，只有发布 job 能写 Release；不使用 `pull_request_target`，不向 PR 暴露发布凭据。当前不需要个人 PAT、模型 Key 或签名密钥。绝不能把自己的 API Key 放入 YAML、安装包或 Git。
 

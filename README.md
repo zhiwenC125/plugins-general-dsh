@@ -43,6 +43,8 @@ Revolution 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-
 
 > **内测提醒：** 当前源码版本 0.1.2 已升级 DSH 0.2.1-rc.2；Releases 中的旧安装包不自动包含这次升级。0.1.0 macOS 包存在签名完整性问题，不再推荐使用；ad-hoc 签名不等于 Apple 公证。参与测试前请阅读 [内测发放与反馈指南](docs/BETA_TESTING.md)。
 
+个人飞书知识库、飞书/微信机器人所需的账号操作见 [接入清单](docs/CONNECTOR-SETUP.md)。
+
 | 系统 | 架构 | 文件 |
 | --- | --- | --- |
 | macOS | Apple Silicon / ARM64 | `.dmg` 或 `-arm64-mac.zip` |

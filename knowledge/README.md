@@ -20,6 +20,8 @@ npm run kb -- export --out '/path/to/new-portable-bundle'
 
 ## 个人飞书连接
 
+账号持有人可按 [个人飞书与机器人接入清单](../docs/CONNECTOR-SETUP.md) 完成应用、文档目录、Wiki 空间和授权准备。
+
 先确认个人飞书账号可创建或授权开放平台应用，并取得当前用户的 `user_access_token`、普通文档文件夹 token 和 Wiki 空间 ID。**不要把令牌写入命令、仓库或本文件**；通过进程环境或系统密钥管理器注入。CLI 不存令牌，只在 `~/.revolution/knowledge/state.json` 记录文档 ID、URL 与上次同步哈希。
 
 ```sh
