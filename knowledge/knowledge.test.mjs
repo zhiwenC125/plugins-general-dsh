@@ -5,6 +5,63 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { loadCatalog, readState, syncObsidian, pullObsidian, searchEntries } from './core.mjs';
 import { FeishuClient, syncFeishu, pullFeishu, markdownBlocks, readMarkdownBlocks } from './feishu.mjs';
+import { main as knowledgeCli } from './cli.mjs';
+
+test('doctor reports configuration without exposing the user token', async () => {
+  const output = await knowledgeCli(['doctor'], {
+    FEISHU_USER_ACCESS_TOKEN: 'secret-token',
+    FEISHU_DOC_FOLDER_TOKEN: 'folder-id',
+  });
+  assert.match(output, /FEISHU_USER_ACCESS_TOKEN: configured/);
+  assert.match(output, /FEISHU_WIKI_SPACE_ID: missing/);
+  assert.doesNotMatch(output, /secret-token|folder-id/);
+});
+
+test('doctor rejects pasted commands and expired JWTs without exposing them', async () => {
+  const command = 'npm run kb -- sync-docs --dry-run';
+  const malformed = await knowledgeCli(['doctor'], { FEISHU_USER_ACCESS_TOKEN: command });
+  assert.match(malformed, /FEISHU_USER_ACCESS_TOKEN: invalid \(contains whitespace or Bearer prefix\)/);
+  assert.doesNotMatch(malformed, /npm run/);
+
+  const payload = Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) - 60 })).toString('base64url');
+  const expired = await knowledgeCli(['doctor'], { FEISHU_USER_ACCESS_TOKEN: `eyJhbGciOiJFUzI1NiJ9.${payload}.signature` });
+  assert.match(expired, /FEISHU_USER_ACCESS_TOKEN: invalid \(expired\)/);
+});
+
+test('blank Markdown lines become valid Feishu text elements', () => {
+  const blocks = markdownBlocks('one\n\ntwo\n');
+  assert.deepEqual(blocks[1].text.elements, [{ text_run: { content: '' } }]);
+  assert.deepEqual(blocks[3].text.elements, [{ text_run: { content: '' } }]);
+  assert.equal(readMarkdownBlocks(blocks), 'one\n\ntwo\n');
+});
+
+test('Feishu client backs off only for transient request frequency limits', async () => {
+  let calls = 0;
+  const delays = [];
+  const client = new FeishuClient({
+    token: 'test-user-token',
+    sleepImpl: async ms => { delays.push(ms); },
+    fetchImpl: async () => {
+      calls++;
+      return calls < 3
+        ? { ok: false, status: 400, json: async () => ({ code: 99991400, msg: 'request trigger frequency limit' }) }
+        : { ok: true, status: 200, json: async () => ({ code: 0, data: { items: [] } }) };
+    },
+  });
+  assert.deepEqual(await client.request('GET', '/test'), { items: [] });
+  assert.equal(calls, 3);
+  assert.deepEqual(delays, [500, 1000]);
+});
+
+test('first Feishu dry-runs need destination IDs but no user token', async t => {
+  const { root } = await fixture(t);
+  const common = ['--repo', root, '--state', join(root, 'state.json'), '--dry-run'];
+  const docs = JSON.parse(await knowledgeCli(['sync-docs', '--folder-token', 'personal-folder', ...common], {}));
+  const wiki = JSON.parse(await knowledgeCli(['sync-wiki', '--space-id', 'personal-space', ...common], {}));
+  assert.deepEqual(docs.map(item => item.action), ['create', 'create']);
+  assert.deepEqual(wiki.map(item => item.action), ['create', 'create']);
+  await assert.rejects(knowledgeCli(['sync-docs', '--folder-token', 'personal-folder', ...common.filter(value => value !== '--dry-run')], {}), /FEISHU_USER_ACCESS_TOKEN/);
+});
 
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), 'revolution-kb-'));
@@ -25,10 +82,15 @@ function fakeFeishu() {
   const calls = [];
   let next = 1;
   const fetchImpl = async (url, init) => {
-    const path = new URL(url).pathname.replace('/open-apis', '');
+    const requestUrl = new URL(url);
+    const path = requestUrl.pathname.replace('/open-apis', '');
     const body = init.body ? JSON.parse(init.body) : undefined;
     calls.push({ method: init.method, path, body });
     assert.equal(init.headers.Authorization, 'Bearer test-user-token');
+    if (path.includes('/children') && ['POST', 'DELETE'].includes(init.method)) {
+      assert.equal(requestUrl.searchParams.get('document_revision_id'), '-1');
+      assert.equal(body.document_revision_id, undefined);
+    }
     let data = {};
     if (init.method === 'POST' && path === '/docx/v1/documents') {
       const id = `doc-${next++}`; docs.set(id, []); data = { document: { document_id: id } };

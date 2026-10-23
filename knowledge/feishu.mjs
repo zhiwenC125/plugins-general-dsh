@@ -3,26 +3,34 @@ import { writeFile, rename } from 'node:fs/promises';
 
 const API = 'https://open.feishu.cn/open-apis';
 const BATCH = 20;
+const RATE_LIMIT_RETRIES = 4;
 
 export class FeishuClient {
-  constructor({ token, fetchImpl = fetch, apiBase = API }) {
+  constructor({ token, fetchImpl = fetch, apiBase = API, sleepImpl = ms => new Promise(resolve => setTimeout(resolve, ms)) }) {
     if (!token) throw new Error('FEISHU_USER_ACCESS_TOKEN is required');
     this.token = token;
     this.fetch = fetchImpl;
     this.apiBase = apiBase;
+    this.sleep = sleepImpl;
   }
 
   async request(method, path, body) {
-    const response = await this.fetch(`${this.apiBase}${path}`, {
-      method,
-      headers: { Authorization: `Bearer ${this.token}`, 'Content-Type': 'application/json; charset=utf-8' },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    });
-    const result = await response.json().catch(() => null);
-    if (!response.ok || !result || result.code !== 0) {
-      throw new Error(`Feishu ${method} ${path} failed (${response.status}, code ${result?.code ?? 'unknown'}): ${result?.msg ?? 'invalid response'}`);
+    for (let attempt = 0; ; attempt++) {
+      const response = await this.fetch(`${this.apiBase}${path}`, {
+        method,
+        headers: { Authorization: `Bearer ${this.token}`, 'Content-Type': 'application/json; charset=utf-8' },
+        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      });
+      const result = await response.json().catch(() => null);
+      if (result?.code === 99991400 && attempt < RATE_LIMIT_RETRIES) {
+        await this.sleep(500 * 2 ** attempt);
+        continue;
+      }
+      if (!response.ok || !result || result.code !== 0) {
+        throw new Error(`Feishu ${method} ${path} failed (${response.status}, code ${result?.code ?? 'unknown'}): ${result?.msg ?? 'invalid response'}`);
+      }
+      return result.data ?? {};
     }
-    return result.data ?? {};
   }
 
   async createDocument(title, folderToken) {
@@ -59,13 +67,13 @@ export class FeishuClient {
   async replaceChildren(documentId, oldCount, content) {
     const base = `/docx/v1/documents/${encodeURIComponent(documentId)}/blocks/${encodeURIComponent(documentId)}/children`;
     for (let end = oldCount; end > 0; end -= BATCH) {
-      await this.request('DELETE', `${base}/batch_delete`, {
-        start_index: Math.max(0, end - BATCH), end_index: end, document_revision_id: -1,
+      await this.request('DELETE', `${base}/batch_delete?document_revision_id=-1`, {
+        start_index: Math.max(0, end - BATCH), end_index: end,
       });
     }
     const blocks = markdownBlocks(content);
     for (let index = 0; index < blocks.length; index += BATCH) {
-      await this.request('POST', base, { index, children: blocks.slice(index, index + BATCH), document_revision_id: -1 });
+      await this.request('POST', `${base}?document_revision_id=-1`, { index, children: blocks.slice(index, index + BATCH) });
     }
   }
 }
@@ -75,7 +83,7 @@ export function markdownBlocks(content) {
   for (const line of lines) if (line.length > 100000) throw new Error('Knowledge line exceeds Feishu text block limit');
   return lines.map(line => ({
     block_type: 2,
-    text: { elements: line ? [{ text_run: { content: line } }] : [] },
+    text: { elements: [{ text_run: { content: line } }] },
   }));
 }
 
@@ -102,6 +110,7 @@ export async function syncFeishu(entries, mode, state, client, options = {}) {
   // Read all existing remote documents before writing any content.
   for (const entry of entries) {
     const previous = state.items[entry.id]?.[key];
+    if (previous && !client) throw new Error('FEISHU_USER_ACCESS_TOKEN is required to check existing Feishu documents');
     const blocks = previous ? await client.children(previous.documentId) : [];
     if (previous) {
       const remote = readMarkdownBlocks(blocks);
@@ -141,6 +150,7 @@ export async function pullFeishu(entries, mode, state, client, options = {}) {
   for (const entry of entries) {
     const previous = state.items[entry.id]?.[key];
     if (!previous?.hash) { actions.push({ id: entry.id, action: 'unlinked' }); continue; }
+    if (!client) throw new Error('FEISHU_USER_ACCESS_TOKEN is required to read existing Feishu documents');
     const remote = readMarkdownBlocks(await client.children(previous.documentId));
     const remoteHash = digest(remote);
     if (remoteHash === previous.hash) { actions.push({ id: entry.id, action: 'current' }); continue; }

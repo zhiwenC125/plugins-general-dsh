@@ -8,6 +8,7 @@
 
 ```sh
 npm run kb -- check
+npm run kb -- doctor
 npm run kb -- search workflow
 npm run kb -- status
 npm run kb -- sync-obsidian --vault '/path/to/Obsidian-vault' --dry-run
@@ -36,7 +37,9 @@ npm run kb -- pull-docs
 npm run kb -- pull-wiki
 ```
 
-`sync-all` 先检查三个目标已有内容，再逐个写入。飞书普通文档与 Wiki 各创建一份完整文章，按原 Markdown 行写成飞书文本块，确保可读与可还原；目前不会把 Markdown 标题、表格转成飞书原生富文本样式。同步前会读回已有块并比对上次发布哈希；新增或手工编辑过的富文本块会触发冲突。真实飞书 API 写入仍需个人账号授权验收。[创建云文档](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/create)、[创建文档块](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document-block/create)、[创建 Wiki 节点](https://open.feishu.cn/document/server-docs/docs/wiki-v2/space-node/create)
+`sync-all` 先检查三个目标已有内容，再逐个写入。飞书普通文档与 Wiki 各创建一份完整文章，按原 Markdown 行写成飞书文本块，确保可读与可还原；目前不会把 Markdown 标题、表格转成飞书原生富文本样式。同步前会读回已有块并比对上次发布哈希；新增或手工编辑过的富文本块会触发冲突。2026-10-24，个人飞书普通文档和 Wiki 各 5 篇均已通过真实 API 创建、写入和读回；与 Obsidian 一同显示 `recorded-current`，两条飞书 dry-run 均显示 5 个 `current`。飞书短时限流 `99991400` 会有限次指数退避重试。[创建云文档](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/create)、[创建文档块](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document-block/create)、[创建 Wiki 节点](https://open.feishu.cn/document/server-docs/docs/wiki-v2/space-node/create)
+
+`doctor` 只显示三个必需环境变量是否已配置，不显示值。首次 `sync-docs --dry-run` / `sync-wiki --dry-run` 只规划待创建文章，不发起远端创建请求，因此 dry-run 成功不代表 API 权限已验证；真正的验收是个人试验目录中的首次同步和读回。终端中失败时会打印 `Feishu ... failed (HTTP 状态, code 数字): 错误说明`，只反馈错误码即可。
 
 `pull-docs`、`pull-wiki` 和 `pull-obsidian` 每次只从一个目标拉取到 GitHub 工作树。确认差异后再运行另外两个 `sync` 命令，并提交 Git；不要同时在三个地方编辑同一篇后强制覆盖。飞书 API 操作可能部分成功；状态文件会逐篇保存进度，重复执行可续传。离线 iCloud 同步也可能延迟，请在另一台设备打开前确认文件已下载。
 
