@@ -24,7 +24,7 @@ function argumentsFor(argv) {
 function help() {
   return `Revolution Knowledge: one article set across GitHub, Obsidian, Feishu Docs and Feishu Wiki.
 
-  check | search <term> | status | export --out <new-directory>
+  check | doctor | search <term> | status | export --out <new-directory>
   sync-obsidian --vault <vault> | pull-obsidian --vault <vault>
   sync-docs --folder-token <personal-folder-token> | pull-docs
   sync-wiki --space-id <personal-space-id> [--parent-node-token <token>] | pull-wiki
@@ -38,6 +38,12 @@ function help() {
 export async function main(argv = process.argv.slice(2), env = process.env) {
   const { command, options, positional } = argumentsFor(argv);
   if (command === 'help') return help();
+  if (command === 'doctor') {
+    const required = ['FEISHU_USER_ACCESS_TOKEN', 'FEISHU_DOC_FOLDER_TOKEN', 'FEISHU_WIKI_SPACE_ID'];
+    const lines = required.map(key => `${key}: ${env[key] ? 'configured' : 'missing'}`);
+    lines.push('The first dry-run checks the local plan only. Real Feishu permission checks require sync-docs and sync-wiki to create and read back test documents.');
+    return lines.join('\n');
+  }
   const root = options.repo ? resolve(options.repo) : REPO_ROOT;
   const entries = await loadCatalog(root);
   if (command === 'check') return `${entries.length} knowledge articles validated\n` + entries.map(e => `${e.id}  ${e.hash.slice(0, 12)}  ${e.source}`).join('\n');

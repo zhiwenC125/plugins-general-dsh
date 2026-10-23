@@ -5,6 +5,17 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { loadCatalog, readState, syncObsidian, pullObsidian, searchEntries } from './core.mjs';
 import { FeishuClient, syncFeishu, pullFeishu, markdownBlocks, readMarkdownBlocks } from './feishu.mjs';
+import { main as knowledgeCli } from './cli.mjs';
+
+test('doctor reports configuration without exposing the user token', async () => {
+  const output = await knowledgeCli(['doctor'], {
+    FEISHU_USER_ACCESS_TOKEN: 'secret-token',
+    FEISHU_DOC_FOLDER_TOKEN: 'folder-id',
+  });
+  assert.match(output, /FEISHU_USER_ACCESS_TOKEN: configured/);
+  assert.match(output, /FEISHU_WIKI_SPACE_ID: missing/);
+  assert.doesNotMatch(output, /secret-token|folder-id/);
+});
 
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), 'revolution-kb-'));
