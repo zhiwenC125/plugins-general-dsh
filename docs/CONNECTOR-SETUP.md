@@ -8,7 +8,7 @@
 2. 在个人飞书云文档创建专用文件夹，例如 `Revolution Knowledge`。再打开「云文档 → 知识库 → 新建知识库」，创建同名的飞书 Wiki 知识库；这里指飞书云文档的 Wiki，**不是飞书 aily 的知识空间**。[飞书官方知识库操作](https://www.feishu.cn/hc/zh-CN/articles/807073676453-%E9%A3%9E%E4%B9%A6%E7%9F%A5%E8%AF%86%E5%BA%93-%E6%9E%84%E5%BB%BA%E4%BC%81%E4%B8%9A%E4%B8%8E%E4%B8%AA%E4%BA%BA%E7%9A%84%E4%B8%93%E5%B1%9E%E6%99%BA%E5%BA%93) 两处都用于保存**同一批完整文章**。记下文件夹 URL 和 Wiki 知识库设置页 URL；现有 CLI 从中取得 folder token 和 space ID，但不要把链接或 ID 放进公开 issue。
 3. 在应用「权限管理」中，按[创建云文档](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document/create)、[读写文档块](https://open.feishu.cn/document/server-docs/docs/docs/docx-v1/document-block/create)、[创建 Wiki 节点](https://open.feishu.cn/document/server-docs/docs/wiki-v2/space-node/create)各接口页显示的**当前用户身份**权限申请最小范围。还需要目标文件夹和知识空间本身允许该用户编辑；API 权限与资源权限是两层。权限名以控制台和接口页实时显示为准。
 4. 在应用「安全设置」登记 OAuth 回调地址，并用该**个人账号**完成用户授权，取得临时 `user_access_token`。当前 CLI 只读取进程环境变量，尚未实现 OAuth 登录与自动刷新；可先在飞书官方 API 调试台验证授权。令牌到期后需重新获取。[飞书访问凭证与权限错误说明](https://open.feishu.cn/document/server-docs/api-call-guide/generic-error-code)
-5. 在自己电脑的终端或受保护的本地密钥管理器配置 `FEISHU_USER_ACCESS_TOKEN`、`FEISHU_DOC_FOLDER_TOKEN`、`FEISHU_WIKI_SPACE_ID`，再按下方命令查看本地配置与试运行结果。首次 dry-run 只列出待创建的文章，**不验证飞书 API 权限**；确认是个人试验目录后，执行真实同步，程序会读回核对。**不要通过聊天、GitHub、截图、录屏或日志发送 App Secret、令牌、回调密钥。**
+5. 在本机配置 `FEISHU_DOC_FOLDER_TOKEN` 与 `FEISHU_WIKI_SPACE_ID` 后可先运行 dry-run；首次未关联远端文档时无需用户令牌。真实同步前还须通过个人账号授权取得 `FEISHU_USER_ACCESS_TOKEN`。首次 dry-run 只列出待创建的文章，**不验证飞书 API 权限**；确认是个人试验目录后，执行真实同步，程序会读回核对。**不要通过聊天、GitHub、截图、录屏或日志发送 App Secret、令牌、回调密钥。**
 
 在电脑终端进入本仓库目录后运行：
 
@@ -18,9 +18,9 @@ npm run kb -- sync-docs --dry-run
 npm run kb -- sync-wiki --dry-run
 ```
 
-`doctor` 显示 `configured` / `missing`，不显示密钥值。你目前的三项都是 `missing`：两条 dry-run 的报错属于**本机缺少目标 ID**，还没有请求飞书，因此没有飞书 API 错误码。先在个人飞书创建普通文档文件夹与 Wiki 知识库，分别从它们的分享链接或设置页取得文件夹 token 与 Wiki space ID，并在本机配置；再完成个人用户授权，取得临时 `user_access_token`。不要把完整链接、ID 或令牌贴到聊天或公开仓库。配置后，dry-run 会列出 5 篇的 `create` / `current` / `update`；首次真实同步可分别运行 `npm run kb -- sync-docs`、`npm run kb -- sync-wiki`，程序会创建文档并读回。只有这一步才会实际验证 API 与资源权限。
+`doctor` 显示 `configured` / `missing`，不显示值。个人账号的普通文档文件夹与 Wiki 空间已创建，两个目标 ID 已确认符合飞书 URL 格式。本地 dry-run 均规划创建 5 篇；此时无需 `FEISHU_USER_ACCESS_TOKEN`，但如已有远端关联记录，dry-run 为核对远端内容仍需要它。首次真实同步可分别运行 `npm run kb -- sync-docs`、`npm run kb -- sync-wiki`，程序会创建文档并读回。只有这一步才会实际验证 API 与资源权限。目标 ID 与令牌只放在本机，不写入仓库。
 
-只需向我反馈非密钥结果：个人账号能否创建 Wiki 空间、`doctor` 三项是否都为 `configured`、上述两条 dry-run 的状态或错误码。个人账号创建应用已确认可用；真实飞书 API 仍待首次同步验收，代码当前仅通过模拟 API 测试。
+只需向我反馈非密钥结果：个人用户授权是否成功、真实同步的状态或错误码。个人账号创建应用和 Wiki 空间已确认可用；真实飞书 API 仍待首次同步验收，代码当前仅通过模拟 API 测试。
 
 ## 飞书机器人
 
@@ -30,7 +30,7 @@ npm run kb -- sync-wiki --dry-run
 
 ## 微信机器人
 
-已在[微信对话开放平台](https://chatbot.weixin.qq.com/)创建 `Revolution-Bot`。当前控制台截图左侧是「配置 → 任务技能」，首页下方「应用接入 → 开放接口」；旧资料中的「高级技能」并非当前菜单名称。请先打开「任务技能」，检查新建流程里是否能配置第三方服务接口、请求及返回字段；再打开「开放接口」，检查是否提供调用机器人或事件回调的官方协议。提供**官方接口文档链接或遮盖密钥后的字段与请求/回复示例**，才能确定平台调用 Revolution 的实际方式。另一个截图中的「知识助理」是独立界面，不能据此推断 `Revolution-Bot` 的接入协议。平台无关的消息路由已实现；不根据旧文章猜测当下的请求格式、签名或回复协议。普通个人微信号任意好友/群聊自动收发不作为全用户接入方案。
+已在[微信对话开放平台](https://chatbot.weixin.qq.com/)创建 `Revolution-Bot`。当前控制台截图左侧是「配置 → 任务技能」，首页下方「应用接入 → 开放 API」；旧资料中的「高级技能」并非当前菜单名称。用户提供的[官方 Token 接口页](https://developers.weixin.qq.com/doc/aispeech/confapi/dialog/token.html)用于开放 API 凭证流程，不能单独确定微信消息回调与回复的字段。须继续核对「接入指引」中回调/消息相关章节、签名与加密、回复格式。另一个截图中的「知识助理」是独立界面，不能据此推断 `Revolution-Bot` 的接入协议。平台无关的消息路由已实现；不根据旧文章猜测当下的请求格式、签名或回复协议。普通个人微信号任意好友/群聊自动收发不作为全用户接入方案。
 
 微信对话开放平台机器人如果需要绑定公众号或小程序，应在其控制台按当前说明完成渠道绑定；若要让平台调用 Revolution，还需一个它能访问的服务地址，本机 `127.0.0.1` 不能作为公网回调。拿到该平台当前接口规范后，再实现对应的鉴权、请求映射、回复格式和多用户授权流程。不要把机器人密钥发布到 GitHub。
 
