@@ -17,6 +17,24 @@ test('doctor reports configuration without exposing the user token', async () =>
   assert.doesNotMatch(output, /secret-token|folder-id/);
 });
 
+test('doctor rejects pasted commands and expired JWTs without exposing them', async () => {
+  const command = 'npm run kb -- sync-docs --dry-run';
+  const malformed = await knowledgeCli(['doctor'], { FEISHU_USER_ACCESS_TOKEN: command });
+  assert.match(malformed, /FEISHU_USER_ACCESS_TOKEN: invalid \(contains whitespace or Bearer prefix\)/);
+  assert.doesNotMatch(malformed, /npm run/);
+
+  const payload = Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) - 60 })).toString('base64url');
+  const expired = await knowledgeCli(['doctor'], { FEISHU_USER_ACCESS_TOKEN: `eyJhbGciOiJFUzI1NiJ9.${payload}.signature` });
+  assert.match(expired, /FEISHU_USER_ACCESS_TOKEN: invalid \(expired\)/);
+});
+
+test('blank Markdown lines become valid Feishu text elements', () => {
+  const blocks = markdownBlocks('one\n\ntwo\n');
+  assert.deepEqual(blocks[1].text.elements, [{ text_run: { content: '' } }]);
+  assert.deepEqual(blocks[3].text.elements, [{ text_run: { content: '' } }]);
+  assert.equal(readMarkdownBlocks(blocks), 'one\n\ntwo\n');
+});
+
 test('first Feishu dry-runs need destination IDs but no user token', async t => {
   const { root } = await fixture(t);
   const common = ['--repo', root, '--state', join(root, 'state.json'), '--dry-run'];
@@ -46,10 +64,15 @@ function fakeFeishu() {
   const calls = [];
   let next = 1;
   const fetchImpl = async (url, init) => {
-    const path = new URL(url).pathname.replace('/open-apis', '');
+    const requestUrl = new URL(url);
+    const path = requestUrl.pathname.replace('/open-apis', '');
     const body = init.body ? JSON.parse(init.body) : undefined;
     calls.push({ method: init.method, path, body });
     assert.equal(init.headers.Authorization, 'Bearer test-user-token');
+    if (path.includes('/children') && ['POST', 'DELETE'].includes(init.method)) {
+      assert.equal(requestUrl.searchParams.get('document_revision_id'), '-1');
+      assert.equal(body.document_revision_id, undefined);
+    }
     let data = {};
     if (init.method === 'POST' && path === '/docx/v1/documents') {
       const id = `doc-${next++}`; docs.set(id, []); data = { document: { document_id: id } };

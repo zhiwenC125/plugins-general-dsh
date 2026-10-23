@@ -35,12 +35,32 @@ function help() {
   GitHub portability: commit knowledge/catalog.json and its source Markdown files.`;
 }
 
+function tokenProblem(token) {
+  if (!token) return 'missing';
+  if (/\s/.test(token) || /^Bearer\b/i.test(token)) return 'contains whitespace or Bearer prefix';
+  const parts = token.split('.');
+  if (parts.length === 3 && parts[0].startsWith('eyJ')) {
+    try {
+      const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+      if (!Number.isFinite(payload.exp)) return 'JWT has no valid expiry';
+      if (payload.exp * 1000 <= Date.now()) return 'expired';
+    } catch {
+      return 'malformed JWT';
+    }
+  }
+  return null;
+}
+
 export async function main(argv = process.argv.slice(2), env = process.env) {
   const { command, options, positional } = argumentsFor(argv);
   if (command === 'help') return help();
   if (command === 'doctor') {
     const required = ['FEISHU_USER_ACCESS_TOKEN', 'FEISHU_DOC_FOLDER_TOKEN', 'FEISHU_WIKI_SPACE_ID'];
-    const lines = required.map(key => `${key}: ${env[key] ? 'configured' : 'missing'}`);
+    const lines = required.map(key => {
+      if (key !== 'FEISHU_USER_ACCESS_TOKEN') return `${key}: ${env[key] ? 'configured' : 'missing'}`;
+      const problem = tokenProblem(env[key]);
+      return `${key}: ${problem ? problem === 'missing' ? 'missing' : `invalid (${problem})` : 'configured'}`;
+    });
     lines.push('The first dry-run checks the local plan only. Real Feishu permission checks require sync-docs and sync-wiki to create and read back test documents.');
     return lines.join('\n');
   }
@@ -86,6 +106,8 @@ export async function main(argv = process.argv.slice(2), env = process.env) {
   if (['sync-wiki', 'sync-all'].includes(command) && !spaceId) throw new Error('Personal Feishu Wiki space ID is required');
   if (command === 'sync-all' && !vault) throw new Error('Obsidian vault path is required');
   if (!env.FEISHU_USER_ACCESS_TOKEN && !options.dryRun) throw new Error('FEISHU_USER_ACCESS_TOKEN is required for Feishu read or write');
+  const problem = tokenProblem(env.FEISHU_USER_ACCESS_TOKEN);
+  if (env.FEISHU_USER_ACCESS_TOKEN && problem) throw new Error(`FEISHU_USER_ACCESS_TOKEN is invalid (${problem}); enter a fresh token in the current shell`);
   const client = env.FEISHU_USER_ACCESS_TOKEN ? new FeishuClient({ token: env.FEISHU_USER_ACCESS_TOKEN }) : null;
   const feishuOptions = { folderToken, spaceId, parentNodeToken, dryRun: options.dryRun, persist };
   if (command === 'pull-docs' || command === 'pull-wiki') {

@@ -59,13 +59,13 @@ export class FeishuClient {
   async replaceChildren(documentId, oldCount, content) {
     const base = `/docx/v1/documents/${encodeURIComponent(documentId)}/blocks/${encodeURIComponent(documentId)}/children`;
     for (let end = oldCount; end > 0; end -= BATCH) {
-      await this.request('DELETE', `${base}/batch_delete`, {
-        start_index: Math.max(0, end - BATCH), end_index: end, document_revision_id: -1,
+      await this.request('DELETE', `${base}/batch_delete?document_revision_id=-1`, {
+        start_index: Math.max(0, end - BATCH), end_index: end,
       });
     }
     const blocks = markdownBlocks(content);
     for (let index = 0; index < blocks.length; index += BATCH) {
-      await this.request('POST', base, { index, children: blocks.slice(index, index + BATCH), document_revision_id: -1 });
+      await this.request('POST', `${base}?document_revision_id=-1`, { index, children: blocks.slice(index, index + BATCH) });
     }
   }
 }
@@ -75,7 +75,7 @@ export function markdownBlocks(content) {
   for (const line of lines) if (line.length > 100000) throw new Error('Knowledge line exceeds Feishu text block limit');
   return lines.map(line => ({
     block_type: 2,
-    text: { elements: line ? [{ text_run: { content: line } }] : [] },
+    text: { elements: [{ text_run: { content: line } }] },
   }));
 }
 
