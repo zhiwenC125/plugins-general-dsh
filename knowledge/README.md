@@ -40,7 +40,7 @@ npm run kb -- pull-wiki
 
 ## GitHub 与公司复用
 
-`git diff -- docs/knowledge knowledge/catalog.json` 审阅变更，再提交到**确认正确的个人仓库**。公司电脑只克隆个人仓库并选择可公开复用的文章、结构和同步代码；公司的知识数据和凭据保留在公司环境，不回写个人 iCloud、个人飞书或个人 GitHub。此工作区 `origin` 当前指向 `zhiwenC125/ai-studio`，而仓库文档仍指向 `plugins-general-dsh`，发布前需核对实际目标仓库。`export` 可生成不含令牌和个人飞书文档 ID 的可移植包。
+`git diff -- docs/knowledge knowledge/catalog.json` 审阅变更，再提交到用户指定的个人仓库 `zhiwenC125/plugins-general-dsh`。公司电脑只克隆该仓库并选择获准复用的个人原创文章、结构和同步代码；公司的知识数据和凭据保留在公司环境，不回写个人 iCloud、个人飞书或个人 GitHub。此工作区 `origin` 仍指向 `zhiwenC125/ai-studio`，目标仓库已配置为 `revolution` remote，推送时须明确指定 `revolution`。`export` 可生成不含令牌和个人飞书文档 ID 的可移植包。
 
 ## 验证
 
