@@ -2,11 +2,13 @@
 
 ## 当前交付
 
-Revolution v0.1.1 内测候选使用 npm 发布的 DeepSeek Harness **0.2.1-alpha.5**，包含完整 Web UI、Workflow Studio 和 Revolution Brand。它不依赖本仓库忽略的 `deepseek-harness/` 或 `.dsh-smoke/`。现有上游检出仍然是 alpha4，留作旧版本对照。
+Revolution v0.1.2 源码锁定 npm 发布的 DeepSeek Harness **0.2.1-rc.2**，包含完整 Web UI、Workflow Studio 和 Revolution Brand。它不依赖本仓库忽略的 `deepseek-harness/` 或 `.dsh-smoke/`。现有上游检出仍然是 alpha4，留作旧版本对照。本次升级尚未发布新安装包；已发布的 0.1.1 包不会自动升级。
 
 0.1.0 macOS 安装包存在包内签名完整性问题，不再推荐。0.1.1 改用 ad-hoc 签名和签名/窗口加载检查，但没有 Developer ID 或 Apple 公证，仍可能被 Gatekeeper 拦截。发放与人工验收见 [内测指南](docs/BETA_TESTING.md)。
 
 默认数据位于 `~/.revolution`，通过 `REVOLUTION_HOME` 可指定其他目录。首次启动创建专用 `revolution` profile；原有 DSH 设置不会被复制。API、模型、插件、权限、会话与定时任务继续由 DSH 原生服务管理。
+
+从 0.1.1 升级时，先备份 `~/.revolution` 并在副本 profile 验证自己的模型、插件和会话。DSH 0.2.1-rc.1 的上游升级说明提到 Web/桌面优先使用已保存凭据、Azure 提供商命名调整，以及部分会话恢复和设置行为修复；已有自定义提供商或旧会话的用户需要单独回归。Revolution 没有替用户迁移旧的外部 DSH profile。[DSH 官方发布说明](https://github.com/deepseek-ai/deepseek-harness/releases)
 
 ## 使用
 
@@ -56,6 +58,14 @@ node scripts/prepare-desktop.mjs
 node scripts/smoke-runtime.mjs
 npm --prefix apps/revolution run package:dir
 node scripts/smoke-runtime.mjs dist/mac-arm64/Revolution.app/Contents/Resources/app/runtime.mjs
+```
+
+若源码位于 iCloud Drive，Finder 可能在打包过程中给 `.app` 添加扩展属性，使 macOS `codesign` 报 `resource fork, Finder information, or similar detritus not allowed`。此时可把**构建输出**放在本机临时目录，再对该目录中的 `.app` 运行包内 smoke 与签名检查：
+
+```sh
+npm --prefix apps/revolution run package:dir -- --config.directories.output=/private/tmp/revolution-build
+node scripts/smoke-runtime.mjs /private/tmp/revolution-build/mac-arm64/Revolution.app/Contents/Resources/app/runtime.mjs
+node scripts/verify-mac.mjs /private/tmp/revolution-build/mac-arm64/Revolution.app
 ```
 
 smoke 测试启动全新临时 profile，验证内置服务的 HTTP 鉴权握手以及两个客户端插件的 boot roster，结束后清理测试数据。它不发送模型请求。

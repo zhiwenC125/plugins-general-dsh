@@ -10,7 +10,7 @@ for (const name of ['workflow-studio', 'revolution-brand']) {
   await cp(new URL(`../plugins/${name}/cordis.patch.yml`, import.meta.url), new URL(`../apps/revolution/node_modules/${packageName}/cordis.patch.yml`, import.meta.url));
 }
 console.log('Prepared Revolution desktop icon');
-// DSH alpha5 has no headline-text slot. Apply a bounded downstream copy patch
+// DSH 0.2.1-rc.2 has no headline-text slot. Apply a bounded downstream copy patch
 // to the installed package, never to the upstream source checkout or user data.
 const conversation = require.resolve('@deepseek-ai/dsh-client-ui-conversation/client');
 let client = await readFile(conversation, 'utf8');

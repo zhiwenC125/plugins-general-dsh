@@ -1,0 +1,10 @@
+{
+  "schema": "revolution.knowledge/v1",
+  "entries": [
+    { "id": "rev-ci-cd", "title": "CI/CD 从提交到安装包", "source": "docs/knowledge/01-ci-cd.md" },
+    { "id": "rev-agents-dsh", "title": "Agent、DSH 与 Workflow", "source": "docs/knowledge/02-agents-and-dsh.md" },
+    { "id": "rev-jev-routing", "title": "Jev 自动路由探索", "source": "docs/knowledge/03-jev-routing.md" },
+    { "id": "rev-figma", "title": "Figma 交互与复用说明", "source": "docs/knowledge/04-figma.md" },
+    { "id": "rev-validation", "title": "本轮验收记录", "source": "docs/knowledge/05-validation.md" }
+  ]
+}

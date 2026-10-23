@@ -8,7 +8,7 @@
 
 [![Checks](https://github.com/zhiwenC125/plugins-general-dsh/actions/workflows/ci.yml/badge.svg)](https://github.com/zhiwenC125/plugins-general-dsh/actions/workflows/ci.yml)
 [![Desktop build](https://github.com/zhiwenC125/plugins-general-dsh/actions/workflows/release.yml/badge.svg)](https://github.com/zhiwenC125/plugins-general-dsh/actions/workflows/release.yml)
-![DSH](https://img.shields.io/badge/DSH-0.2.1--alpha.5-c7f36b?style=flat-square&labelColor=17191d)
+![DSH](https://img.shields.io/badge/DSH-0.2.1--rc.2-c7f36b?style=flat-square&labelColor=17191d)
 ![Preview](https://img.shields.io/badge/status-preview-c7f36b?style=flat-square&labelColor=17191d)
 ![Platforms](https://img.shields.io/badge/platforms-macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-dedfd8?style=flat-square&labelColor=17191d)
 
@@ -29,7 +29,7 @@ Revolution 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-
 | **Bring your own API** | 配置自己的提供商、API Key 和模型 |
 | **Workflow Studio** | 在会话的“对话”和“轨迹”之间，查看原生 Workflow 的阶段、成员与状态 |
 | **Evidence, not decoration** | 从真实持久化事件和子会话读取运行事实，不伪造任务关系或产物 |
-| **Desktop + local web** | Electron 桌面宿主与本地 Web，共用锁定的 DSH alpha5 运行时 |
+| **Desktop + local web** | Electron 桌面宿主与本地 Web，共用锁定的 DSH 0.2.1-rc.2 运行时 |
 | **Your own identity** | 原创 R/V 联字、荧光绿与光影拳头，属于 Revolution 的视觉语言 |
 | **Build in the open** | 自动检查、三平台打包、校验和与人工确认的发布流程 |
 
@@ -41,7 +41,7 @@ Revolution 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-
 
 前往 [Releases](https://github.com/zhiwenC125/plugins-general-dsh/releases)，按设备选择安装包：
 
-> **内测提醒：** 0.1.0 macOS 包存在签名完整性问题，不再推荐使用。0.1.1 正在修复与验收；ad-hoc 签名不等于 Apple 公证。参与测试前请阅读 [内测发放与反馈指南](docs/BETA_TESTING.md)，不要绕过系统安全警告。
+> **内测提醒：** 当前源码版本 0.1.2 已升级 DSH 0.2.1-rc.2；Releases 中的旧安装包不自动包含这次升级。0.1.0 macOS 包存在签名完整性问题，不再推荐使用；ad-hoc 签名不等于 Apple 公证。参与测试前请阅读 [内测发放与反馈指南](docs/BETA_TESTING.md)。
 
 | 系统 | 架构 | 文件 |
 | --- | --- | --- |
@@ -158,7 +158,7 @@ npm run package:revolution
 <details>
 <summary><strong>旧 alpha4 源码路径（不是 Revolution 快速启动）</strong></summary>
 
-原有 `npm start` / `dsh-studio` 依赖另行准备的 `deepseek-harness/` 源码副本与 `.dsh-smoke` profile，两者不在仓库内，新 clone 后不能直接使用旧命令。现有副本保留 alpha4 对照，桌面依赖则锁定 npm alpha5。
+原有 `npm start` / `dsh-studio` 依赖另行准备的 `deepseek-harness/` 源码副本与 `.dsh-smoke` profile，两者不在仓库内，新 clone 后不能直接使用旧命令。现有副本保留 alpha4 对照，桌面依赖则锁定 npm 0.2.1-rc.2。
 
 在已准备源码检出的环境中：
 
@@ -189,6 +189,10 @@ Jev 是结构化判断层的探索，不替代主 Agent，更不能绕过权限�
 ## 08 / 把经验留下来
 
 [个人知识库](docs/knowledge/README.md) 从 CI/CD 到 Agent、DSH、Jev 和 Figma，把一次次开发变成可复用的方法，而不只是一次成功的截图。
+
+[知识库与消息机器人实施方案](docs/REVOLUTION-KNOWLEDGE-AND-BOTS.md) 覆盖 iCloud Obsidian、个人飞书普通文档与 Wiki 双形态试验，以及面向多用户的飞书/微信接入路线。
+
+[并列知识库命令](knowledge/README.md) 将仓库文章同步到 Obsidian、个人飞书普通文档和个人飞书 Wiki；支持检索、可移植导出与冲突检查。
 
 Revolution 基于 DeepSeek 团队原生开发的 Harness，是独立下游项目，非 DeepSeek 官方客户端。界面探索参考 [open-claude-ui](https://github.com/Caho1/open-claude-ui) 的布局思路；REV 标识与光影拳头为本项目原创资源。依赖与参考项目的使用、再分发仍需遵守各自许可证。
 
