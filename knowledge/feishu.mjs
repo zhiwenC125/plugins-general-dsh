@@ -102,6 +102,7 @@ export async function syncFeishu(entries, mode, state, client, options = {}) {
   // Read all existing remote documents before writing any content.
   for (const entry of entries) {
     const previous = state.items[entry.id]?.[key];
+    if (previous && !client) throw new Error('FEISHU_USER_ACCESS_TOKEN is required to check existing Feishu documents');
     const blocks = previous ? await client.children(previous.documentId) : [];
     if (previous) {
       const remote = readMarkdownBlocks(blocks);
@@ -141,6 +142,7 @@ export async function pullFeishu(entries, mode, state, client, options = {}) {
   for (const entry of entries) {
     const previous = state.items[entry.id]?.[key];
     if (!previous?.hash) { actions.push({ id: entry.id, action: 'unlinked' }); continue; }
+    if (!client) throw new Error('FEISHU_USER_ACCESS_TOKEN is required to read existing Feishu documents');
     const remote = readMarkdownBlocks(await client.children(previous.documentId));
     const remoteHash = digest(remote);
     if (remoteHash === previous.hash) { actions.push({ id: entry.id, action: 'current' }); continue; }
