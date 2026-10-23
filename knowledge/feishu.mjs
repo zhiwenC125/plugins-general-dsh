@@ -3,26 +3,34 @@ import { writeFile, rename } from 'node:fs/promises';
 
 const API = 'https://open.feishu.cn/open-apis';
 const BATCH = 20;
+const RATE_LIMIT_RETRIES = 4;
 
 export class FeishuClient {
-  constructor({ token, fetchImpl = fetch, apiBase = API }) {
+  constructor({ token, fetchImpl = fetch, apiBase = API, sleepImpl = ms => new Promise(resolve => setTimeout(resolve, ms)) }) {
     if (!token) throw new Error('FEISHU_USER_ACCESS_TOKEN is required');
     this.token = token;
     this.fetch = fetchImpl;
     this.apiBase = apiBase;
+    this.sleep = sleepImpl;
   }
 
   async request(method, path, body) {
-    const response = await this.fetch(`${this.apiBase}${path}`, {
-      method,
-      headers: { Authorization: `Bearer ${this.token}`, 'Content-Type': 'application/json; charset=utf-8' },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    });
-    const result = await response.json().catch(() => null);
-    if (!response.ok || !result || result.code !== 0) {
-      throw new Error(`Feishu ${method} ${path} failed (${response.status}, code ${result?.code ?? 'unknown'}): ${result?.msg ?? 'invalid response'}`);
+    for (let attempt = 0; ; attempt++) {
+      const response = await this.fetch(`${this.apiBase}${path}`, {
+        method,
+        headers: { Authorization: `Bearer ${this.token}`, 'Content-Type': 'application/json; charset=utf-8' },
+        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      });
+      const result = await response.json().catch(() => null);
+      if (result?.code === 99991400 && attempt < RATE_LIMIT_RETRIES) {
+        await this.sleep(500 * 2 ** attempt);
+        continue;
+      }
+      if (!response.ok || !result || result.code !== 0) {
+        throw new Error(`Feishu ${method} ${path} failed (${response.status}, code ${result?.code ?? 'unknown'}): ${result?.msg ?? 'invalid response'}`);
+      }
+      return result.data ?? {};
     }
-    return result.data ?? {};
   }
 
   async createDocument(title, folderToken) {

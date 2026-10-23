@@ -35,6 +35,24 @@ test('blank Markdown lines become valid Feishu text elements', () => {
   assert.equal(readMarkdownBlocks(blocks), 'one\n\ntwo\n');
 });
 
+test('Feishu client backs off only for transient request frequency limits', async () => {
+  let calls = 0;
+  const delays = [];
+  const client = new FeishuClient({
+    token: 'test-user-token',
+    sleepImpl: async ms => { delays.push(ms); },
+    fetchImpl: async () => {
+      calls++;
+      return calls < 3
+        ? { ok: false, status: 400, json: async () => ({ code: 99991400, msg: 'request trigger frequency limit' }) }
+        : { ok: true, status: 200, json: async () => ({ code: 0, data: { items: [] } }) };
+    },
+  });
+  assert.deepEqual(await client.request('GET', '/test'), { items: [] });
+  assert.equal(calls, 3);
+  assert.deepEqual(delays, [500, 1000]);
+});
+
 test('first Feishu dry-runs need destination IDs but no user token', async t => {
   const { root } = await fixture(t);
   const common = ['--repo', root, '--state', join(root, 'state.json'), '--dry-run'];
