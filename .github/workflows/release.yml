@@ -27,7 +27,7 @@ jobs:
           cache: npm
           cache-dependency-path: apps/revolution/package-lock.json
       - name: Build downstream plugins
-        run: npm run build && npm run build:brand && npm run build:knowledge && npm run test:workflow && npm run test:knowledge-app
+        run: npm run build && npm run build:brand && npm run build:knowledge && npm run test:workflow && npm run test:knowledge && npm run test:knowledge-app && npm run test:bot
       - name: Validate release tag and locked version
         run: node scripts/check-release.mjs
       - name: Install locked runtime
@@ -42,6 +42,9 @@ jobs:
       - name: Verify macOS desktop launch and page load
         if: runner.os == 'macOS'
         run: node scripts/smoke-desktop-mac.mjs
+      - name: Verify knowledge and bot settings in Electron
+        if: runner.os == 'macOS'
+        run: ./apps/revolution/node_modules/.bin/electron scripts/smoke-knowledge-electron.cjs
       - name: Verify packaged runtime on Linux
         if: runner.os == 'Linux'
         run: node scripts/smoke-runtime.mjs dist/linux-unpacked/resources/app/runtime.mjs

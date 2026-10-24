@@ -2,7 +2,7 @@
 
 ## 当前交付
 
-Revolution v0.1.2 源码锁定 npm 发布的 DeepSeek Harness **0.2.1-rc.2**，包含完整 Web UI、Workflow Studio 和 Revolution Brand。它不依赖本仓库忽略的 `deepseek-harness/` 或 `.dsh-smoke/`。现有上游检出仍然是 alpha4，留作旧版本对照。本次升级尚未发布新安装包；已发布的 0.1.1 包不会自动升级。
+Revolution v0.1.3 候选源码锁定 DeepSeek Harness **0.2.1-rc.2**，包含 Web UI、Workflow Studio、品牌、个人知识自动召回和飞书私聊桥接。它不依赖本仓库忽略的 `deepseek-harness/` 或 `.dsh-smoke/`。本次改动尚未完成真实手机飞书端到端验收；已发布的旧安装包不会自动升级。
 
 0.1.0 macOS 安装包存在包内签名完整性问题，不再推荐。0.1.1 改用 ad-hoc 签名和签名/窗口加载检查，但没有 Developer ID 或 Apple 公证，仍可能被 Gatekeeper 拦截。发放与人工验收见 [内测指南](docs/BETA_TESTING.md)。
 

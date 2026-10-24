@@ -41,7 +41,7 @@ Revolution 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-
 
 前往 [Releases](https://github.com/zhiwenC125/plugins-general-dsh/releases)，按设备选择安装包：
 
-> **内测提醒：** 当前源码版本 0.1.2 已升级 DSH 0.2.1-rc.2；Releases 中的旧安装包不自动包含这次升级。0.1.0 macOS 包存在签名完整性问题，不再推荐使用；ad-hoc 签名不等于 Apple 公证。参与测试前请阅读 [内测发放与反馈指南](docs/BETA_TESTING.md)。
+> **内测提醒：** 当前源码版本 0.1.3 保持 DSH 0.2.1-rc.2，并加入个人知识自动召回与飞书私聊桥接。手机飞书的真实端到端验收仍待完成；Releases 中的旧安装包不自动包含这次改动。ad-hoc 签名不等于 Apple 公证。参见 [0.1.3 候选版验收](docs/RELEASE-0.1.3-CANDIDATE.md)。
 
 个人飞书知识库、飞书/微信机器人所需的账号操作见 [接入清单](docs/CONNECTOR-SETUP.md)。
 
