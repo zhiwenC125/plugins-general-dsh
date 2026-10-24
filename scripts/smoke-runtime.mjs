@@ -25,10 +25,10 @@ try {
     : first;
   if (!response.ok) throw new Error(`Runtime HTTP ${response.status}`);
   const html = await response.text();
-  for (const name of ['revolution-brand', 'dsh-workflow-studio']) {
+  for (const name of ['revolution-brand', 'dsh-workflow-studio', 'revolution-knowledge']) {
     if (!html.includes(name)) throw new Error(`Missing browser plugin: ${name}`);
   }
-  console.log('PASS: independent DSH runtime, HTTP response, brand and workflow client roster');
+  console.log('PASS: independent DSH runtime, HTTP response, brand, workflow and knowledge client roster');
 } finally {
   child.kill('SIGTERM');
   if (child.exitCode === null) await new Promise(done => child.once('exit', done));

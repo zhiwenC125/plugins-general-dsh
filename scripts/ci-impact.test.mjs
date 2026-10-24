@@ -21,3 +21,7 @@ test('runs all checks for unclassified code, missing comparisons, or manual runs
   assert.deepEqual(classifyChangedFiles([]), all);
   assert.equal(changedFiles('0'.repeat(40), '1'.repeat(40)), null);
 });
+
+test('knowledge app triggers plugin, knowledge and desktop gates', () => {
+  assert.deepEqual(classifyChangedFiles(['plugins/revolution-knowledge/src/service.mjs']), { plugins: true, knowledge: true, bot: false, desktop: true });
+});

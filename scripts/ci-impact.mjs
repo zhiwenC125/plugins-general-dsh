@@ -9,7 +9,8 @@ export function classifyChangedFiles(files) {
   if (!files.length) return { ...all };
   const result = { plugins: false, knowledge: false, bot: false, desktop: false };
   for (const file of files) {
-    if (/^plugins\/(workflow-studio|revolution-brand)\//.test(file)) result.plugins = true;
+    if (file.startsWith('plugins/revolution-knowledge/')) { result.plugins = true; result.knowledge = true; result.desktop = true; }
+    else if (/^plugins\/(workflow-studio|revolution-brand)\//.test(file)) result.plugins = true;
     else if (file.startsWith('knowledge/') || file.startsWith('docs/knowledge/')) result.knowledge = true;
     else if (file.startsWith('integrations/bot/')) result.bot = true;
     else if (file === 'README.md' || file.startsWith('docs/')) continue;
