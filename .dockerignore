@@ -1,0 +1,9 @@
+.git
+**/node_modules
+**/.env
+**/.revolution
+dist
+deepseek-harness
+.dsh-smoke
+apps/revolution/relay-config.json
+apps/revolution/icon.png

@@ -22,7 +22,7 @@ export function normalizeBotEvent(event) {
 }
 
 /** Route a verified platform event to exactly one Revolution user and workspace. */
-export async function routeBotEvent(rawEvent, { resolveBinding, canAccess, dedupe, enqueue, listProjects, listSessions, updateBinding }) {
+export async function routeBotEvent(rawEvent, { resolveBinding, canAccess, dedupe, enqueue, listProjects, listSessions, updateBinding, createProject, createTask, stopSession, readResult, listModels, selectModel }) {
   const event = normalizeBotEvent(rawEvent);
   if (!event.text || (!event.isDirect && !event.mentionsBot)) return { status: 'ignored' };
   const binding = await resolveBinding(event.provider, event.connectorAccountId, event.chatId);
@@ -32,7 +32,7 @@ export async function routeBotEvent(rawEvent, { resolveBinding, canAccess, dedup
   if (!(await dedupe.claim(key))) return { status: 'duplicate' };
   try {
     const command = parseBotCommand(event.text);
-    if (command) return await handleBotCommand(command, binding, { listProjects, listSessions, updateBinding });
+    if (command) return await handleBotCommand(command, binding, { listProjects, listSessions, updateBinding, createProject, createTask, stopSession, readResult, listModels, selectModel });
     if (!binding.sessionId && (listProjects || listSessions)) return { status: 'command', text: '请先用 /项目 和 /会话 选择要对话的 Revolution 会话。' };
     const job = await enqueue({
       revolutionUserId: binding.revolutionUserId,

@@ -42,6 +42,8 @@ jobs:
       - name: Check bot routing
         if: steps.impact.outputs.bot == 'true'
         run: npm run test:bot
+      - name: Check shared Feishu relay routing
+        run: npm --prefix services/revolution-relay ci && npm run test:relay
       - name: Check desktop and release configuration
         if: steps.impact.outputs.desktop == 'true'
         run: |

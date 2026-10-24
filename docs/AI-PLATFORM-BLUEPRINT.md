@@ -11,7 +11,7 @@
 
 **但藏着你的真实意图（考古核心发现）**：未跟踪的 ` 2` 文件里有一份更激进、更接近目标的草案——`README 2.md` 写「你只给初始输入（用户诉求、飞书纪要、GitHub / Coding 需求等），第一次输入即由 DSH 判断需要几个 Agent…生成 DAG，不需要人来决定是否产生 workflow」；`host 2.js` 实现了 `workflow_studio_catalog/ingest/plan/edit/run` 五个原生工具。**但它不完整：引用的 `graph.js`（DAG 校验）和 `runner.js`（DAG 执行器）不存在**，且 `handoff.md:224` 明确「不要恢复已经移除的插件内 DAG runner」——团队战略上主动从「自研编排器」退回到「只读忠实投影」。
 
-**一句话结论**：你已有「模型编排 → 可观察执行」的上层壳，缺的是三层增量——**(1) 硬件/工具层**（编译/烧录/HIL/OTA 真实执行器）、**(2) 数据层**（把公司 Nexus agent 体系的持久化 DAG 用 adapter 接进来，`WORKFLOW_COMPATIBILITY.md` 已写好规范）、**(3) 决策边界层**（把「只做决策」变成可审计的审批/规则引擎）。而 **workflow 是这三层的统一载体**（详见第 9 章）。
+**一句话结论**：你已有「模型编排 → 可观察执行」的上层壳，缺的是三层增量——**(1) 硬件/工具层**（编译/烧录/HIL/OTA 真实执行器）、**(2) 数据层**（把公司 Nexus agent 体系的持久化 DAG 用 adapter 接进来，`archive/WORKFLOW_COMPATIBILITY.md` 已写好规范）、**(3) 决策边界层**（把「只做决策」变成可审计的审批/规则引擎）。而 **workflow 是这三层的统一载体**（详见第 9 章）。
 
 ---
 
@@ -31,7 +31,7 @@
 | Smoke 测试 | 覆盖 workflow 全部脚本钩子 | 🟢 可用 | `workflow-smoke-test/script.js:4-74` |
 | 知识库 | CI/Agent/Jev/Figma/验收 | 🟢 高质量 | `docs/knowledge/01~05` |
 | Jev 路由 | 快速结构化路由设计 | 🔴 仅研究 | `docs/knowledge/03-jev-routing.md:7-12` |
-| Nexus DAG 兼容规范 | 公司 agent→统一视图模型的 adapter | 🔴 纯契约 | `WORKFLOW_COMPATIBILITY.md:83-134` |
+| Nexus DAG 兼容规范 | 公司 agent→统一视图模型的 adapter | 🔴 纯契约 | `archive/WORKFLOW_COMPATIBILITY.md:83-134` |
 | 自动编排 DAG 运行器 | 自研编排器（5 工具+ingest） | 🔴 残缺草案 | `src/host 2.js`；`README 2.md`；**缺 graph.js/runner.js** |
 
 ### 2.2 能力 / 缺口 / 技术债 / 自动化机会
@@ -58,10 +58,10 @@
 
 > **一句话**：一条命令从需求到板子，中间只有决策需要你。
 
-1. **可复现优先于聪明**：每次烧录/HIL 可完整重放（对齐 `WORKFLOW_COMPATIBILITY.md:196` 的 append-only 可重放哲学）。
+1. **可复现优先于聪明**：每次烧录/HIL 可完整重放（对齐 `archive/WORKFLOW_COMPATIBILITY.md:196` 的 append-only 可重放哲学）。
 2. **硬件感知，低打扰**：板子是稀缺资源，预约→烧录→回收，异步通知不打断会话。
 3. **事实与推断分界**：画布只画有持久化证据的边（`handoff.md:110-117` 铁律）。
-4. **实时安全，fail-closed**：烧录/OTA/量产默认拒绝，未知事件版本降级不显示（`WORKFLOW_COMPATIBILITY.md:258`）。
+4. **实时安全，fail-closed**：烧录/OTA/量产默认拒绝，未知事件版本降级不显示（`archive/WORKFLOW_COMPATIBILITY.md:258`）。
 5. **决策最小化、审批可回滚**：人只在高风险点出现一次，每次审批可回滚。
 
 ### 3.3 体验地图（10 阶段）
@@ -142,7 +142,7 @@ flowchart TB
 | 架构方案批准 | 👤 人类 | 长期可维护性 |
 | 量产板烧录 | 👤 一次放行 + ⚙️ 白名单内自动 | 防变砖 |
 | OTA 灰度/回滚 | 👤 人类 | 不可逆成本高 |
-| 数据授权（飞书/设备数据外发） | 👤 人类 | 信息安全（`WORKFLOW_COMPATIBILITY.md:201`） |
+| 数据授权（飞书/设备数据外发） | 👤 人类 | 信息安全（`archive/WORKFLOW_COMPATIBILITY.md:201`） |
 | 发布/撤回 Release | 👤 人类 | 现有 draft+publish 机制 |
 | direct vs workflow 路由 | ⚡ Jev/System One | `03-jev-routing.md:7-12` |
 | 工具/技能预筛、失败分类、模型路由 | ⚡ Jev/System One | 同文档小实验 |
@@ -231,10 +231,10 @@ showroom/mobile-robot/
 
 ### 9.2 当前约束与解锁路径
 
-当前原生 DSH workflow 事件**只有父子调用关系，没有 DAG 依赖边**（`WORKFLOW_COMPATIBILITY.md:24-43`），所以画布只能忠实投影，不能画数据流。要让 workflow 承担上面的角色，只有两条路：
+当前原生 DSH workflow 事件**只有父子调用关系，没有 DAG 依赖边**（`archive/WORKFLOW_COMPATIBILITY.md:24-43`），所以画布只能忠实投影，不能画数据流。要让 workflow 承担上面的角色，只有两条路：
 
 - **路径 A（改上游）**：扩展 DSH Runtime 持久化稳定 node ID、依赖边、artifact 引用（`handoff.md:122-132` 已列协议字段）。
-- **路径 B（接 Nexus，不动上游）**：按 `WORKFLOW_COMPATIBILITY.md:143-202` 定义 `nexus-workflow/v1/*` 事件，写 `adapters/nexus-dag.js`，把公司已有 DAG 投影到同一规范化模型。
+- **路径 B（接 Nexus，不动上游）**：按 `archive/WORKFLOW_COMPATIBILITY.md:143-202` 定义 `nexus-workflow/v1/*` 事件，写 `adapters/nexus-dag.js`，把公司已有 DAG 投影到同一规范化模型。
 
 **建议**：先走路径 B（零上游改动、复用公司资产、契约已就绪），路径 A 作为长期提案与上游共建。
 
@@ -259,8 +259,8 @@ flowchart LR
 
 **七条具体 UI 落地原则**：
 
-1. **画布即决策台**：节点是点击单元；状态「待澄清/待审批/运行中/完成/失败/已中断」用**颜色+文本+形状三重编码**（`REVOLUTION_EXPLORATION.md:77`）。
-2. **审批与澄清是一等状态**：画布上高亮「待你决策」节点，而不是埋在聊天里等用户发现（`REVOLUTION_EXPLORATION.md:33`）。
+1. **画布即决策台**：节点是点击单元；状态「待澄清/待审批/运行中/完成/失败/已中断」用**颜色+文本+形状三重编码**（`archive/REVOLUTION_EXPLORATION.md:77`）。
+2. **审批与澄清是一等状态**：画布上高亮「待你决策」节点，而不是埋在聊天里等用户发现（`archive/REVOLUTION_EXPLORATION.md:33`）。
 3. **聊天分层化**：全图输入框（总领）＋ 节点级对话（针对单 Agent 补充，变更波及下游）＋ 澄清问答 ＋ 审批对话，四层上下文，而非一条扁平滚动流（`locales 2.js` 已有 `targetWorkflow/targetNode/chatPlaceholderNode` 文案）。
 4. **版本即回滚**：plan 每次 edit 升 revision，画布顶部版本选择器 = 回滚入口。
 5. **硬件面板常驻**：右侧或底部独立「设备面板」——板卡列表、串口监视器、HIL 波形、烧录进度，把「硬件感知」变成可见 UI。

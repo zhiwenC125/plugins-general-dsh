@@ -87,6 +87,11 @@ export class FeishuLogin {
   }
   async cancel() { this.generation = (this.generation ?? 0) + 1; this.child?.kill(); await this.pending; this.attempt = { status: 'idle' }; this.tail = ''; }
   async logout() { await this.cancel(); await this.run(['auth', 'logout', '--json']); }
+  async botInfo() {
+    const result = await this.run(['api', 'GET', '/open-apis/bot/v3/info', '--as', 'bot', '--format', 'json']);
+    if (result.ok !== true || !result.data?.open_id || !result.data?.app_name) throw new Error('无法识别当前飞书机器人，请检查应用机器人能力。');
+    return { name: result.data.app_name, openId: result.data.open_id };
+  }
   async configure(appId, secret) {
     if (!/^cli_[a-zA-Z0-9]+$/.test(appId) || typeof secret !== 'string' || !secret || /[\r\n]/.test(secret)) throw new Error('请输入正确的 App ID 和 App Secret。');
     await this.cancel();

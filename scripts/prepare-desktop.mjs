@@ -4,6 +4,12 @@ import { cp, readFile, writeFile } from 'node:fs/promises';
 const require = createRequire(new URL('../apps/revolution/package.json', import.meta.url));
 const sharp = require('sharp');
 await sharp(fileURLToPath(new URL('../assets/revolution.svg', import.meta.url))).resize(1024, 1024).png().toFile(fileURLToPath(new URL('../apps/revolution/icon.png', import.meta.url)));
+const relayUrl = process.env.REVOLUTION_RELAY_URL || null;
+if (relayUrl) {
+  const url = new URL(relayUrl);
+  if (url.protocol !== 'https:' || url.pathname !== '/' || url.search || url.hash) throw new Error('REVOLUTION_RELAY_URL must be an HTTPS origin');
+}
+await writeFile(new URL('../apps/revolution/relay-config.json', import.meta.url), JSON.stringify({ url: relayUrl }, null, 2) + '\n');
 for (const name of ['workflow-studio', 'revolution-brand', 'revolution-knowledge']) {
   const packageName = name === 'workflow-studio' ? 'dsh-workflow-studio' : name;
   if (name === 'revolution-knowledge') {

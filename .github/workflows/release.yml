@@ -27,11 +27,11 @@ jobs:
           cache: npm
           cache-dependency-path: apps/revolution/package-lock.json
       - name: Build downstream plugins
-        run: npm run build && npm run build:brand && npm run build:knowledge && npm run test:workflow && npm run test:knowledge && npm run test:knowledge-app && npm run test:bot
+        run: npm run build && npm run build:brand && npm run build:knowledge && npm run test:workflow && npm run test:knowledge && npm run test:knowledge-app && npm run test:bot && npm run test:relay
       - name: Validate release tag and locked version
         run: node scripts/check-release.mjs
       - name: Install locked runtime
-        run: npm --prefix apps/revolution ci --install-links
+        run: npm --prefix apps/revolution ci --install-links && npm --prefix services/revolution-relay ci
       - name: Prepare icon
         run: node scripts/prepare-desktop.mjs
       - name: Package internal preview (macOS ad-hoc, not notarized)
