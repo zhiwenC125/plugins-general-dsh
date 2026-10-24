@@ -2,9 +2,9 @@
 
 ## 当前交付
 
-Revolution v0.1.3 候选源码锁定 DeepSeek Harness **0.2.1-rc.2**，包含 Web UI、Workflow Studio、品牌、个人知识自动召回和飞书私聊桥接。它不依赖本仓库忽略的 `deepseek-harness/` 或 `.dsh-smoke/`。本次改动尚未完成真实手机飞书端到端验收；已发布的旧安装包不会自动升级。
+Revolution `0.1.4-preview.4` 锁定 DeepSeek Harness **0.2.1-rc.2**，包含 Web UI、Workflow Studio、品牌、个人知识自动召回、飞书身份绑定和私聊研发机器人。它不依赖本仓库忽略的 `deepseek-harness/` 或 `.dsh-smoke/`。2026-10-25 已完成真实飞书 `/当前`、`/项目`、`/会话` 往返验收；已发布的旧安装包不会自动升级。
 
-0.1.0 macOS 安装包存在包内签名完整性问题，不再推荐。0.1.1 改用 ad-hoc 签名和签名/窗口加载检查，但没有 Developer ID 或 Apple 公证，仍可能被 Gatekeeper 拦截。发放与人工验收见 [内测指南](docs/BETA_TESTING.md)。
+0.1.0 macOS 安装包存在包内签名完整性问题，不再推荐。0.1.1 起改用 ad-hoc 签名和签名/窗口加载检查，但没有 Developer ID 或 Apple 公证，仍可能被 Gatekeeper 拦截。发放与人工验收见 [内测指南](../BETA_TESTING.md)。
 
 默认数据位于 `~/.revolution`，通过 `REVOLUTION_HOME` 可指定其他目录。首次启动创建专用 `revolution` profile；原有 DSH 设置不会被复制。API、模型、插件、权限、会话与定时任务继续由 DSH 原生服务管理。
 
@@ -82,7 +82,7 @@ smoke 测试启动全新临时 profile，验证内置服务的 HTTP 鉴权握手
 - 只用内置 `GITHUB_TOKEN`，发布 job 才获得 `contents: write`。不需要 API Key、COS、Vercel 或自建服务器。
 - PR 不进行昂贵的多平台打包；并发检查自动取消旧任务。
 
-操作步骤与免费边界见 [CI/CD 教程](docs/knowledge/01-ci-cd.md)。分支 CI 自动检查；手动构建生成三平台临时安装包；匹配版本的 tag 才建立草稿 Release。远端运行状态以 GitHub Actions 为准，不能仅凭 YAML 存在就声称已通过。Windows/Linux 需由对应 Runner 验证。
+操作步骤与免费边界见 [CI/CD 教程](../knowledge/01-ci-cd.md)。分支 CI 自动检查；手动构建生成三平台临时安装包；匹配版本的 tag 才建立草稿 Release。远端运行状态以 GitHub Actions 为准，不能仅凭 YAML 存在就声称已通过。Windows/Linux 需由对应 Runner 验证。
 
 如果仓库保持私有，请在 GitHub Billing 中设置付费用量预算，避免额度耗尽后继续计费。公开仓库标准 Runner 可作为接近零成本的首选方案。Artifacts 只保留三天，正式安装包放 Releases。
 
@@ -93,3 +93,13 @@ smoke 测试启动全新临时 profile，验证内置服务的 HTTP 鉴权握手
 - 原生桌面深度集成：目录选择、自动更新、签名、公证、平台菜单本地化。
 - 真实 API 与工具执行回归（需要用户选择提供商和凭据）。
 - Runtime DAG/Artifact 协议修改继续暂缓。
+
+## Mac 固定预览版入口
+
+本机联调使用 `npm run package:preview:mac`。脚本在 `/private/tmp` 中构建、执行 runtime 与登录窗口 smoke test 及签名验证，然后将唯一的当前预览版放到 `~/Applications/Revolution Preview.app`。旧版备份在 `~/Library/Application Support/Revolution Preview Builds/previous.app`，不会与当前版一起出现在 Applications。预览版 Finder 版本号为 `0.1.4-preview.4`，窗口标题为 `Revolution Preview · Feishu R4`。
+
+启动前退出其他 Revolution 窗口；同一用户资料使用单实例锁，旧实例仍运行时打开新包只会激活旧窗口。首次使用需要在独立登录窗口完成飞书授权；本机资料绑定首次登录的飞书应用和账号，退出后须以同一身份重新登录。进入工作区后，在侧栏底部核对「飞书机器人在线」，或在「设置 → 飞书与知识库」查看详细状态。不要从 `/private/tmp` 的构建目录启动测试版。
+
+## 统一机器人 R4 开发候选
+
+源码版本 `0.1.4-preview.4` 增加统一机器人中转协议。本机固定预览版已安装 R4，但因尚无中转服务地址，当前包使用现有个人机器人模式；上一个 R3 安装包保存在 `~/Library/Application Support/Revolution Preview Builds/previous.app`。服务端部署与飞书配置见 [中转服务说明](../../services/revolution-relay/README.md)。构建时提供 `REVOLUTION_RELAY_URL=https://<域名>`，桌面包会内置该公开地址；不提供时保留每人自建飞书应用的个人模式。实际面向其他人发布仍需服务器、域名、飞书应用配置、跨电脑验收和安装包信任检查。

@@ -17,6 +17,8 @@ node_modules/
 deepseek-harness/
 dist/
 apps/revolution/icon.png
+apps/revolution/relay-config.json
+services/revolution-relay/.env
 .revolution/
 
 # Local-only workflow compatibility notes

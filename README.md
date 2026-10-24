@@ -33,7 +33,7 @@ Revolution 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-
 | **Your own identity** | 原创 R/V 联字、荧光绿与光影拳头，属于 Revolution 的视觉语言 |
 | **Build in the open** | 自动检查、三平台打包、校验和与人工确认的发布流程 |
 
-> **Preview，坦诚地迭代。** 当前安装包未签名、未公证；真实 API 推理与跨平台 GUI 全流程仍需验收。Figma 的完整视觉与交互是产品设计目标，不代表每个页面都已逐像素实现。Jev 自动路由目前是研究方案，未接入运行时。
+> **Preview，坦诚地迭代。** 当前安装包采用 macOS ad-hoc 签名，尚未使用 Developer ID 签名或 Apple 公证；真实 API 推理与跨平台 GUI 全流程仍需继续验收。Figma 的完整视觉与交互是产品设计目标，不代表每个页面都已逐像素实现。
 
 ## 02 / 选择你的入口
 
@@ -41,7 +41,7 @@ Revolution 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-
 
 前往 [Releases](https://github.com/zhiwenC125/plugins-general-dsh/releases)，按设备选择安装包：
 
-> **内测提醒：** 当前源码版本 0.1.3 保持 DSH 0.2.1-rc.2，并加入个人知识自动召回与飞书私聊桥接。手机飞书的真实端到端验收仍待完成；Releases 中的旧安装包不自动包含这次改动。ad-hoc 签名不等于 Apple 公证。参见 [0.1.3 候选版验收](docs/RELEASE-0.1.3-CANDIDATE.md)。
+> **内测提醒：** 当前源码版本为 `0.1.4-preview.4`，保持 DSH 0.2.1-rc.2，并加入飞书个人账号登录、机器人在线状态、项目/会话控制、模型选择、任务停止与结果回传。2026-10-25 已完成真实飞书私聊 `/当前`、`/项目`、`/会话` 往返验收。ad-hoc 签名不等于 Apple 公证。
 
 个人飞书知识库、飞书/微信机器人所需的账号操作见 [接入清单](docs/CONNECTOR-SETUP.md)。
 
@@ -53,7 +53,9 @@ Revolution 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-
 
 使用同平台的 `SHA256SUMS-*.txt` 核验文件。`Source code` 是源码，不是安装包；当前没有 Intel Mac 安装包。macOS 请将应用复制到 Applications，不要长期在只读 DMG 中运行，也不要全局关闭系统安全机制。
 
-首次打开：**账号菜单 → 设置 → 模型 → 配置提供商与 API Key → 选择模型 → 开始任务**。协议支持以 DSH 原生设置为准，不承诺任意 API 地址都兼容。详见 [使用与发行指南](REVOLUTION_DESKTOP.md)。
+首次打开先完成飞书授权，再进入 **账号菜单 → 设置 → 模型** 配置提供商、API Key 和模型。协议支持以 DSH 原生设置为准。详见 [使用与发行指南](docs/archive/REVOLUTION_DESKTOP.md)。
+
+飞书私聊可使用 `/当前`、`/项目`、`/会话`、`/新建项目`、`/新建任务`、`/模型`、`/结果` 和 `/停止`。电脑与 Revolution 需要保持运行。当前默认是每位用户在自己的电脑上使用个人飞书应用；公共统一机器人所需的中转代码已保留，但没有服务器和域名时不启用。
 
 ### 从源码启动
 
@@ -94,7 +96,7 @@ Workflow Studio 不是第二套编排器，而是 DSH 原生 `workflow` 工具�
 
 无运行时，不展示虚构的运行。失败和中止，也应该作为事实被看见。
 
-[插件说明](plugins/workflow-studio/README.md) · [兼容性与事件边界](WORKFLOW_COMPATIBILITY.md) · [开发交接](handoff.md)
+[插件说明](plugins/workflow-studio/README.md) · [开发交接](handoff.md)
 
 ## 04 / 从设计语言，到可复用界面
 
@@ -137,6 +139,9 @@ Workflow Studio 不是第二套编排器，而是 DSH 原生 `workflow` 工具�
 apps/revolution/          Electron 宿主与独立 DSH runtime
 plugins/workflow-studio/  真实 Workflow 事件投影与交付清单
 plugins/revolution-brand/ 品牌插槽与主题覆盖
+plugins/revolution-knowledge/ 个人知识、飞书身份与机器人宿主
+integrations/bot/          飞书研发机器人命令与消息路由
+services/revolution-relay/ 可选的统一机器人中转服务
 assets/                  原创品牌矢量资源
 design/                  Figma 生成脚本与审计
 scripts/                 构建、打包准备、版本及运行检查
@@ -172,7 +177,7 @@ npm start
 npm run version:dsh
 ```
 
-旧路径 setup 获取锁定的 pnpm，无需全局安装。`deepseek-harness/`、`.dsh-smoke/`、`.pnpm-store/` 均被忽略，不参与提交。涉及上游结构与版本时，先阅读 [探索文档](REVOLUTION_EXPLORATION.md)，不要误改另一套运行环境。
+旧路径 setup 获取锁定的 pnpm，无需全局安装。`deepseek-harness/`、`.dsh-smoke/`、`.pnpm-store/` 均被忽略，不参与提交。涉及上游结构与版本时，先阅读 [探索文档](docs/archive/REVOLUTION_EXPLORATION.md)，不要误改另一套运行环境。
 
 </details>
 

@@ -31,8 +31,23 @@ test('official CLI transport streams events and sends a bounded bot reply throug
   await transport.pending;
   assert.equal(events[0].text, '你好');
   assert.deepEqual(calls[0].args, ['event', 'consume', 'im.message.receive_v1', '--as', 'bot']);
+  assert.deepEqual(calls[0].options.stdio, ['pipe', 'pipe', 'pipe']);
   assert.equal(calls[0].options.env.LARKSUITE_CLI_CONFIG_DIR, '/private/feishu');
+  children[0].stderr.write('[event] ready event_key=im.message.receive_v1\n');
+  assert.equal(transport.ready, true);
   assert.deepEqual(await transport.send('oc_chat', '回复', 'om_1'), { ok: true });
   assert.ok(calls[1].args.includes('--as'));
   transport.stop();
+  assert.equal(transport.ready, false);
+});
+
+test('unexpected clean exit reports a disconnected event stream', () => {
+  let child; const errors = [];
+  const transport = new FeishuBotTransport({ binary: '/pinned/lark-cli', configDir: '/private/feishu', appId: 'cli_one',
+    spawnImpl: () => { child = new EventEmitter(); child.stdout = new PassThrough(); child.stderr = new PassThrough(); return child; },
+    onEvent: () => {}, onError: error => errors.push(error.message),
+  });
+  transport.start(); child.emit('close', 0);
+  assert.equal(transport.child, null);
+  assert.match(errors[0], /已断开/);
 });

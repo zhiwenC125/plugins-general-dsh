@@ -89,7 +89,7 @@
 - 新增常驻服务必须提交 ADR，证明它无法作为现有控制平面模块或外部 adapter 落地，并给出 owner、SLO、数据归属和退出方案。
 - DSH 升级只能经 compatibility adapter；禁止让业务 schema 直接依赖 alpha 版本内部类型。
 
-> 当前核验事实：DSH `0.2.1-alpha.4` 持久化 `tool-workflow/run-start`、`agent-start`、`agent-end`、`run-end`；没有持久化完整 pipeline/parallel 边、节点输入输出关系或 artifact 血缘。详见 `WORKFLOW_COMPATIBILITY.md`。
+> 当前核验事实：DSH `0.2.1-alpha.4` 持久化 `tool-workflow/run-start`、`agent-start`、`agent-end`、`run-end`；没有持久化完整 pipeline/parallel 边、节点输入输出关系或 artifact 血缘。详见 `archive/WORKFLOW_COMPATIBILITY.md`。
 
 ---
 

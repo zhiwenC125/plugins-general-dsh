@@ -1,0 +1,32 @@
+services:
+  relay:
+    build:
+      context: ../..
+      dockerfile: services/revolution-relay/Dockerfile
+    restart: unless-stopped
+    environment:
+      FEISHU_APP_ID: ${FEISHU_APP_ID}
+      FEISHU_APP_SECRET: ${FEISHU_APP_SECRET}
+      PUBLIC_BASE_URL: https://${RELAY_DOMAIN}
+      HOST: 0.0.0.0
+      PORT: 8787
+    volumes:
+      - relay-data:/home/node/.revolution-relay
+  https:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      RELAY_DOMAIN: ${RELAY_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - relay
+volumes:
+  relay-data:
+  caddy-data:
+  caddy-config:

@@ -12,11 +12,13 @@
     "kb": "node knowledge/cli.mjs",
     "test:knowledge": "node --test knowledge/*.test.mjs",
     "test:bot": "node --test integrations/bot/*.test.mjs",
+    "test:relay": "node --test services/revolution-relay/*.test.mjs",
     "build:brand": "node scripts/build-brand.mjs",
     "setup:revolution": "npm run build && npm run build:brand && npm run build:knowledge && npm --prefix apps/revolution install --install-links && node scripts/prepare-desktop.mjs",
     "start:revolution": "npm --prefix apps/revolution start",
     "web:revolution": "npm --prefix apps/revolution run web",
     "package:revolution": "node scripts/prepare-desktop.mjs && npm --prefix apps/revolution run package",
+    "package:preview:mac": "node scripts/build-preview-mac.mjs",
     "build:knowledge": "node plugins/revolution-knowledge/scripts/build.mjs",
     "test:knowledge-app": "node --test plugins/revolution-knowledge/tests/*.test.mjs"
   },

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Revolution · 飞书登录</title>
+<style>
+  body{margin:0;background:#f7f7f3;color:#202321;font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
+  main{max-width:440px;margin:44px auto;padding:0 28px}h1{font-size:28px;margin:0 0 6px}p{margin:10px 0;color:#545b57}
+  .card{background:white;border:1px solid #dce1da;border-radius:16px;padding:24px;margin-top:26px;box-shadow:0 8px 28px #1c32160b}
+  button{border:0;border-radius:9px;background:#246a38;color:#fff;padding:11px 16px;font:inherit;cursor:pointer;margin:8px 8px 0 0}
+  button.secondary{background:#e5eae2;color:#202321}button:disabled{opacity:.5;cursor:default}
+  label{display:block;margin:12px 0 5px}input{box-sizing:border-box;width:100%;padding:10px;border:1px solid #bfc8bf;border-radius:7px;font:inherit}
+  a{color:#1b6332;overflow-wrap:anywhere}small{color:#667269}#error{color:#b33131}details{margin-top:20px}summary{cursor:pointer}
+</style></head><body><main>
+  <h1>登录 Revolution</h1><p>使用飞书确认这台电脑的个人身份。模型账号与飞书文档权限仍分别管理。</p>
+  <div class="card"><strong id="state">正在检查飞书登录…</strong><p id="detail"></p><p id="error" role="alert"></p>
+    <button id="login">使用飞书登录</button><button class="secondary" id="cancel" hidden>取消登录</button>
+    <p id="link"></p>
+    <div id="confirm-box" hidden><label for="confirm-code">授权页面显示的一次性确认码</label><input id="confirm-code" inputmode="numeric" maxlength="8" autocomplete="one-time-code"><button id="confirm">确认这台电脑</button></div>
+    <details><summary>使用已有飞书应用</summary><label for="app-id">App ID</label><input id="app-id" autocomplete="off">
+      <label for="app-secret">App Secret</label><input id="app-secret" type="password" autocomplete="off"><button class="secondary" id="configure">保存应用配置</button></details>
+  </div>
+  <p><small>此登录只解锁本机 Revolution 配置。首次登录绑定一个飞书用户；以后必须使用同一个应用和账号。</small></p>
+</main><script>
+const byId = id => document.getElementById(id);
+async function refresh(){
+  try {
+    const s = await window.revolutionAuth.status(), a = s.auth;
+    byId('state').textContent = s.authenticated ? '身份已确认，正在打开 Revolution…' :
+      s.reason === 'different-account' ? '当前飞书账号与本机资料的所有者不一致' :
+      a.connected ? '飞书已连接，正在确认本机资料…' : '请使用飞书登录';
+    byId('detail').textContent = s.reason === 'different-account' ? '请切回最初绑定本机资料的飞书账号。' :
+      a.connected ? `当前身份：${a.name || a.accountId}` : a.mode === 'relay' ? '请用飞书授权 Revolution，机器人会连接到你的本机工作区。' : a.configured ? '应用已配置，等待用户授权。' : '首次使用可以创建个人飞书应用，或填写已有应用配置。';
+    const pending = ['starting','waiting','confirming'].includes(a.attempt?.status);
+    byId('login').disabled = pending || s.authenticated || s.reason === 'different-account';
+    byId('login').textContent = a.mode === 'relay' ? '使用飞书登录并连接机器人' : a.configured ? '使用飞书登录' : '创建个人应用并登录';
+    byId('app-id').closest('details').hidden = a.mode === 'relay';
+    byId('cancel').hidden = !pending;
+    byId('confirm-box').hidden = a.attempt?.status !== 'confirming';
+    byId('link').replaceChildren();
+    if (a.attempt?.url) { const link = document.createElement('a'); link.href = a.attempt.url; link.target = '_blank'; link.rel = 'noreferrer'; link.textContent = '打开飞书授权页面 ↗'; byId('link').append(link); }
+    if (a.attempt?.status === 'error') byId('error').textContent = a.attempt.message;
+  } catch (error) { byId('error').textContent = error.message; }
+}
+byId('login').onclick = async () => { byId('error').textContent=''; try { const s=await window.revolutionAuth.status(); await window.revolutionAuth.start({createApp:!s.auth.configured}); await refresh(); } catch(e){byId('error').textContent=e.message;} };
+byId('cancel').onclick = async () => { await window.revolutionAuth.cancel(); await refresh(); };
+byId('confirm').onclick = async () => { byId('error').textContent=''; try { await window.revolutionAuth.confirm(byId('confirm-code').value.trim()); byId('confirm-code').value=''; await refresh(); } catch(e){byId('error').textContent=e.message;} };
+byId('configure').onclick = async () => { byId('error').textContent=''; try { await window.revolutionAuth.configure(byId('app-id').value.trim(),byId('app-secret').value); byId('app-secret').value=''; await refresh(); } catch(e){byId('error').textContent=e.message;} };
+refresh(); setInterval(refresh,2000);
+</script></body></html>

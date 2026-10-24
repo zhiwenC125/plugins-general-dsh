@@ -1,7 +1,7 @@
 {
   "name": "revolution-desktop",
   "productName": "Revolution",
-  "version": "0.1.3",
+  "version": "0.1.4-preview.4",
   "private": true,
   "description": "Revolution workflow workspace powered by DeepSeek Harness",
   "author": "Revolution",
@@ -67,6 +67,9 @@
     },
     "files": [
       "main.cjs",
+      "auth.html",
+      "auth-preload.cjs",
+      "relay-config.json",
       "runtime.mjs",
       "icon.png",
       "package.json",

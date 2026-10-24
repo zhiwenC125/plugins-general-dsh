@@ -19,7 +19,7 @@ export class FeishuBotTransport {
     this.binary = binary; this.configDir = configDir; this.appId = appId;
     this.botOpenId = botOpenId; this.spawn = spawnImpl;
     this.onEvent = onEvent; this.onError = onError;
-    this.tail = ''; this.pending = Promise.resolve();
+    this.tail = ''; this.stderrTail = ''; this.ready = false; this.pending = Promise.resolve();
   }
   environment() {
     const env = { ...process.env, LARKSUITE_CLI_CONFIG_DIR: this.configDir, NO_COLOR: '1' };
@@ -29,13 +29,22 @@ export class FeishuBotTransport {
   start() {
     if (this.child) throw new Error('飞书机器人已连接。');
     const child = this.spawn(this.binary, ['event', 'consume', 'im.message.receive_v1', '--as', 'bot'], {
-      cwd: this.configDir, env: this.environment(), stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true,
+      // The CLI treats stdin EOF as a graceful request to stop consuming.
+      cwd: this.configDir, env: this.environment(), stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true,
     });
-    this.child = child;
+    this.child = child; this.ready = false; this.stderrTail = '';
     child.stdout.on('data', chunk => this.accept(chunk.toString()));
-    child.stderr.on('data', () => {}); // Never surface credential-bearing CLI output.
-    child.once('error', () => { this.onError(new Error('飞书事件连接启动失败。')); });
-    child.once('close', code => { if (this.child === child) this.child = null; if (code !== 0 && code !== null) this.onError(new Error('飞书事件连接已断开。')); });
+    child.stderr.on('data', chunk => {
+      // Recognize only the CLI readiness marker; never surface its raw output.
+      this.stderrTail = (this.stderrTail + chunk.toString()).slice(-512);
+      if (this.child === child && /\[event\] ready event_key=im\.message\.receive_v1/.test(this.stderrTail)) this.ready = true;
+    });
+    child.once('error', () => { this.ready = false; this.onError(new Error('飞书事件连接启动失败。')); });
+    child.once('close', () => {
+      if (this.child !== child) return;
+      this.child = null; this.ready = false;
+      this.onError(new Error('飞书事件连接已断开。'));
+    });
   }
   accept(chunk) {
     this.tail += chunk;
@@ -48,7 +57,7 @@ export class FeishuBotTransport {
       if (event) this.pending = this.pending.then(() => this.onEvent(event)).catch(() => this.onError(new Error('飞书消息处理失败。')));
     }
   }
-  stop() { this.child?.kill(); this.child = null; }
+  stop() { this.child?.kill(); this.child = null; this.ready = false; }
   async send(chatId, text, idempotencyKey) {
     if (!/^oc_[A-Za-z0-9]+$/.test(chatId) || typeof text !== 'string' || !text.trim()) throw new Error('飞书回复目标或内容无效。');
     const args = ['im', '+messages-send', '--as', 'bot', '--chat-id', chatId, '--text', '-', '--format', 'json'];
