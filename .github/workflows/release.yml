@@ -35,6 +35,7 @@ jobs:
       - name: Prepare icon
         run: node scripts/prepare-desktop.mjs
       - name: Package internal preview (macOS ad-hoc, not notarized)
+        timeout-minutes: 12
         run: npm --prefix apps/revolution run package
       - name: Verify macOS application signatures
         if: runner.os == 'macOS'

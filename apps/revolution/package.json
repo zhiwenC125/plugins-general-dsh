@@ -11,7 +11,7 @@
   "scripts": {
     "start": "node launch.mjs",
     "web": "node runtime.mjs",
-    "package": "electron-builder --publish never",
+    "package": "node ../../scripts/prepare-windows-packaging.mjs && electron-builder --publish never",
     "package:dir": "electron-builder --dir --publish never"
   },
   "dependencies": {
