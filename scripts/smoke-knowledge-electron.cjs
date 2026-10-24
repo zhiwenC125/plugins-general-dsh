@@ -23,6 +23,8 @@ app.whenReady().then(async () => {
       const base = '/revolution/knowledge';
       const read = await fetch(base + '/status'); const state = await read.json();
       if (!read.ok || state.articles.length !== 0) throw new Error('Knowledge status not ready: '+JSON.stringify(state));
+      const botState = await (await fetch(base + '/bot-status')).json();
+      if (botState.enabled || botState.connected) throw new Error('Bot must start disabled in a new profile');
       const post = async (path, body) => { const r = await fetch(base+path,{method:'POST',headers:{'content-type':'application/json','x-revolution-request':'knowledge'},body:JSON.stringify(body)}); const v=await r.json(); if(!r.ok)throw new Error(JSON.stringify(v)); return v; };
       const proposed=await post('/propose',{id:'smoke-note',title:'界面测试',content:'飞书知识库测试内容'});
       await post('/approve',{draftId:proposed.draftId});
@@ -30,7 +32,7 @@ app.whenReady().then(async () => {
       if(found.passages[0]?.id!=='smoke-note')throw new Error('Retrieval failed');
       const cross=await fetch(base+'/propose',{method:'POST',headers:{'content-type':'application/json'},body:'{}'});
       const link=[...document.querySelectorAll('button')].find(b=>b.textContent.includes('知识库')||b.getAttribute('aria-label')==='知识库'); if(link)link.click();
-      return {status:read.status,created:true,retrieved:true,csrfRejected:cross.status,sidebarFound:!!link};
+      return {status:read.status,created:true,retrieved:true,botDisabledByDefault:true,csrfRejected:cross.status,sidebarFound:!!link};
     })()`);
     await window.webContents.executeJavaScript("[...document.querySelectorAll('button')].find(b=>b.textContent.trim()==='继续')?.click()");
     await new Promise(r => setTimeout(r, 1500));

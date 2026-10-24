@@ -5,7 +5,7 @@
   "exports": {".": "./src/host.js", "./client": "./lib/client.js", "./package.json": "./package.json"},
   "files": ["src", "lib", "engine", "cordis.patch.yml", "README.md"],
   "dependencies": {"@larksuite/cli": "1.0.98"},
-  "peerDependencies": {"@deepseek-ai/dsh-tools": "0.2.1-rc.2"},
+  "peerDependencies": {"@deepseek-ai/dsh-tools": "0.2.1-rc.2", "@deepseek-ai/dsh-llm": "0.2.1-rc.2"},
   "dsh": {"bundle": {"patch": "./cordis.patch.yml"}, "client": {"platform": "web", "inject": ["@deepseek-ai/dsh-client-ui-renderer", "@deepseek-ai/dsh-client-ui-layout", "@deepseek-ai/dsh-client-ui-sidebar", "@deepseek-ai/dsh-client-ui-settings", "@deepseek-ai/dsh-client-ui-settings-general"]}},
   "license": "MIT"
 }

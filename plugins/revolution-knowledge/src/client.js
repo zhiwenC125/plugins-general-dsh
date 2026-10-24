@@ -9,18 +9,21 @@ function KnowledgePanel() {
   const [query, setQuery] = React.useState(''), [url, setUrl] = React.useState('');
   const [article, setArticle] = React.useState({ id: '', title: '', content: '' });
   const [spaces, setSpaces] = React.useState([]);
+  const [bot, setBot] = React.useState(null);
   const [app, setApp] = React.useState({ appId: '', secret: '' });
-  const reload = async () => { const s = await api('/status'); setState(s); setConfig(c => c ?? s.config); return s; };
-  React.useEffect(() => { let live = true; api('/status').then(s => { if (live) { setState(s); setConfig(s.config); } }).catch(e => live && setError(e.message)); return () => { live = false; }; }, []);
+  const reload = async () => { const [s, b] = await Promise.all([api('/status'), api('/bot-status')]); setState(s); setBot(b); setConfig(c => c ?? s.config); return s; };
+  React.useEffect(() => { let live = true; Promise.all([api('/status'), api('/bot-status')]).then(([s, b]) => { if (live) { setState(s); setBot(b); setConfig(s.config); } }).catch(e => live && setError(e.message)); return () => { live = false; }; }, []);
   const pending = ['starting', 'waiting'].includes(state?.auth?.attempt?.status);
   React.useEffect(() => { if (!pending) return; let live = true; const timer = setInterval(() => api('/status').then(s => live && setState(s)).catch(e => live && setError(e.message)), 2000); return () => { live = false; clearInterval(timer); }; }, [pending]);
+  React.useEffect(() => { if (!bot?.enabled) return; let live = true; const timer = setInterval(() => api('/bot-status').then(value => live && setBot(value)).catch(e => live && setError(e.message)), 5000); return () => { live = false; clearInterval(timer); }; }, [bot?.enabled]);
   const run = async action => { setBusy(true); setError(''); try { const r = await action(); setResult(r); await reload(); } catch (e) { setError(e.message); } finally { setBusy(false); } };
   const button = (text, fn) => h('button', { type: 'button', disabled: busy, onClick: () => run(fn) }, text);
   const input = (label, value, onChange, type = 'text') => h('label', { className: 'rev-kb-field' }, label, h('input', { type, value, onChange: e => onChange(e.target.value) }));
   if (!state || !config) return h('div', { className: 'rev-kb' }, error || '正在打开知识库…');
   const attempt = state.auth.attempt;
   return h('main', { className: 'rev-kb' },
-    h('h1', null, '知识库与飞书'), h('p', null, '让 Revolution 查阅你的知识、引用来源，并把同一套文章同步到 Obsidian、飞书云文档和 Wiki。'),
+    h('h1', null, '知识库与长期记忆'), h('p', null, 'Revolution 会在每轮对话开始时，从你的本地知识库自动召回相关片段；重要决定和偏好可保存为文章，供未来会话使用。'),
+    h('p', { className: 'rev-kb-muted' }, '当前是本机个人知识库。自动召回只读取本地副本，可能不是飞书最新版本；团队共享、权限隔离和自动提炼记忆仍在开发。'),
     error && h('p', { role: 'alert', className: 'rev-kb-error' }, error),
     h('section', null, h('h2', null, '连接飞书'),
       h('p', null, state.auth.connected ? `已连接：${state.auth.name || state.auth.accountId}` : '登录并授权后可读取你的飞书文档。'),
@@ -38,6 +41,12 @@ function KnowledgePanel() {
         input('App ID', app.appId, v => setApp({ ...app, appId: v })), input('App Secret（仅本机保存）', app.secret, v => setApp({ ...app, secret: v }), 'password'),
         button('连接已有应用', async () => { const r = await api('/app', app); setApp({ appId: '', secret: '' }); return r; })),
       h('p', { className: 'rev-kb-muted' }, '登录授权和 DeepSeek 模型登录各自管理。飞书登录不会提供模型额度；用户授权不会扩大原有文档访问权限。')),
+    h('section', null, h('h2', null, '飞书中的 Revolution'),
+      h('p', null, bot?.enabled ? `机器人已启用${bot.connected ? '，长连接在线' : '，等待重连'}。` : '启用后，可在飞书私聊自己的应用机器人，与选定的 Revolution 会话对话。'),
+      bot?.error && h('p', { role: 'alert', className: 'rev-kb-error' }, bot.error),
+      h('p', { className: 'rev-kb-muted' }, '在飞书发送 /项目 查看可用工作区，/项目 <ID> 切换工作区；发送 /会话 查看会话，/会话 <ID> 切换会话；/当前 查看当前选择。首次使用仅接受当前已授权飞书账号的私聊。Mac 需保持运行。'),
+      bot?.enabled ? button('关闭飞书机器人', () => api('/bot-disable', {})) : button('启用飞书机器人', () => api('/bot-enable', {})),
+      bot?.enabled && h('p', { className: 'rev-kb-muted' }, `当前项目：${bot.projectId || '未选择'} · 当前会话：${bot.sessionId || '未选择'} · 私聊：${bot.chatBound ? '已绑定' : '等待首条消息'}`)),
     h('section', null, h('h2', null, '三个并列知识副本'),
       ...[['root', 'Markdown 原文目录（含 knowledge/catalog.json）'], ['vault', 'Obsidian 库完整路径'], ['folderToken', '飞书普通文档文件夹链接或标识'], ['spaceId', 'Wiki 空间设置页链接或空间 ID']].map(([key, label]) => input(label, config[key] || '', v => setConfig({ ...config, [key]: v }))),
       h('div', { className: 'rev-kb-actions' }, button('保存连接位置', () => api('/configure', config)), button('选择可访问 Wiki 空间', async () => { const r = await api('/spaces', {}); setSpaces(r.items || []); return { spaces: (r.items || []).length, more: !!r.has_more }; })),

@@ -1,10 +1,13 @@
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import { defineTool } from '@deepseek-ai/dsh-tools';
+import { createUserMessage } from '@deepseek-ai/dsh-llm';
 import { KnowledgeService } from './service.mjs';
 import { FeishuLogin } from './feishu-login.mjs';
+import { recallForTurn } from './recall.mjs';
+import { PersonalBotService } from './bot-service.mjs';
 export const name = 'revolution-knowledge';
-export const inject = ['webServer', 'connection', 'tools'];
+export const inject = ['webServer', 'connection', 'tools', 'sessionController', 'workspaceRegistry', 'agents'];
 const BASE = '/revolution/knowledge';
 
 export async function readBody(req) {
@@ -20,8 +23,21 @@ export function apply(ctx) {
   const home = join(process.env.DSH_HOME || process.env.REVOLUTION_HOME || join(homedir(), '.revolution'), 'knowledge-app');
   const login = new FeishuLogin({ home: join(home, 'feishu') });
   const service = new KnowledgeService({ home, login });
-  const ready = service.init();
-  ctx.effect(() => () => { void login.cancel(); });
+  const bot = new PersonalBotService({ home, login, ctx });
+  const ready = service.init().then(() => bot.init());
+  ctx.effect(() => () => { bot.stop(); void login.cancel(); });
+  ctx.on('agent/pre-step', async (payload, next) => {
+    const decision = await next();
+    if (decision.kind === 'reject' || payload.signal.aborted) return decision;
+    try {
+      await ready;
+      const recall = await recallForTurn(payload, query => service.search(query), createUserMessage);
+      return recall ? { ...decision, messages: [...decision.messages, recall] } : decision;
+    } catch (error) {
+      ctx.logger.warn('Revolution knowledge recall skipped: %o', error);
+      return decision;
+    }
+  });
   ctx.effect(() => ctx.webServer.register({ kind: 'prefix', path: BASE, handler: async (req, res) => {
     const rejection = ctx.connection.requestRejection(req);
     if (rejection !== undefined) return send(res, rejection, { error: '请从 Revolution 登录后的页面访问。' });
@@ -29,6 +45,7 @@ export function apply(ctx) {
       await ready;
       const url = new URL(req.url, 'http://localhost'); const action = url.pathname.slice(BASE.length);
       if (req.method === 'GET' && action === '/status') return send(res, 200, await service.status());
+      if (req.method === 'GET' && action === '/bot-status') return send(res, 200, bot.status());
       if (req.method === 'GET' && action === '/article') return send(res, 200, await service.read(url.searchParams.get('id')));
       if (req.method !== 'POST' || req.headers['x-revolution-request'] !== 'knowledge') return send(res, 405, { error: '不支持的请求。' });
       const body = await readBody(req);
@@ -48,6 +65,8 @@ export function apply(ctx) {
         case '/remote-read': result = await service.remoteRead(body.url); break;
         case '/import-legacy': result = await service.importLegacyMappings(); break;
         case '/reset-mappings': result = await service.resetRemoteMappings(); break;
+        case '/bot-enable': result = await bot.enable(); break;
+        case '/bot-disable': result = await bot.disable(); break;
         default: return send(res, 404, { error: '接口不存在。' });
       }
       send(res, 200, result);
