@@ -27,7 +27,7 @@ jobs:
           cache: npm
           cache-dependency-path: apps/revolution/package-lock.json
       - name: Build downstream plugins
-        run: npm run build && npm run build:brand && npm run test:workflow
+        run: npm run build && npm run build:brand && npm run build:knowledge && npm run test:workflow && npm run test:knowledge-app
       - name: Validate release tag and locked version
         run: node scripts/check-release.mjs
       - name: Install locked runtime

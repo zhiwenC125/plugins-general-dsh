@@ -1,3 +1,4 @@
+import { ensureKnowledgeBundle } from './profile.mjs';
 import { createRequire } from 'node:module';
 import { mkdir, access, writeFile, symlink, lstat, readlink, unlink } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
@@ -11,12 +12,14 @@ export async function startRuntime({ port = 0, home = process.env.REVOLUTION_HOM
   await mkdir(profile, { recursive: true });
   const manifestPath = join(profile, 'package.json');
   try { await access(manifestPath); } catch {
-    await writeFile(manifestPath, JSON.stringify({ name: 'revolution-profile', private: true, dsh: { profile: { bundles: ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app', 'dsh-workflow-studio', 'revolution-brand'] } } }, null, 2), { flag: 'wx' });
+    await writeFile(manifestPath, JSON.stringify({ name: 'revolution-profile', private: true, dsh: { profile: { bundles: ['@deepseek-ai/dsh-base', '@deepseek-ai/dsh-web-app', 'dsh-workflow-studio', 'revolution-brand', 'revolution-knowledge'] } } }, null, 2), { flag: 'wx' });
   }
+  // Upgrade existing profiles while preserving user-installed bundles.
+  await ensureKnowledgeBundle(manifestPath);
   // DSH's Loader resolves third-party entries relative to the profile.
-  // Link only our two bundled packages; preserve user-installed plugins.
+  // Link our bundled packages; preserve user-installed plugins.
   await mkdir(join(profile, 'node_modules'), { recursive: true });
-  for (const name of ['dsh-workflow-studio', 'revolution-brand']) {
+  for (const name of ['dsh-workflow-studio', 'revolution-brand', 'revolution-knowledge']) {
     const target = dirname(require.resolve(`${name}/package.json`));
     const link = join(profile, 'node_modules', name);
     let current;

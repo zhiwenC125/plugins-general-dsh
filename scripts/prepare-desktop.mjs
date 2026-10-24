@@ -4,8 +4,11 @@ import { cp, readFile, writeFile } from 'node:fs/promises';
 const require = createRequire(new URL('../apps/revolution/package.json', import.meta.url));
 const sharp = require('sharp');
 await sharp(fileURLToPath(new URL('../assets/revolution.svg', import.meta.url))).resize(1024, 1024).png().toFile(fileURLToPath(new URL('../apps/revolution/icon.png', import.meta.url)));
-for (const name of ['workflow-studio', 'revolution-brand']) {
+for (const name of ['workflow-studio', 'revolution-brand', 'revolution-knowledge']) {
   const packageName = name === 'workflow-studio' ? 'dsh-workflow-studio' : name;
+  if (name === 'revolution-knowledge') {
+    for (const dir of ['src', 'engine']) await cp(new URL(`../plugins/${name}/${dir}/`, import.meta.url), new URL(`../apps/revolution/node_modules/${packageName}/${dir}/`, import.meta.url), { recursive: true });
+  }
   await cp(new URL(`../plugins/${name}/lib/`, import.meta.url), new URL(`../apps/revolution/node_modules/${packageName}/lib/`, import.meta.url), { recursive: true });
   await cp(new URL(`../plugins/${name}/cordis.patch.yml`, import.meta.url), new URL(`../apps/revolution/node_modules/${packageName}/cordis.patch.yml`, import.meta.url));
 }

@@ -29,14 +29,16 @@ jobs:
       - name: Build and verify plugins
         if: steps.impact.outputs.plugins == 'true'
         run: |
-          npm run build && npm run build:brand
+          npm run build && npm run build:brand && npm run build:knowledge
           node --check plugins/workflow-studio/lib/client.js
           node --check plugins/revolution-brand/lib/client.js
           npm run test:workflow
-          git diff --exit-code -- plugins/workflow-studio/lib/client.js plugins/revolution-brand/lib/client.js
+          npm run test:knowledge-app
+          node --check plugins/revolution-knowledge/lib/client.js
+          git diff --exit-code -- plugins/workflow-studio/lib/client.js plugins/revolution-brand/lib/client.js plugins/revolution-knowledge/lib/client.js plugins/revolution-knowledge/engine
       - name: Check knowledge library
         if: steps.impact.outputs.knowledge == 'true'
-        run: npm run kb -- check && npm run test:knowledge
+        run: npm run build:knowledge && npm run kb -- check && npm run test:knowledge && npm run test:knowledge-app
       - name: Check bot routing
         if: steps.impact.outputs.bot == 'true'
         run: npm run test:bot
@@ -48,5 +50,5 @@ jobs:
           node --check apps/revolution/after-pack.cjs
           node --check scripts/verify-mac.mjs
           node --check scripts/smoke-desktop-mac.mjs
-          node --test scripts/ci-impact.test.mjs
+          node --test scripts/ci-impact.test.mjs scripts/runtime-profile.test.mjs
           node scripts/check-release.mjs

@@ -41,20 +41,64 @@
     "@deepseek-ai/dsh-workflow": "0.2.1-rc.2",
     "dsh-workflow-studio": "file:../../plugins/workflow-studio",
     "revolution-brand": "file:../../plugins/revolution-brand",
-    "node": "24.22.0"
+    "node": "24.22.0",
+    "revolution-knowledge": "file:../../plugins/revolution-knowledge"
   },
-  "devDependencies": { "electron": "44.8.0", "electron-builder": "26.17.0", "sharp": "0.35.5" },
+  "devDependencies": {
+    "electron": "44.8.0",
+    "electron-builder": "26.17.0",
+    "sharp": "0.35.5"
+  },
   "build": {
     "appId": "app.revolution.workspace",
     "productName": "Revolution",
     "asar": false,
     "npmRebuild": false,
     "afterPack": "./after-pack.cjs",
-    "directories": { "output": "../../dist" },
-    "files": ["main.cjs", "runtime.mjs", "icon.png", "package.json"],
-    "mac": { "target": ["dmg", "zip"], "category": "public.app-category.developer-tools", "identity": "-", "timestamp": null, "hardenedRuntime": true, "entitlements": "entitlements.mac.plist", "entitlementsInherit": "entitlements.mac.plist", "binaries": ["Contents/Resources/app/node_modules/node/bin/node"], "icon": "icon.png" },
-    "win": { "target": ["nsis"], "icon": "icon.png", "signAndEditExecutable": false },
-    "linux": { "target": ["AppImage"], "category": "Development", "icon": "icon.png" },
-    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true }
+    "directories": {
+      "output": "../../dist"
+    },
+    "files": [
+      "main.cjs",
+      "runtime.mjs",
+      "icon.png",
+      "package.json",
+      "profile.mjs"
+    ],
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.developer-tools",
+      "identity": "-",
+      "timestamp": null,
+      "hardenedRuntime": true,
+      "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist",
+      "binaries": [
+        "Contents/Resources/app/node_modules/node/bin/node",
+        "Contents/Resources/app/node_modules/@larksuite/cli/bin/lark-cli"
+      ],
+      "icon": "icon.png"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "icon.png",
+      "signAndEditExecutable": false
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Development",
+      "icon": "icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }

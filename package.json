@@ -13,10 +13,12 @@
     "test:knowledge": "node --test knowledge/*.test.mjs",
     "test:bot": "node --test integrations/bot/*.test.mjs",
     "build:brand": "node scripts/build-brand.mjs",
-    "setup:revolution": "npm run build && npm run build:brand && npm --prefix apps/revolution install --install-links && node scripts/prepare-desktop.mjs",
+    "setup:revolution": "npm run build && npm run build:brand && npm run build:knowledge && npm --prefix apps/revolution install --install-links && node scripts/prepare-desktop.mjs",
     "start:revolution": "npm --prefix apps/revolution start",
     "web:revolution": "npm --prefix apps/revolution run web",
-    "package:revolution": "node scripts/prepare-desktop.mjs && npm --prefix apps/revolution run package"
+    "package:revolution": "node scripts/prepare-desktop.mjs && npm --prefix apps/revolution run package",
+    "build:knowledge": "node plugins/revolution-knowledge/scripts/build.mjs",
+    "test:knowledge-app": "node --test plugins/revolution-knowledge/tests/*.test.mjs"
   },
   "engines": {
     "node": "^22.19.0 || >=24.0.0"
